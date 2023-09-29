@@ -1,0 +1,13 @@
+**/.DS_Store
+.idea/
+.vs/
+.vscode/
+build/
+cmake-build-*/
+prefix/
+CMakeLists.txt.user
+compile_commands.json
+vcpkg_installed/
+imgui.ini
+.cache/
+vendor/
