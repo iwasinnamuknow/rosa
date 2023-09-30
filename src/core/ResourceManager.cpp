@@ -14,25 +14,19 @@
  * bbai. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include <unordered_map>
-#include <SFML/Graphics.hpp>
+#include <cassert>
+#include <core/ResourceManager.hpp>
 
 namespace rosa {
 
-    class ResourceManager {
-        public:
-            explicit ResourceManager() = default;
-            ResourceManager(ResourceManager const &) = delete;
-            auto operator=(ResourceManager const &) -> ResourceManager & = delete;
-            ResourceManager(ResourceManager const &&) = delete;
-            auto operator=(ResourceManager const &&) -> ResourceManager & = delete;
-            ~ResourceManager() = delete;
+    auto ResourceManager::getTexture(const std::string &path) -> sf::Texture& {
+        if (auto search = m_textures.find(path); search != m_textures.end()) {
+            return search->second;
+        }
 
-            auto getTexture(const std::string& path) -> sf::Texture&;
-        private:
-            std::unordered_map<std::string, sf::Texture> m_textures;
-    };
+        m_textures[path] = sf::Texture{};
+        assert(m_textures[path].loadFromFile(path));
+        return m_textures[path];
+    }
 
 } // namespace rosa
