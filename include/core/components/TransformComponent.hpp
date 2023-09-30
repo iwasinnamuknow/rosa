@@ -13,25 +13,16 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <entt/entt.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/System/Vector2.hpp>
 
 namespace rosa {
 
-    class Scene {
-        public:
-            virtual ~Scene() = default;
-            auto update(float delta_time) -> void;
-            auto render(sf::RenderWindow& window) -> void;
-
-        protected:
-            auto getRegistry() -> entt::registry& {
-                return m_registry;
-            }
-        private:
-            entt::registry m_registry;
+    struct TransformComponent {
+        sf::Vector2f position{};
+        sf::Vector2f velocity{};
+        sf::Vector2f scale{};
+        float rotation{};
     };
 
 } // namespace rosa
