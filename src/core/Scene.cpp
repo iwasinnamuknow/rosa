@@ -13,11 +13,28 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include "core/ResourceManager.hpp"
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <core/Scene.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <core/components/TransformComponent.hpp>
+#include <entt/entity/fwd.hpp>
 
 namespace rosa {
+
+    Scene::Scene(ResourceManager& resource_manager, sf::RenderWindow& render_window) : m_resource_manager(resource_manager), m_render_window(render_window) {
+        auto entity = getRegistry().create();
+        getRegistry().emplace<SpriteComponent>(entity);
+        auto& texture = m_resource_manager.getTexture("assets/rosa.png");
+        getRegistry().get<SpriteComponent>(entity).sprite.setTexture(texture);
+
+        const sf::Vector2f position = sf::Vector2f(
+            (static_cast<float>(m_render_window.getSize().x) / 2.F) - (static_cast<float>(texture.getSize().x) / 2.F),
+            (static_cast<float>(m_render_window.getSize().y) / 2.F) - (static_cast<float>(texture.getSize().y) / 2.F)
+        );
+        getRegistry().emplace<TransformComponent>(entity, position, sf::Vector2f(0,0), sf::Vector2f(1,1), 0);
+    }
 
     auto Scene::update(float /*delta_time*/) -> void {
         // This function only cares about entities with SpriteComponent and TransformComponent

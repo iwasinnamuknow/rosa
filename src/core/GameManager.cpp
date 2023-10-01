@@ -17,16 +17,26 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/WindowStyle.hpp>
 #include <core/GameManager.hpp>
+#include <tuple>
+#include <utility>
 
 namespace rosa {
 
     GameManager::GameManager() {
-        m_render_window.create(sf::VideoMode(800, 600), "SFML Window");
+        m_render_window.create(sf::VideoMode(800, 600), "SFML Window", sf::Style::None);
+
+        /*const auto injector = boost::di::make_injector(
+            boost::di::bind<ResourceManager>.to(m_resource_manager)
+        );*/
 
         // Add an empty scene so we don't crash
-        m_scenes.emplace("test", Scene());
-        m_current_scene = &m_scenes["test"];
+        //m_scenes.emplace(std::piecewise_construct, std::forward_as_tuple(std::string("test")), std::forward_as_tuple(new_scene));
+        //m_scenes.push_back(std::move(new_scene));
+        //m_scenes.emplace(std::make_pair("test", std::move(injector.create<Scene>())));
+        m_scenes.try_emplace("test", m_resource_manager, m_render_window);
+        assert(changeScene("test"));
     }
 
     GameManager::~GameManager() {

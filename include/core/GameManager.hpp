@@ -18,6 +18,8 @@
 #include <unordered_map>
 #include <core/Scene.hpp>
 #include <SFML/Graphics.hpp>
+#include <core/ResourceManager.hpp>
+#include <boost/di.hpp>
 
 namespace rosa {
 
@@ -37,6 +39,7 @@ namespace rosa {
             std::unordered_map<std::string, Scene> m_scenes{};
             Scene* m_current_scene{nullptr};
             sf::RenderWindow m_render_window{};
+            ResourceManager m_resource_manager{};
     };
 
 } // namespace rosa

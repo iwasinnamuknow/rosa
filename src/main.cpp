@@ -1,5 +1,3 @@
-#include <boost/di.hpp>
-
 #include <string>
 #include <cassert>
 #include <memory>
