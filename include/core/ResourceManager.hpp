@@ -28,7 +28,7 @@ namespace rosa {
             auto operator=(ResourceManager const &) -> ResourceManager & = delete;
             ResourceManager(ResourceManager const &&) = delete;
             auto operator=(ResourceManager const &&) -> ResourceManager & = delete;
-            ~ResourceManager() = delete;
+            ~ResourceManager() = default;
 
             auto getTexture(const std::string& path) -> sf::Texture&;
         private:
