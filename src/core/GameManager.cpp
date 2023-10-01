@@ -13,14 +13,7 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/Window/Event.hpp>
-#include <SFML/Window/VideoMode.hpp>
-#include <SFML/Window/WindowStyle.hpp>
 #include <core/GameManager.hpp>
-#include <tuple>
-#include <utility>
 
 namespace rosa {
 

@@ -19,7 +19,6 @@
 #include <core/Scene.hpp>
 #include <SFML/Graphics.hpp>
 #include <core/ResourceManager.hpp>
-#include <boost/di.hpp>
 
 namespace rosa {
 
