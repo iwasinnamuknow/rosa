@@ -13,13 +13,12 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include "core/ResourceManager.hpp"
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <core/ResourceManager.hpp>
 #include <core/Scene.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <core/components/TransformComponent.hpp>
-#include <entt/entity/fwd.hpp>
+#include <core/components/NativeScriptComponent.hpp>
+#include <TestScript.hpp>
 
 namespace rosa {
 
@@ -34,9 +33,21 @@ namespace rosa {
             (static_cast<float>(m_render_window.getSize().y) / 2.F) - (static_cast<float>(texture.getSize().y) / 2.F)
         );
         getRegistry().emplace<TransformComponent>(entity, position, sf::Vector2f(0,0), sf::Vector2f(1,1), 0);
+        getRegistry().emplace<NativeScriptComponent>(entity).bind<TestScript>();
     }
 
-    auto Scene::update(float /*delta_time*/) -> void {
+    auto Scene::update(float delta_time) -> void {
+
+        // Run updates for native script components, instantiating where needed
+        m_registry.view<NativeScriptComponent>().each([this, delta_time](auto entity, auto& nsc) {
+            if (!nsc.instance) {
+                nsc.instantiate_function(*this, entity);
+                nsc.on_create_function(nsc.instance);
+            }
+
+            nsc.on_update_function(nsc.instance, delta_time);
+        });
+
         // This function only cares about entities with SpriteComponent and TransformComponent
         auto view = m_registry.view<SpriteComponent, TransformComponent>();
 

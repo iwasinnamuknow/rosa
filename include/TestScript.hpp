@@ -15,31 +15,26 @@
 
 #pragma once
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <boost/di.hpp>
-#include <entt/entt.hpp>
-#include <core/ResourceManager.hpp>
+#include "core/NativeScriptEntity.hpp"
+#include <iostream>
 
 namespace rosa {
 
-    class NativeScriptEntity;
-
-    class Scene {
+    class TestScript : public NativeScriptEntity {
         public:
-            explicit Scene(ResourceManager& resource_manager, sf::RenderWindow& render_window);
-            auto update(float delta_time) -> void;
-            auto render(sf::RenderWindow& window) -> void;
+            TestScript(Scene& scene, entt::entity entity) : NativeScriptEntity(scene, entity) {}
 
-        protected:
-            auto getRegistry() -> entt::registry& {
-                return m_registry;
+            void onCreate() override {
+                std::cout << "On Create!" << std::endl;
             }
-        private:
-            entt::registry m_registry{};
-            ResourceManager& m_resource_manager;
-            sf::RenderWindow& m_render_window;
 
-            friend class NativeScriptEntity;
+            void onUpdate(float delta_time) override {
+                std::cout << "DeltaTime: " << delta_time << std::endl;
+            }
+
+            void onDestroy() override {
+
+            }
     };
 
 } // namespace rosa

@@ -15,31 +15,29 @@
 
 #pragma once
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <boost/di.hpp>
+#include <core/Scene.hpp>
 #include <entt/entt.hpp>
-#include <core/ResourceManager.hpp>
 
 namespace rosa {
 
-    class NativeScriptEntity;
-
-    class Scene {
+    class NativeScriptEntity {
         public:
-            explicit Scene(ResourceManager& resource_manager, sf::RenderWindow& render_window);
-            auto update(float delta_time) -> void;
-            auto render(sf::RenderWindow& window) -> void;
+            explicit NativeScriptEntity(Scene& scene, entt::entity entity) : m_scene(scene), m_entity(entity) {}
 
-        protected:
-            auto getRegistry() -> entt::registry& {
-                return m_registry;
+            virtual ~NativeScriptEntity() = default;
+
+            virtual auto onCreate() -> void{};
+            virtual auto onUpdate(float delta_time) -> void{};
+            virtual auto onDestroy() -> void{};
+
+            template<typename T>
+            auto getComponent() -> T& {
+                return m_scene.getRegistry().get<T>(m_entity);
             }
         private:
-            entt::registry m_registry{};
-            ResourceManager& m_resource_manager;
-            sf::RenderWindow& m_render_window;
-
-            friend class NativeScriptEntity;
+            entt::entity m_entity;
+            Scene& m_scene;
+            friend class Scene;
     };
 
 } // namespace rosa

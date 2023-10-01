@@ -41,7 +41,7 @@ namespace rosa {
     auto GameManager::run() -> void {
         sf::Clock delta_clock;
 
-        while (true) {
+        while (m_render_window.isOpen()) {
             sf::Event event{};
 
             while (m_render_window.pollEvent(event)) {
