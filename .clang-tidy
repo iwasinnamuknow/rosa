@@ -17,11 +17,10 @@ Checks: "*,\
   -fuchsia-multiple-inheritance,\
   -cppcoreguidelines-pro-type-vararg,\
   -hicpp-vararg,\
+  -cppcoreguidelines-special-member-functions \
   -misc-non-private-member-variables-in-classes"
 WarningsAsErrors: ''
 CheckOptions:
-  - key: 'cppcoreguidelines-special-member-functions.AllowMissingMoveFunctionsWhenCopyIsDeleted'
-    value: 'true'
   - key: 'bugprone-argument-comment.StrictMode'
     value: 'true'
 # Prefer using enum classes with 2 values for parameters instead of bools
@@ -129,7 +128,7 @@ CheckOptions:
   - key: 'readability-identifier-naming.ProtectedMemberPrefix'
     value: 'm_'
   - key: 'readability-identifier-naming.ProtectedMethodCase'
-    value: 'lower_case'
+    value: 'snakeCase'
   - key: 'readability-identifier-naming.PublicMemberCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.PublicMethodCase'
@@ -141,7 +140,7 @@ CheckOptions:
   - key: 'readability-identifier-naming.StaticVariableCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.StructCase'
-    value: 'lower_case'
+    value: 'CamelCase'
   - key: 'readability-identifier-naming.TemplateParameterCase'
     value: 'CamelCase'
   - key: 'readability-identifier-naming.TemplateTemplateParameterCase'
