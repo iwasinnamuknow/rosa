@@ -17,7 +17,8 @@ Checks: "*,\
   -fuchsia-multiple-inheritance,\
   -cppcoreguidelines-pro-type-vararg,\
   -hicpp-vararg,\
-  -cppcoreguidelines-special-member-functions \
+  -cppcoreguidelines-special-member-functions,\
+  -cppcoreguidelines-avoid-const-or-ref-data-members,\
   -misc-non-private-member-variables-in-classes"
 WarningsAsErrors: ''
 CheckOptions:
@@ -128,7 +129,7 @@ CheckOptions:
   - key: 'readability-identifier-naming.ProtectedMemberPrefix'
     value: 'm_'
   - key: 'readability-identifier-naming.ProtectedMethodCase'
-    value: 'snakeCase'
+    value: 'camelBack'
   - key: 'readability-identifier-naming.PublicMemberCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.PublicMethodCase'
