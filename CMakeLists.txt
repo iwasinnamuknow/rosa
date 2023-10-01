@@ -7,7 +7,9 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 set(Boost_INCLUDE_DIR ${_VCPKG_INSTALLED_DIR}/x64-linux/include)
 #set(Boost_USE_STATIC_LIBS        ON)
+find_package(imgui CONFIG REQUIRED)
 find_package(SFML CONFIG REQUIRED COMPONENTS graphics system window)
+find_package(ImGui-SFML CONFIG REQUIRED)
 #find_package(entt)
 #find_package(Boost COMPONENTS di REQUIRED)
 
@@ -26,5 +28,7 @@ target_include_directories(rosa_exe PRIVATE
     ${Boost_INCLUDE_DIR}
 )
 target_link_libraries(rosa_exe PRIVATE
+  imgui::imgui
   sfml-graphics sfml-system sfml-window
+  ImGui-SFML::ImGui-SFML
 )

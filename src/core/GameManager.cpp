@@ -14,12 +14,15 @@
  */
 
 #include <core/GameManager.hpp>
+#include "imgui.h"
+#include "imgui-SFML.h"
 
 namespace rosa {
 
     GameManager::GameManager() {
         m_render_window.create(sf::VideoMode(800, 600), "SFML Window", sf::Style::None);
 
+        assert(ImGui::SFML::Init(m_render_window));
         /*const auto injector = boost::di::make_injector(
             boost::di::bind<ResourceManager>.to(m_resource_manager)
         );*/
@@ -45,6 +48,8 @@ namespace rosa {
             sf::Event event{};
 
             while (m_render_window.pollEvent(event)) {
+                ImGui::SFML::ProcessEvent(m_render_window, event);
+
                 if (event.type == sf::Event::Closed) {
                     m_render_window.close();
                 }
@@ -52,10 +57,14 @@ namespace rosa {
 
             assert(m_current_scene); // Ensure scene pointer is valid - this needs to be managed internally.
 
+            ImGui::SFML::Update(m_render_window, delta_clock.getElapsedTime());
+            //ImGui::ShowDemoWindow();
             m_current_scene->update(delta_clock.restart().asSeconds());
 
             m_render_window.clear();
             m_current_scene->render(m_render_window);
+
+            ImGui::SFML::Render(m_render_window);
             m_render_window.display();
 
         }

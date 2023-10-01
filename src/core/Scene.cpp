@@ -20,6 +20,9 @@
 #include <core/components/NativeScriptComponent.hpp>
 #include <TestScript.hpp>
 
+#include "imgui.h"
+#include "imgui-SFML.h"
+
 namespace rosa {
 
     Scene::Scene(ResourceManager& resource_manager, sf::RenderWindow& render_window) : m_resource_manager(resource_manager), m_render_window(render_window) {
@@ -34,6 +37,8 @@ namespace rosa {
         );
         getRegistry().emplace<TransformComponent>(entity, position, sf::Vector2f(0,0), sf::Vector2f(1,1), 0);
         getRegistry().emplace<NativeScriptComponent>(entity).bind<TestScript>();
+
+        
     }
 
     auto Scene::update(float delta_time) -> void {

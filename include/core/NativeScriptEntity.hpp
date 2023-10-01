@@ -16,6 +16,7 @@
 #pragma once
 
 #include <core/Scene.hpp>
+#include <core/components/SpriteComponent.hpp>
 #include <entt/entt.hpp>
 
 namespace rosa {
