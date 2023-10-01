@@ -15,22 +15,28 @@
 
 #pragma once
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <entt/entt.hpp>
+#include <unordered_map>
+#include <core/Scene.hpp>
+#include <SFML/Graphics.hpp>
 
 namespace rosa {
 
-    class Scene {
+    class GameManager {
         public:
-            auto update(float delta_time) -> void;
-            auto render(sf::RenderWindow& window) -> void;
+            explicit GameManager();
+            GameManager(GameManager const &) = delete;
+            auto operator=(GameManager const &) -> GameManager & = delete;
+            GameManager(GameManager const &&) = delete;
+            auto operator=(GameManager const &&) -> GameManager & = delete;
+            ~GameManager();
 
-        protected:
-            auto getRegistry() -> entt::registry& {
-                return m_registry;
-            }
+            auto run() -> void;
+            auto changeScene(const std::string& key) -> bool;
+
         private:
-            entt::registry m_registry{};
+            std::unordered_map<std::string, Scene> m_scenes{};
+            Scene* m_current_scene{nullptr};
+            sf::RenderWindow m_render_window{};
     };
 
 } // namespace rosa

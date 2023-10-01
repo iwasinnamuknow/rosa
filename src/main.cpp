@@ -61,19 +61,11 @@ int main() {
 }
 */
 
-#include "core/Exception.hpp"
-#include "core/Logger.hpp"
-#include "core/Scene.hpp"
+#include "core/GameManager.hpp"
 
 auto main() -> int {
-  try {
-    auto *logger = new rosa::Logger("");
-    logger->message("This is my test");
-    delete logger;
-  } catch (rosa::Exception &e) {
-    std::cerr << e.what() << std::endl;
-    return 1;
-  }
+  rosa::GameManager mgr{};
+  mgr.run();
 
   return 0;
 }
