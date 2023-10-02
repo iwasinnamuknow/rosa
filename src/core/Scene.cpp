@@ -62,14 +62,7 @@ namespace rosa {
                 nsc.on_create_function(nsc.instance);
             }
 
-            if (actual->forDeletion()) {
-                nsc.on_destroy_function(nsc.instance);
-                nsc.destroy_instance_function();
-                m_entities.erase(entity);
-                m_registry.destroy(entity);
-            } else {
-                nsc.on_update_function(nsc.instance, delta_time);
-            }
+            nsc.on_update_function(nsc.instance, delta_time);
         });
 
         // This function only cares about entities with SpriteComponent and TransformComponent
@@ -84,6 +77,21 @@ namespace rosa {
             sprite_comp.sprite.setScale(transform.scale);
             sprite_comp.sprite.setRotation(transform.rotation);
         }
+
+        for (auto [entity] : m_registry.storage<entt::entity>().each()) {
+            Entity* actual = &m_entities.at(entity);
+
+            if (actual->forDeletion()) {
+                if (actual->hasComponent<NativeScriptComponent>()) {
+                    auto nsc = actual->getComponent<NativeScriptComponent>();
+                    nsc.on_destroy_function(nsc.instance);
+                    nsc.destroy_instance_function();
+                }
+                m_entities.erase(entity);
+                m_registry.destroy(entity);
+            }
+        }
+        
     }
 
     auto Scene::render(sf::RenderWindow& window) -> void {
