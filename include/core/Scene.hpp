@@ -19,6 +19,7 @@
 #include <boost/di.hpp>
 #include <entt/entt.hpp>
 #include <core/ResourceManager.hpp>
+#include <spdlog/spdlog.h>
 
 namespace rosa {
 

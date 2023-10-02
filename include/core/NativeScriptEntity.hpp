@@ -18,6 +18,7 @@
 #include <core/Scene.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <entt/entt.hpp>
+#include <spdlog/spdlog.h>
 
 namespace rosa {
 
@@ -35,6 +36,8 @@ namespace rosa {
             auto getComponent() -> T& {
                 return m_scene.getRegistry().get<T>(m_entity);
             }
+
+            
         private:
             entt::entity m_entity;
             Scene& m_scene;

@@ -19,6 +19,7 @@
 #include <core/Scene.hpp>
 #include <SFML/Graphics.hpp>
 #include <core/ResourceManager.hpp>
+#include <spdlog/spdlog.h>
 
 namespace rosa {
 

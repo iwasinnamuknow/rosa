@@ -22,19 +22,17 @@
 namespace rosa {
 
     GameManager::GameManager() {
+        spdlog::set_level(spdlog::level::debug);
+        spdlog::info("Rosa is up and running!");
+
         m_render_window.create(sf::VideoMode(800, 600), "SFML Window", sf::Style::None);
 
-        assert(ImGui::SFML::Init(m_render_window));
-        /*const auto injector = boost::di::make_injector(
-            boost::di::bind<ResourceManager>.to(m_resource_manager)
-        );*/
+        bool imgui_init =  ImGui::SFML::Init(m_render_window);
+        assert(imgui_init);
 
-        // Add an empty scene so we don't crash
-        //m_scenes.emplace(std::piecewise_construct, std::forward_as_tuple(std::string("test")), std::forward_as_tuple(new_scene));
-        //m_scenes.push_back(std::move(new_scene));
-        //m_scenes.emplace(std::make_pair("test", std::move(injector.create<Scene>())));
         m_scenes.try_emplace("test", m_resource_manager, m_render_window);
-        assert(changeScene("test"));
+        bool change_scene =  changeScene("test");
+        assert(change_scene);
     }
 
     GameManager::~GameManager() {

@@ -16,7 +16,7 @@
 #pragma once
 
 #include "core/NativeScriptEntity.hpp"
-#include <iostream>
+#include <spdlog/spdlog.h>
 
 namespace rosa {
 
@@ -25,11 +25,12 @@ namespace rosa {
             TestScript(Scene& scene, entt::entity entity) : NativeScriptEntity(scene, entity) {}
 
             void onCreate() override {
-                std::cout << "On Create!" << std::endl;
+                spdlog::info("Test script initialised");
             }
 
             void onUpdate(float delta_time) override {
-                std::cout << "DeltaTime: " << delta_time << std::endl;
+                //std::cout << "DeltaTime: " << delta_time << std::endl;
+                spdlog::debug("Deltatime: {}", delta_time);
             }
 
             void onDestroy() override {

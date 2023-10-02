@@ -25,7 +25,7 @@ namespace rosa {
 
     class ResourceManager {
         public:
-            explicit ResourceManager();
+            ResourceManager();
             ResourceManager(ResourceManager const &) = delete;
             auto operator=(ResourceManager const &) -> ResourceManager & = delete;
             ResourceManager(ResourceManager const &&) = delete;

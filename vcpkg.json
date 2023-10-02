@@ -29,6 +29,10 @@
     {
       "name": "thor",
       "version>=": "2022-04-16"
+    },
+    {
+      "name": "spdlog",
+      "version>=": "1.11.0#1"
     }
   ],
   "default-features": [],
