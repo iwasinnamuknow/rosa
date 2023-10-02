@@ -25,6 +25,10 @@
     {
       "name": "physfs",
       "version>=": "3.2.0#1"
+    },
+    {
+      "name": "thor",
+      "version>=": "2022-04-16"
     }
   ],
   "default-features": [],
