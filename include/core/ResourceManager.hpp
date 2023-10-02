@@ -25,15 +25,18 @@ namespace rosa {
 
     class ResourceManager {
         public:
-            ResourceManager();
             ResourceManager(ResourceManager const &) = delete;
             auto operator=(ResourceManager const &) -> ResourceManager & = delete;
             ResourceManager(ResourceManager const &&) = delete;
             auto operator=(ResourceManager const &&) -> ResourceManager & = delete;
+            
+            auto getTexture(const std::string& path) -> sf::Texture&;
+
+            static auto instance() -> ResourceManager&;
+        private:
+            ResourceManager();
             ~ResourceManager() = default;
 
-            auto getTexture(const std::string& path) -> sf::Texture&;
-        private:
             std::unordered_map<std::string, sf::Texture> m_textures;
             PhysFsStream m_physfs_stream;
     };

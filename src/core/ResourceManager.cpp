@@ -20,7 +20,13 @@
 namespace rosa {
 
     ResourceManager::ResourceManager() {
-        assert(PHYSFS_mount("base.pak", "", 1) != 0);
+        int mount_success = PHYSFS_mount("base.pak", "", 1);
+        assert(mount_success != 0);
+    }
+
+    auto ResourceManager::instance() -> ResourceManager& {
+        static ResourceManager s_instance;
+        return s_instance;
     }
 
     auto ResourceManager::getTexture(const std::string &path) -> sf::Texture& {

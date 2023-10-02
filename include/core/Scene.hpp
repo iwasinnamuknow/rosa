@@ -27,7 +27,7 @@ namespace rosa {
 
     class Scene {
         public:
-            explicit Scene(ResourceManager& resource_manager, sf::RenderWindow& render_window);
+            explicit Scene(sf::RenderWindow& render_window);
             auto update(float delta_time) -> void;
             auto render(sf::RenderWindow& window) -> void;
 
@@ -37,7 +37,7 @@ namespace rosa {
             }
         private:
             entt::registry m_registry{};
-            ResourceManager& m_resource_manager;
+            //ResourceManager& m_resource_manager;
             sf::RenderWindow& m_render_window;
 
             friend class NativeScriptEntity;

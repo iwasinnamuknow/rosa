@@ -25,10 +25,10 @@
 
 namespace rosa {
 
-    Scene::Scene(ResourceManager& resource_manager, sf::RenderWindow& render_window) : m_resource_manager(resource_manager), m_render_window(render_window) {
+    Scene::Scene(sf::RenderWindow& render_window) : m_render_window(render_window) {
         auto entity = getRegistry().create();
         getRegistry().emplace<SpriteComponent>(entity);
-        auto& texture = m_resource_manager.getTexture("assets/rosa.png");
+        auto& texture = ResourceManager::instance().getTexture("assets/rosa.png");
         getRegistry().get<SpriteComponent>(entity).sprite.setTexture(texture);
 
         const sf::Vector2f position = sf::Vector2f(

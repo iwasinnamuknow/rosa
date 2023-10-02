@@ -30,7 +30,7 @@ namespace rosa {
         bool imgui_init =  ImGui::SFML::Init(m_render_window);
         assert(imgui_init);
 
-        m_scenes.try_emplace("test", m_resource_manager, m_render_window);
+        m_scenes.try_emplace("test", m_render_window);
         bool change_scene =  changeScene("test");
         assert(change_scene);
     }
