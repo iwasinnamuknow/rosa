@@ -19,7 +19,12 @@ Checks: "*,\
   -hicpp-vararg,\
   -cppcoreguidelines-special-member-functions,\
   -cppcoreguidelines-avoid-const-or-ref-data-members,\
-  -misc-non-private-member-variables-in-classes"
+  -misc-non-private-member-variables-in-classes,\
+  -cert-dcl51-cpp,\
+  -bugprone-reserved-identifier,\
+  -cert-dcl37-c,\
+  -misc-confusable-identifiers,\
+  -google-upgrade-googletest-case"
 WarningsAsErrors: ''
 CheckOptions:
   - key: 'bugprone-argument-comment.StrictMode'

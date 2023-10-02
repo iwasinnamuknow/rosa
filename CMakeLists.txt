@@ -28,6 +28,8 @@ set_property(TARGET rosa_exe PROPERTY OUTPUT_NAME rosa)
 target_compile_features(rosa_exe PRIVATE cxx_std_20)
 target_include_directories(rosa_exe PRIVATE
     include/
+)
+target_include_directories(rosa_exe SYSTEM PUBLIC
     vendor/
     ${PHYSFS_INCLUDE_DIR}
     ${vcpkg_INCLUDE_DIR}
