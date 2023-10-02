@@ -16,7 +16,6 @@
 #pragma once
 
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
 #include <core/ResourceManager.hpp>
 #include <spdlog/spdlog.h>
@@ -30,8 +29,8 @@ namespace rosa {
     class Scene {
         public:
             explicit Scene(sf::RenderWindow& render_window);
-            auto update(float delta_time) -> void;
-            auto render(sf::RenderWindow& window) -> void;
+            virtual auto update(float delta_time) -> void;
+            virtual auto render() -> void;
 
             auto getRenderWindow() const -> sf::RenderWindow& {
                 return m_render_window;

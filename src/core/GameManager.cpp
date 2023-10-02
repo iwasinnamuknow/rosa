@@ -15,6 +15,7 @@
 
 #include <core/GameManager.hpp>
 #include <cstddef>
+#include <memory>
 #include <physfs.h>
 #include "imgui.h"
 #include "imgui-SFML.h"
@@ -30,9 +31,10 @@ namespace rosa {
         bool imgui_init =  ImGui::SFML::Init(m_render_window);
         assert(imgui_init);
 
-        m_scenes.try_emplace("test", m_render_window);
+        /*std::unique_ptr<Scene> new_scene = std::make_unique<Scene>(m_render_window);
+        m_scenes.insert_or_assign("test", std::move(new_scene));
         bool change_scene =  changeScene("test");
-        assert(change_scene);
+        assert(change_scene);*/
     }
 
     auto GameManager::instance() -> GameManager& {
@@ -48,6 +50,11 @@ namespace rosa {
 
     auto GameManager::currentScene() -> Scene& {
         return *m_current_scene;
+    }
+
+    auto GameManager::addScene(const std::string& key, std::unique_ptr<Scene> scene) -> bool {
+        auto [iterator, inserted] = m_scenes.insert_or_assign(key, std::move(scene));
+        return inserted;
     }
 
     auto GameManager::run() -> void {
@@ -71,7 +78,7 @@ namespace rosa {
             m_current_scene->update(delta_clock.restart().asSeconds());
 
             m_render_window.clear();
-            m_current_scene->render(m_render_window);
+            m_current_scene->render();
 
             ImGui::SFML::Render(m_render_window);
             m_render_window.display();
@@ -81,7 +88,7 @@ namespace rosa {
 
     auto GameManager::changeScene(const std::string& key) -> bool {
         if (auto search = m_scenes.find(key); search != m_scenes.end()) {
-            m_current_scene = &search->second;
+            m_current_scene = search->second.get();
             return true;
         }
 

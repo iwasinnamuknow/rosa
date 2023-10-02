@@ -19,7 +19,6 @@
 #include <core/Entity.hpp>
 #include <core/components/TransformComponent.hpp>
 #include <core/components/NativeScriptComponent.hpp>
-#include <TestScript.hpp>
 #include <entt/entity/fwd.hpp>
 
 #include "imgui.h"
@@ -27,12 +26,7 @@
 
 namespace rosa {
 
-    Scene::Scene(sf::RenderWindow& render_window) : m_render_window(render_window) {
-        auto new_entity = createEntity();
-        new_entity.addComponent<SpriteComponent>();
-
-        getRegistry().emplace<NativeScriptComponent>(new_entity).bind<TestScript>();
-    }
+    Scene::Scene(sf::RenderWindow& render_window) : m_render_window(render_window) { }
 
     auto Scene::createEntity() -> Entity {
         Entity entity{m_registry.create(), &m_registry};
@@ -94,11 +88,11 @@ namespace rosa {
         
     }
 
-    auto Scene::render(sf::RenderWindow& window) -> void {
+    auto Scene::render() -> void {
         // For every entity with a SpriteComponent, draw it.
         m_registry.view<SpriteComponent>().each([&](const auto& sprite_comp)
         {
-            window.draw(sprite_comp.sprite);
+            m_render_window.draw(sprite_comp.sprite);
         });
     }
 
