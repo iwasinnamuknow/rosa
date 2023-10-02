@@ -8,7 +8,9 @@ before_script:
   - apt-get install --yes cmake clang-tidy ninja-build curl zip unzip tar
   - rm -rf build
   - mkdir build
-  - cd vendor/vcpkg && git fetch && ./bootstrap-vcpkg.sh && cd ../../
+  - git submodule sync --recursive
+  - git submodule update --init
+  - ./vendor/vcpkg/bootstrap-vcpkg.sh
 
 stages:
   - build
