@@ -62,11 +62,13 @@ int main() {
 #include "core/GameManager.hpp"
 #include <physfs.h>
 #include <core/PhysFSStream.hpp>
+#include <span>
 
-auto main(int /*argc*/, char** argv) -> int {
+auto main(int argc, char** argv) -> int {
 
-  PHYSFS_init(argv[0]);
-  
+  auto args = std::span(argv, static_cast<size_t>(argc));
+  PHYSFS_init(args[0]);
+
   rosa::GameManager mgr{};
   mgr.run();
 
