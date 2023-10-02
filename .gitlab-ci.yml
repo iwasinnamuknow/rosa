@@ -2,12 +2,12 @@
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
-image: gcc:13.2
+#image: gcc:13.2
 before_script:
-  - apt-get update --yes
-  - apt-get install --yes cmake clang-tidy ninja-build curl zip unzip tar
-  - rm -rf build
-  - mkdir build
+  # - apt-get update --yes
+  # - apt-get install --yes cmake clang-tidy ninja-build curl zip unzip tar
+  # - rm -rf build
+  # - mkdir build
   - git submodule sync --recursive
   - git submodule update --init
   - ./vendor/vcpkg/bootstrap-vcpkg.sh
