@@ -1,10 +1,14 @@
 ---
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
 image: gcc:13.2
 before_script:
   - apt-get update --yes
-  - apt-get install --yes cmake clang-tidy
+  - apt-get install --yes cmake clang-tidy ninja-build curl zip unzip tar
   - rm -rf build
   - mkdir build
+  - ./vendor/vcpkg/bootstrap-vcpkg.sh
 
 stages:
   - build
