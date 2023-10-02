@@ -38,7 +38,6 @@ namespace rosa {
             ~ResourceManager() = default;
 
             std::unordered_map<std::string, sf::Texture> m_textures;
-            PhysFsStream m_physfs_stream;
     };
 
 } // namespace rosa

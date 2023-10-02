@@ -34,9 +34,14 @@ namespace rosa {
             return search->second;
         }
 
-        assert(m_physfs_stream.open(path.c_str()));
+        PhysFsStream stream;
+        bool stream_success = stream.open(path.c_str());
+        assert(stream_success);
+
         m_textures[path] = sf::Texture{};
-        assert(m_textures[path].loadFromStream(m_physfs_stream));
+        bool load_success = m_textures[path].loadFromStream(stream);
+        assert(load_success);
+        
         return m_textures[path];
     }
 
