@@ -41,7 +41,7 @@ namespace rosa {
         m_textures[path] = sf::Texture{};
         bool load_success = m_textures[path].loadFromStream(stream);
         assert(load_success);
-        
+
         return m_textures[path];
     }
 

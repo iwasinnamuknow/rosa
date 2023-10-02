@@ -13,16 +13,18 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#pragma once
+
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
 
 namespace rosa {
 
     struct TransformComponent {
-        sf::Vector2f position{};
-        sf::Vector2f velocity{};
-        sf::Vector2f scale{};
-        float rotation{};
+        sf::Vector2f position{0, 0};
+        sf::Vector2f velocity{0, 0};
+        sf::Vector2f scale{1, 1};
+        float rotation{0};
     };
 
 } // namespace rosa

@@ -22,20 +22,27 @@
 #include <spdlog/spdlog.h>
 
 namespace rosa {
+    
+    constexpr int window_width{800};
+    constexpr int window_height{600};
 
     class GameManager {
         public:
-            explicit GameManager();
             GameManager(GameManager const &) = delete;
             auto operator=(GameManager const &) -> GameManager & = delete;
             GameManager(GameManager const &&) = delete;
             auto operator=(GameManager const &&) -> GameManager & = delete;
-            ~GameManager();
 
             auto run() -> void;
             auto changeScene(const std::string& key) -> bool;
 
+            static auto instance() -> GameManager&;
+
+            auto currentScene() -> Scene&;
         private:
+            explicit GameManager();
+            ~GameManager();
+
             std::unordered_map<std::string, Scene> m_scenes{};
             Scene* m_current_scene{nullptr};
             sf::RenderWindow m_render_window{};

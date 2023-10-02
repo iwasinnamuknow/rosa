@@ -15,32 +15,40 @@
 
 #pragma once
 
-#include <core/Scene.hpp>
+//#include <core/Scene.hpp>
 #include <core/components/SpriteComponent.hpp>
+#include <core/components/TransformComponent.hpp>
 #include <entt/entt.hpp>
 #include <spdlog/spdlog.h>
+#include <core/Entity.hpp>
+#include <core/Scene.hpp>
 
 namespace rosa {
 
     class NativeScriptEntity {
         public:
-            explicit NativeScriptEntity(Scene& scene, entt::entity entity) : m_scene(scene), m_entity(entity) {}
-
+            explicit NativeScriptEntity(Scene* scene, Entity* entity) : m_scene(scene), m_entity(entity) {}
             virtual ~NativeScriptEntity() = default;
 
             virtual auto onCreate() -> void{};
             virtual auto onUpdate(float delta_time) -> void{};
             virtual auto onDestroy() -> void{};
 
-            template<typename T>
-            auto getComponent() -> T& {
-                return m_scene.getRegistry().get<T>(m_entity);
+            auto getScene() -> Scene& {
+                return *m_scene;
             }
 
+            auto getEntity() -> Entity& {
+                return *m_entity;
+            }
+
+            auto die() -> void {
+                m_entity->die();
+            }
             
         private:
-            entt::entity m_entity;
-            Scene& m_scene;
+            Entity* m_entity;
+            Scene* m_scene{nullptr};
             friend class Scene;
     };
 

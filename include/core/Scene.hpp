@@ -16,10 +16,12 @@
 #pragma once
 
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <boost/di.hpp>
+#include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
 #include <core/ResourceManager.hpp>
 #include <spdlog/spdlog.h>
+#include <unordered_map>
+#include <core/Entity.hpp>
 
 namespace rosa {
 
@@ -31,16 +33,24 @@ namespace rosa {
             auto update(float delta_time) -> void;
             auto render(sf::RenderWindow& window) -> void;
 
+            auto getRenderWindow() const -> sf::RenderWindow& {
+                return m_render_window;
+            }
+
         protected:
             auto getRegistry() -> entt::registry& {
                 return m_registry;
             }
+
+            auto createEntity() -> Entity;
+            auto removeEntity(entt::entity) -> bool;
         private:
             entt::registry m_registry{};
-            //ResourceManager& m_resource_manager;
             sf::RenderWindow& m_render_window;
+            std::unordered_map<entt::entity, Entity> m_entities{};
 
             friend class NativeScriptEntity;
+            friend class Entity;
     };
 
 } // namespace rosa

@@ -25,7 +25,7 @@ namespace rosa {
         spdlog::set_level(spdlog::level::debug);
         spdlog::info("Rosa is up and running!");
 
-        m_render_window.create(sf::VideoMode(800, 600), "SFML Window", sf::Style::None);
+        m_render_window.create(sf::VideoMode(window_width, window_height), "SFML Window", sf::Style::None);
 
         bool imgui_init =  ImGui::SFML::Init(m_render_window);
         assert(imgui_init);
@@ -35,10 +35,19 @@ namespace rosa {
         assert(change_scene);
     }
 
+    auto GameManager::instance() -> GameManager& {
+        static GameManager s_instance;
+        return s_instance;
+    }
+
     GameManager::~GameManager() {
         if (m_render_window.isOpen()) {
             m_render_window.close();
         }
+    }
+
+    auto GameManager::currentScene() -> Scene& {
+        return *m_current_scene;
     }
 
     auto GameManager::run() -> void {

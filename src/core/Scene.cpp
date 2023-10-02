@@ -13,12 +13,14 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include <SFML/System/Vector2.hpp>
 #include <core/ResourceManager.hpp>
 #include <core/Scene.hpp>
-#include <core/components/SpriteComponent.hpp>
+#include <core/Entity.hpp>
 #include <core/components/TransformComponent.hpp>
 #include <core/components/NativeScriptComponent.hpp>
 #include <TestScript.hpp>
+#include <entt/entity/fwd.hpp>
 
 #include "imgui.h"
 #include "imgui-SFML.h"
@@ -26,31 +28,48 @@
 namespace rosa {
 
     Scene::Scene(sf::RenderWindow& render_window) : m_render_window(render_window) {
-        auto entity = getRegistry().create();
-        getRegistry().emplace<SpriteComponent>(entity);
-        auto& texture = ResourceManager::instance().getTexture("assets/rosa.png");
-        getRegistry().get<SpriteComponent>(entity).sprite.setTexture(texture);
+        auto new_entity = createEntity();
+        new_entity.addComponent<SpriteComponent>();
 
-        const sf::Vector2f position = sf::Vector2f(
-            (static_cast<float>(m_render_window.getSize().x) / 2.F) - (static_cast<float>(texture.getSize().x) / 2.F),
-            (static_cast<float>(m_render_window.getSize().y) / 2.F) - (static_cast<float>(texture.getSize().y) / 2.F)
-        );
-        getRegistry().emplace<TransformComponent>(entity, position, sf::Vector2f(0,0), sf::Vector2f(1,1), 0);
-        getRegistry().emplace<NativeScriptComponent>(entity).bind<TestScript>();
+        getRegistry().emplace<NativeScriptComponent>(new_entity).bind<TestScript>();
+    }
 
-        
+    auto Scene::createEntity() -> Entity {
+        Entity entity{m_registry.create(), &m_registry};
+        entity.addComponent<TransformComponent>();
+        m_entities.insert({entity.getId(), entity});
+        return entity;
+    };
+    
+    auto Scene::removeEntity(entt::entity entity) -> bool {
+        if (m_entities.contains(entity)) {
+            m_entities.at(entity).m_for_deletion = true;
+            return true;
+        }
+
+        return false;
     }
 
     auto Scene::update(float delta_time) -> void {
 
         // Run updates for native script components, instantiating where needed
-        m_registry.view<NativeScriptComponent>().each([this, delta_time](auto entity, auto& nsc) {
+        m_registry.view<NativeScriptComponent>().each([this, delta_time](entt::entity entity, auto& nsc) {
+
+            Entity* actual = &m_entities.at(entity);
+
             if (!nsc.instance) {
-                nsc.instantiate_function(*this, entity);
+                nsc.instantiate_function(this, actual);
                 nsc.on_create_function(nsc.instance);
             }
 
-            nsc.on_update_function(nsc.instance, delta_time);
+            if (actual->forDeletion()) {
+                nsc.on_destroy_function(nsc.instance);
+                nsc.destroy_instance_function();
+                m_entities.erase(entity);
+                m_registry.destroy(entity);
+            } else {
+                nsc.on_update_function(nsc.instance, delta_time);
+            }
         });
 
         // This function only cares about entities with SpriteComponent and TransformComponent
