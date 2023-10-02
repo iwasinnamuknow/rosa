@@ -11,6 +11,7 @@ find_package(SFML CONFIG REQUIRED COMPONENTS graphics system window)
 find_package(ImGui-SFML CONFIG REQUIRED)
 find_package(PhysFS REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
 #find_package(thor REQUIRED)
 #find_package(entt)
 #find_package(Boost COMPONENTS di REQUIRED)
@@ -43,6 +44,7 @@ target_link_libraries(rosa PRIVATE
   ${PHYSFS_LIBRARY}
   ${vcpkg_LIB_DIR}/libthor-s.a
   spdlog::spdlog_header_only
+  fmt::fmt-header-only
 )
 
 add_subdirectory(testbed)

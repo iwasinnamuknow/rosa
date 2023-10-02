@@ -16,7 +16,6 @@
 #pragma once
 
 #include <entt/entt.hpp>
-#include <format>
 
 namespace rosa {
 
