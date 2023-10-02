@@ -60,8 +60,13 @@ int main() {
 */
 
 #include "core/GameManager.hpp"
+#include <physfs.h>
+#include <core/PhysFSStream.hpp>
 
-auto main() -> int {
+auto main(int /*argc*/, char** argv) -> int {
+
+  PHYSFS_init(argv[0]);
+  
   rosa::GameManager mgr{};
   mgr.run();
 

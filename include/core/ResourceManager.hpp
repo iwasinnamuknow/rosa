@@ -18,12 +18,14 @@
 
 #include <unordered_map>
 #include <SFML/Graphics.hpp>
+#include <physfs.h>
+#include <core/PhysFSStream.hpp>
 
 namespace rosa {
 
     class ResourceManager {
         public:
-            explicit ResourceManager() = default;
+            explicit ResourceManager();
             ResourceManager(ResourceManager const &) = delete;
             auto operator=(ResourceManager const &) -> ResourceManager & = delete;
             ResourceManager(ResourceManager const &&) = delete;
@@ -33,6 +35,7 @@ namespace rosa {
             auto getTexture(const std::string& path) -> sf::Texture&;
         private:
             std::unordered_map<std::string, sf::Texture> m_textures;
+            PhysFsStream m_physfs_stream;
     };
 
 } // namespace rosa

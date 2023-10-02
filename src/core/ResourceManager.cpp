@@ -19,13 +19,18 @@
 
 namespace rosa {
 
+    ResourceManager::ResourceManager() {
+        assert(PHYSFS_mount("base.pak", "", 1) != 0);
+    }
+
     auto ResourceManager::getTexture(const std::string &path) -> sf::Texture& {
         if (auto search = m_textures.find(path); search != m_textures.end()) {
             return search->second;
         }
 
+        assert(m_physfs_stream.open(path.c_str()));
         m_textures[path] = sf::Texture{};
-        assert(m_textures[path].loadFromFile(path));
+        assert(m_textures[path].loadFromStream(m_physfs_stream));
         return m_textures[path];
     }
 

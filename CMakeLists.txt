@@ -10,6 +10,7 @@ set(Boost_INCLUDE_DIR ${_VCPKG_INSTALLED_DIR}/x64-linux/include)
 find_package(imgui CONFIG REQUIRED)
 find_package(SFML CONFIG REQUIRED COMPONENTS graphics system window)
 find_package(ImGui-SFML CONFIG REQUIRED)
+find_package(PhysFS REQUIRED)
 #find_package(entt)
 #find_package(Boost COMPONENTS di REQUIRED)
 
@@ -25,10 +26,12 @@ target_compile_features(rosa_exe PRIVATE cxx_std_20)
 target_include_directories(rosa_exe PRIVATE
     include/
     vendor/
+    ${PHYSFS_INCLUDE_DIR}
     ${Boost_INCLUDE_DIR}
 )
 target_link_libraries(rosa_exe PRIVATE
   imgui::imgui
   sfml-graphics sfml-system sfml-window
   ImGui-SFML::ImGui-SFML
+  ${PHYSFS_LIBRARY}
 )

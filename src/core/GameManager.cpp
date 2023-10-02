@@ -14,6 +14,8 @@
  */
 
 #include <core/GameManager.hpp>
+#include <cstddef>
+#include <physfs.h>
 #include "imgui.h"
 #include "imgui-SFML.h"
 
