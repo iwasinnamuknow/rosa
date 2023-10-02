@@ -1,0 +1,22 @@
+---
+image: gcc:13.2
+before_script:
+  - apt-get update --yes
+  - apt-get install --yes cmake clang-tidy
+  - rm -rf build
+  - mkdir build
+
+stages:
+  - build
+  - lint
+
+build:
+  stage: build
+  script:
+    - cmake -B build/ -DCMAKE_BUILD_TYPE=Debug
+    - cmake --build build/
+
+clang-tidy:
+  stage: lint
+  script:
+    - find src/ -name \*.cpp -print0 | xargs -0 -n 1 clang-tidy -p build/
