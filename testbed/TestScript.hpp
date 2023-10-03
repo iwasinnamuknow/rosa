@@ -25,7 +25,7 @@ class TestScript : public rosa::NativeScriptEntity {
 
         void onCreate() override {
             spdlog::info("Test script initialised");
-            auto& texture = rosa::ResourceManager::instance().getTexture("assets/rosa.png");
+            auto& texture = rosa::ResourceManager::instance().getTexture("rosa.png");
             getEntity().getComponent<rosa::SpriteComponent>().sprite.setTexture(texture);
             const sf::Vector2f position = sf::Vector2f(
                 (static_cast<float>(getScene().getRenderWindow().getSize().x) / 2.F) - (static_cast<float>(texture.getSize().x) / 2.F),
