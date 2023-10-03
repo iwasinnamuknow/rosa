@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.20)
-set(CMAKE_TOOLCHAIN_FILE "./vendor/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 project(rosa)
 
@@ -23,9 +22,7 @@ find_package(fmt CONFIG REQUIRED)
 add_library(
   rosa ${SOURCES}
 )
-                                                                 
-set(vcpkg_INCLUDE_DIR ${_VCPKG_INSTALLED_DIR}/x64-linux/include)
-set(vcpkg_LIB_DIR ${_VCPKG_INSTALLED_DIR}/x64-linux/lib)
+                                                                
 #endif (_WIN32)
 
 target_compile_features(rosa PRIVATE cxx_std_20)

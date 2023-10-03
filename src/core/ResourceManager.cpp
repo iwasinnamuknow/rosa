@@ -20,7 +20,7 @@
 namespace rosa {
 
     ResourceManager::ResourceManager() {
-        int mount_success = PHYSFS_mount("base.pak", "", 1);
+        [[maybe_unused]] int mount_success = PHYSFS_mount("base.pak", "", 1);
         assert(mount_success != 0);
     }
 
@@ -35,11 +35,11 @@ namespace rosa {
         }
 
         PhysFsStream stream;
-        bool stream_success = stream.open(path.c_str());
+        [[maybe_unused]] bool stream_success = stream.open(path.c_str());
         assert(stream_success);
 
         m_textures[path] = sf::Texture{};
-        bool load_success = m_textures[path].loadFromStream(stream);
+        [[maybe_unused]] bool load_success = m_textures[path].loadFromStream(stream);
         assert(load_success);
 
         return m_textures[path];

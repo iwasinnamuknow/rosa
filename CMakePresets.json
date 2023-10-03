@@ -12,11 +12,13 @@
             "binaryDir": "${sourceDir}/build/linux",
             "generator": "Ninja",
             "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": "vcpkg/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vendor/vcpkg/scripts/buildsystems/vcpkg.cmake",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
                 "CMAKE_CXX_FLAGS": "-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -fstack-protector-strong -fcf-protection=full -fstack-clash-protection -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wcast-qual -Wformat=2 -Wundef -Werror=float-equal -Wshadow -Wcast-align -Wunused -Wnull-dereference -Wdouble-promotion -Wimplicit-fallthrough -Wextra-semi -Woverloaded-virtual -Wnon-virtual-dtor -Wold-style-cast",
                 "CMAKE_EXE_LINKER_FLAGS": "-Wl,--allow-shlib-undefined,--as-needed,-z,noexecstack,-z,relro,-z,now",
-                "CMAKE_SHARED_LINKER_FLAGS": "-Wl,--allow-shlib-undefined,--as-needed,-z,noexecstack,-z,relro,-z,now"
+                "CMAKE_SHARED_LINKER_FLAGS": "-Wl,--allow-shlib-undefined,--as-needed,-z,noexecstack,-z,relro,-z,now",
+                "vcpkg_INCLUDE_DIR": "${sourceDir}/build/vcpkg_installed/x64-linux/include",
+                "vcpkg_LIB_DIR": "${sourceDir}/build/vcpkg_installed/x64-linux/lib"
             }
         },
         {
@@ -32,7 +34,7 @@
             "name": "linux-release",
             "hidden": false,
             "inherits": [ "base-linux" ],
-            "binaryDir": "${sourceDir}/build/linux-release",
+            "binaryDir": "${sourceDir}/build/linux/release",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
