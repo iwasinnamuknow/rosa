@@ -28,7 +28,7 @@ namespace rosa {
 
         m_render_window.create(sf::VideoMode(window_width, window_height), "SFML Window", sf::Style::None);
 
-        bool imgui_init =  ImGui::SFML::Init(m_render_window);
+        [[maybe_unused]] bool imgui_init =  ImGui::SFML::Init(m_render_window);
         assert(imgui_init);
 
         /*std::unique_ptr<Scene> new_scene = std::make_unique<Scene>(m_render_window);
