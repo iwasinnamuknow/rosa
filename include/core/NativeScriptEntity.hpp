@@ -24,6 +24,8 @@
 #include <core/Entity.hpp>
 #include <core/Scene.hpp>
 
+#define ROSA_CONSTRUCTOR(class) explicit class(std::reference_wrapper<rosa::Scene> scene, std::reference_wrapper<rosa::Entity> entity) : NativeScriptEntity(scene, entity) {}
+
 namespace rosa {
 
     class NativeScriptEntity {

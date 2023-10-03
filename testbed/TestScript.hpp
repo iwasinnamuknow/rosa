@@ -21,7 +21,7 @@
 
 class TestScript : public rosa::NativeScriptEntity {
     public:
-        explicit TestScript(std::reference_wrapper<rosa::Scene> scene, std::reference_wrapper<rosa::Entity> entity) : NativeScriptEntity(scene, entity) {}
+        ROSA_CONSTRUCTOR(TestScript)
 
         void onCreate() override {
             spdlog::info("Test script initialised");
