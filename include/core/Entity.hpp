@@ -21,8 +21,12 @@ namespace rosa {
 
     class Entity {
         public:
-            Entity(entt::entity ent_id, entt::registry* registry) : m_registry(registry), m_id(ent_id) {};
+            Entity(entt::entity ent_id, entt::registry* registry) : m_id(ent_id), m_registry(registry) {}
+            Entity(Entity&&) = default;
             Entity(const Entity&) = default;
+            auto operator=(Entity const &) -> Entity & = default;
+            auto operator=(Entity&&) -> Entity & = default;
+            ~Entity() = default;
 
             operator entt::entity() const {
                 return m_id;

@@ -42,16 +42,16 @@ namespace rosa {
                 instance = nullptr;
             };
 
-            on_create_function = [](NativeScriptEntity* instance) -> void {
-                instance->onCreate();
+            on_create_function = [](NativeScriptEntity* p_instance) -> void {
+                p_instance->onCreate();
             };
 
-            on_destroy_function = [](NativeScriptEntity* instance) -> void {
-                instance->onDestroy();
+            on_destroy_function = [](NativeScriptEntity* p_instance) -> void {
+                p_instance->onDestroy();
             };
 
-            on_update_function = [](NativeScriptEntity* instance, float delta_time) -> void {
-                instance->onUpdate(delta_time);
+            on_update_function = [](NativeScriptEntity* p_instance, float delta_time) -> void {
+                p_instance->onUpdate(delta_time);
             };
         }
     };

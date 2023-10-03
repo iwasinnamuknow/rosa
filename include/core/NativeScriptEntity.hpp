@@ -27,12 +27,16 @@ namespace rosa {
 
     class NativeScriptEntity {
         public:
-            explicit NativeScriptEntity(Scene* scene, Entity* entity) : m_scene(scene), m_entity(entity) {}
+            explicit NativeScriptEntity(Scene* scene, Entity* entity) : m_entity(entity), m_scene(scene) {}
+            NativeScriptEntity(NativeScriptEntity const &) = delete;
+            auto operator=(NativeScriptEntity const &) -> NativeScriptEntity & = delete;
+            NativeScriptEntity(NativeScriptEntity const &&) = delete;
+            auto operator=(NativeScriptEntity const &&) -> NativeScriptEntity & = delete;
             virtual ~NativeScriptEntity() = default;
 
-            virtual auto onCreate() -> void{};
-            virtual auto onUpdate(float delta_time) -> void{};
-            virtual auto onDestroy() -> void{};
+            virtual auto onCreate() -> void{}
+            virtual auto onUpdate([[maybe_unused]] float delta_time) -> void{} 
+            virtual auto onDestroy() -> void{}
 
             auto getScene() -> Scene& {
                 return *m_scene;

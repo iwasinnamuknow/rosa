@@ -31,6 +31,7 @@ namespace rosa {
             explicit Scene(sf::RenderWindow& render_window);
             virtual auto update(float delta_time) -> void;
             virtual auto render() -> void;
+            virtual ~Scene() = default;
 
             auto getRenderWindow() const -> sf::RenderWindow& {
                 return m_render_window;

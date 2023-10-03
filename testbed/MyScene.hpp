@@ -23,7 +23,7 @@
 class MyScene : public rosa::Scene {
     public:
         explicit MyScene(sf::RenderWindow& render_window);
-        ~MyScene() = default;
+        ~MyScene() override = default;
 
         // auto update(float delta_time) -> void override;
         // auto render() -> void override;
