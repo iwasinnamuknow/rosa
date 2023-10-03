@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include "core/Entity.hpp"
 #include "core/NativeScriptEntity.hpp"
 #include <cstddef>
 #include <functional>
@@ -24,7 +25,7 @@ namespace rosa {
     struct NativeScriptComponent {
         NativeScriptEntity* instance = nullptr;
 
-        std::function<void(Scene*, Entity*)> instantiate_function;
+        std::function<void(std::reference_wrapper<Scene>, std::reference_wrapper<Entity>)> instantiate_function;
         std::function<void()> destroy_instance_function;
 
         std::function<void(NativeScriptEntity*)> on_create_function;
@@ -33,7 +34,7 @@ namespace rosa {
 
         template<typename T>
         void bind() {
-            instantiate_function = [this](Scene* scene, Entity* entity) {
+            instantiate_function = [this](std::reference_wrapper<Scene> scene, std::reference_wrapper<Entity> entity) {
                 instance = new T(scene, entity);
             };
 

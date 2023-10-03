@@ -16,12 +16,13 @@
 #pragma once
 
 #include <entt/entt.hpp>
+#include <functional>
 
 namespace rosa {
 
     class Entity {
         public:
-            Entity(entt::entity ent_id, entt::registry* registry) : m_id(ent_id), m_registry(registry) {}
+            Entity(entt::entity ent_id, std::reference_wrapper<entt::registry> registry) : m_id(ent_id), m_registry(registry) {}
             Entity(Entity&&) = default;
             Entity(const Entity&) = default;
             auto operator=(Entity const &) -> Entity & = default;
@@ -35,24 +36,24 @@ namespace rosa {
             template<typename T>
             auto getComponent() -> T& {
                 assert(hasComponent<T>());
-                return m_registry->get<T>(m_id);
+                return m_registry.get().get<T>(m_id);
             }
 
             template<typename T>
             auto hasComponent() -> bool {
-                return m_registry->any_of<T>(m_id);
+                return m_registry.get().any_of<T>(m_id);
             }
 
             template<typename T, typename... Args>
             auto addComponent(Args&&... args) -> T& {
                 assert(!hasComponent<T>());
-                return m_registry->emplace<T>(m_id, std::forward<Args>(args)...);
+                return m_registry.get().emplace<T>(m_id, std::forward<Args>(args)...);
             }
 
             template<typename T>
             auto removeComponent() -> bool {
                 assert(hasComponent<T>());
-                return m_registry->remove<T>(m_id);
+                return m_registry.get().remove<T>(m_id);
             }
 
             auto getId() const -> entt::entity {
@@ -72,7 +73,7 @@ namespace rosa {
             bool m_enabled{true};
             bool m_for_deletion{false};
 
-            entt::registry* m_registry{nullptr};
+            std::reference_wrapper<entt::registry> m_registry;
             
             friend class NativeScriptEntity;
             friend class Scene;

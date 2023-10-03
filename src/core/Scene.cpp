@@ -20,6 +20,7 @@
 #include <core/components/TransformComponent.hpp>
 #include <core/components/NativeScriptComponent.hpp>
 #include <entt/entity/fwd.hpp>
+#include <functional>
 
 #include "imgui.h"
 #include "imgui-SFML.h"
@@ -29,7 +30,7 @@ namespace rosa {
     Scene::Scene(sf::RenderWindow& render_window) : m_render_window(render_window) { }
 
     auto Scene::createEntity() -> Entity {
-        Entity entity{m_registry.create(), &m_registry};
+        Entity entity{m_registry.create(), std::reference_wrapper<entt::registry>(m_registry)};
         entity.addComponent<TransformComponent>();
         m_entities.insert({entity.getId(), entity});
         return entity;
@@ -52,7 +53,7 @@ namespace rosa {
             Entity* actual = &m_entities.at(entity);
 
             if (!nsc.instance) {
-                nsc.instantiate_function(this, actual);
+                nsc.instantiate_function(std::reference_wrapper<Scene>(*this), std::reference_wrapper<Entity>(*actual));
                 nsc.on_create_function(nsc.instance);
             }
 

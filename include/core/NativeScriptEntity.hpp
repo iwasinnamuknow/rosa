@@ -19,6 +19,7 @@
 #include <core/components/SpriteComponent.hpp>
 #include <core/components/TransformComponent.hpp>
 #include <entt/entt.hpp>
+#include <functional>
 #include <spdlog/spdlog.h>
 #include <core/Entity.hpp>
 #include <core/Scene.hpp>
@@ -27,7 +28,7 @@ namespace rosa {
 
     class NativeScriptEntity {
         public:
-            explicit NativeScriptEntity(Scene* scene, Entity* entity) : m_entity(entity), m_scene(scene) {}
+            explicit NativeScriptEntity(std::reference_wrapper<Scene> scene, std::reference_wrapper<Entity> entity) : m_entity(entity), m_scene(scene) {}
             NativeScriptEntity(NativeScriptEntity const &) = delete;
             auto operator=(NativeScriptEntity const &) -> NativeScriptEntity & = delete;
             NativeScriptEntity(NativeScriptEntity const &&) = delete;
@@ -39,20 +40,20 @@ namespace rosa {
             virtual auto onDestroy() -> void{}
 
             auto getScene() -> Scene& {
-                return *m_scene;
+                return m_scene.get();
             }
 
             auto getEntity() -> Entity& {
-                return *m_entity;
+                return m_entity.get();
             }
 
             auto die() -> void {
-                m_entity->die();
+                m_entity.get().die();
             }
             
         private:
-            Entity* m_entity;
-            Scene* m_scene{nullptr};
+            std::reference_wrapper<Entity> m_entity;
+            std::reference_wrapper<Scene> m_scene;
             friend class Scene;
     };
 
