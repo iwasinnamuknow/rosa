@@ -18,6 +18,9 @@
 #include <core/NativeScriptEntity.hpp>
 #include <core/GameManager.hpp>
 #include <spdlog/spdlog.h>
+#include <string_view>
+
+constexpr std::string_view rosa_uuid = "b79dc541-f2f5-49b2-9af6-22693f3ee4da";
 
 class TestScript : public rosa::NativeScriptEntity {
     public:
@@ -25,7 +28,7 @@ class TestScript : public rosa::NativeScriptEntity {
 
         void onCreate() override {
             spdlog::info("Test script initialised");
-            auto& texture = rosa::ResourceManager::instance().getTexture("rosa.png");
+            auto& texture = rosa::ResourceManager::instance().getTexture(uuids::uuid::from_string(rosa_uuid).value());
             getEntity().getComponent<rosa::SpriteComponent>().sprite.setTexture(texture);
             const sf::Vector2f position = sf::Vector2f(
                 (static_cast<float>(getScene().getRenderWindow().getSize().x) / 2.F) - (static_cast<float>(texture.getSize().x) / 2.F),
