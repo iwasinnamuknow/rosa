@@ -25,6 +25,7 @@
 namespace rosa {
 
     class NativeScriptEntity;
+    class SceneSerialiser;
 
     class Scene {
         public:
@@ -51,6 +52,7 @@ namespace rosa {
 
             friend class NativeScriptEntity;
             friend class Entity;
+            friend class SceneSerialiser;
     };
 
 } // namespace rosa

@@ -15,12 +15,14 @@
 
 #pragma once
 
+#include "core/ResourceManager.hpp"
 #include <core/NativeScriptEntity.hpp>
 #include <core/GameManager.hpp>
 #include <spdlog/spdlog.h>
 #include <string_view>
+#include <core/SceneSerialiser.hpp>
 
-constexpr std::string_view rosa_uuid = "b79dc541-f2f5-49b2-9af6-22693f3ee4da";
+constexpr uuids::uuid rosa_uuid = uuids::uuid::from_string(std::string_view("b79dc541-f2f5-49b2-9af6-22693f3ee4da")).value();
 
 class TestScript : public rosa::NativeScriptEntity {
     public:
@@ -28,13 +30,16 @@ class TestScript : public rosa::NativeScriptEntity {
 
         void onCreate() override {
             spdlog::info("Test script initialised");
-            auto& texture = rosa::ResourceManager::instance().getTexture(uuids::uuid::from_string(rosa_uuid).value());
-            getEntity().getComponent<rosa::SpriteComponent>().sprite.setTexture(texture);
+            getEntity().getComponent<rosa::SpriteComponent>().setTexture(rosa_uuid);
+            auto texture = rosa::ResourceManager::instance().getTexture(rosa_uuid);
             const sf::Vector2f position = sf::Vector2f(
                 (static_cast<float>(getScene().getRenderWindow().getSize().x) / 2.F) - (static_cast<float>(texture.getSize().x) / 2.F),
                 (static_cast<float>(getScene().getRenderWindow().getSize().y) / 2.F) - (static_cast<float>(texture.getSize().y) / 2.F)
             );
             getEntity().getComponent<rosa::TransformComponent>().position = position;
+
+            auto ser = rosa::SceneSerialiser(getScene());
+            ser.serialiseToYaml("test.yaml");
         }
 
         void onUpdate(float delta_time) override {

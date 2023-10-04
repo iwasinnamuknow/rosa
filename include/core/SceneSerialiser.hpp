@@ -15,33 +15,23 @@
 
 #pragma once
 
-#include <core/ResourceManager.hpp>
-#include <SFML/Graphics.hpp>
-#include <stduuid/uuid.h>
-#include <string_view>
+#include <core/Scene.hpp>
+#include <yaml-cpp/yaml.h>
 
 namespace rosa {
 
-    class SceneSerialiser;
+    constexpr int serialiser_version{1};
 
-    struct SpriteComponent {
-        sf::Sprite sprite;
+    class SceneSerialiser {
+        public:
+            explicit SceneSerialiser(Scene& scene);
 
-        auto setTexture(uuids::uuid uuid) -> void {
-            m_texture_uuid = uuid;
-            sprite.setTexture(ResourceManager::instance().getTexture(m_texture_uuid));
-        }
-
-        auto setColor(sf::Color color) -> void {
-            m_color = color;
-            sprite.setColor(color);
-        }
+            auto serialiseToYaml(const std::string& filepath) -> void;
+            auto deserialiseFromYaml(const std::string& filepath) -> bool;
 
         private:
-            uuids::uuid m_texture_uuid;
-            sf::Color m_color{255, 255, 255, 255};
-
-            friend class SceneSerialiser;
+            auto serialise_entity(YAML::Emitter& out, Entity& entity) -> void;
+            Scene& m_scene;
     };
 
 } // namespace rosa
