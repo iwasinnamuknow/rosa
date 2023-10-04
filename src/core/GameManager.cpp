@@ -16,7 +16,6 @@
 #include <core/GameManager.hpp>
 #include <cstddef>
 #include <memory>
-#include <physfs.h>
 #include "imgui.h"
 #include "imgui-SFML.h"
 
@@ -35,6 +34,8 @@ namespace rosa {
         m_scenes.insert_or_assign("test", std::move(new_scene));
         bool change_scene =  changeScene("test");
         assert(change_scene);*/
+
+        [[maybe_unused]]auto& res = ResourceManager::instance();
     }
 
     auto GameManager::instance() -> GameManager& {
