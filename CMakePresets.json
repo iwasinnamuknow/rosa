@@ -16,9 +16,7 @@
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
                 "CMAKE_CXX_FLAGS": "-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -fstack-protector-strong -fcf-protection=full -fstack-clash-protection -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wcast-qual -Wformat=2 -Wundef -Werror=float-equal -Wshadow -Wcast-align -Wunused -Wnull-dereference -Wdouble-promotion -Wimplicit-fallthrough -Wextra-semi -Woverloaded-virtual -Wnon-virtual-dtor -Wold-style-cast",
                 "CMAKE_EXE_LINKER_FLAGS": "-Wl,--allow-shlib-undefined,--as-needed,-z,noexecstack,-z,relro,-z,now",
-                "CMAKE_SHARED_LINKER_FLAGS": "-Wl,--allow-shlib-undefined,--as-needed,-z,noexecstack,-z,relro,-z,now",
-                "vcpkg_INCLUDE_DIR": "${sourceDir}/build/vcpkg_installed/x64-linux/include",
-                "vcpkg_LIB_DIR": "${sourceDir}/build/vcpkg_installed/x64-linux/lib"
+                "CMAKE_SHARED_LINKER_FLAGS": "-Wl,--allow-shlib-undefined,--as-needed,-z,noexecstack,-z,relro,-z,now"
             }
         },
         {
@@ -27,7 +25,9 @@
             "binaryDir": "${sourceDir}/build/linux/debug",
             "inherits": [ "base-linux" ],
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "vcpkg_INCLUDE_DIR": "${sourceDir}/build/linux/debug/vcpkg_installed/x64-linux/include",
+                "vcpkg_LIB_DIR": "${sourceDir}/build/linux/debug/vcpkg_installed/x64-linux/lib"
             }
         },
         {
@@ -36,7 +36,9 @@
             "inherits": [ "base-linux" ],
             "binaryDir": "${sourceDir}/build/linux/release",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "Release",
+                "vcpkg_INCLUDE_DIR": "${sourceDir}/build/linux/release/vcpkg_installed/x64-linux/include",
+                "vcpkg_LIB_DIR": "${sourceDir}/build/linux/release/vcpkg_installed/x64-linux/lib"
             }
         }
     ],
