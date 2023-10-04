@@ -6,7 +6,7 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 #set(Boost_USE_STATIC_LIBS        ON)
 find_package(imgui CONFIG REQUIRED)
-find_package(SFML CONFIG REQUIRED COMPONENTS graphics system window)
+find_package(SFML CONFIG REQUIRED COMPONENTS graphics system window audio)
 find_package(ImGui-SFML CONFIG REQUIRED)
 find_package(PhysFS REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
@@ -36,7 +36,7 @@ target_include_directories(rosa SYSTEM PUBLIC
 )
 target_link_libraries(rosa PRIVATE
   imgui::imgui
-  sfml-graphics sfml-system sfml-window
+  sfml-graphics sfml-system sfml-window sfml-audio
   ImGui-SFML::ImGui-SFML
   ${PHYSFS_LIBRARY}
   ${vcpkg_LIB_DIR}/libthor-s.a

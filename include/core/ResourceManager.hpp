@@ -18,6 +18,7 @@
 
 #include <unordered_map>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <physfs.h>
 #include <core/PhysFSStream.hpp>
 
@@ -31,6 +32,9 @@ namespace rosa {
             auto operator=(ResourceManager const &&) -> ResourceManager & = delete;
             
             auto getTexture(const std::string& path) -> sf::Texture&;
+            auto getFont(const std::string& path) -> sf::Font&;
+            auto getSound(const std::string& path) -> sf::SoundBuffer&;
+            auto getMusicTrack(const std::string& path) -> sf::Music&;
 
             static auto instance() -> ResourceManager&;
         private:
@@ -38,6 +42,9 @@ namespace rosa {
             ~ResourceManager() = default;
 
             std::unordered_map<std::string, sf::Texture> m_textures;
+            std::unordered_map<std::string, sf::Font> m_fonts;
+            std::unordered_map<std::string, sf::SoundBuffer> m_sounds;
+            std::unordered_map<std::string, sf::Music> m_music_tracks;
     };
 
 } // namespace rosa
