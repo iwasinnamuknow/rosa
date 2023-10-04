@@ -16,13 +16,23 @@
 #pragma once
 
 #include <entt/entt.hpp>
+#include <stduuid/uuid.h>
 #include <functional>
 
 namespace rosa {
 
     class Entity {
         public:
-            Entity(entt::entity ent_id, std::reference_wrapper<entt::registry> registry) : m_id(ent_id), m_registry(registry) {}
+            Entity(entt::entity ent_id, std::reference_wrapper<entt::registry> registry) : m_id(ent_id), m_registry(registry) {
+                std::random_device rd;
+                auto seed_data = std::array<int, std::mt19937::state_size> {};
+                std::generate(std::begin(seed_data), std::end(seed_data), std::ref(rd));
+                std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
+                std::mt19937 generator(seq);
+                uuids::uuid_random_generator gen{generator};
+                m_uuid = gen();
+            }
+
             Entity(Entity&&) = default;
             Entity(const Entity&) = default;
             auto operator=(Entity const &) -> Entity & = default;
@@ -60,6 +70,10 @@ namespace rosa {
                 return m_id;
             }
 
+            auto getUUID() const -> std::string {
+                return uuids::to_string(m_uuid);
+            }
+
             auto forDeletion() const -> bool {
                 return m_for_deletion;
             }
@@ -72,6 +86,7 @@ namespace rosa {
             entt::entity m_id = entt::null;
             bool m_enabled{true};
             bool m_for_deletion{false};
+            uuids::uuid m_uuid;
 
             std::reference_wrapper<entt::registry> m_registry;
             
