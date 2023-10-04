@@ -33,6 +33,8 @@ namespace rosa {
                 m_uuid = gen();
             }
 
+            Entity(uuids::uuid uuid, entt::entity ent_id, std::reference_wrapper<entt::registry> registry) : m_id(ent_id), m_uuid(uuid), m_registry(registry) {}
+
             Entity(Entity&&) = default;
             Entity(const Entity&) = default;
             auto operator=(Entity const &) -> Entity & = default;

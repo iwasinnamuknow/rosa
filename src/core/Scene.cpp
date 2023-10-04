@@ -34,7 +34,14 @@ namespace rosa {
         entity.addComponent<TransformComponent>();
         m_entities.insert({entity.getId(), entity});
         return entity;
-    };
+    }
+
+    auto Scene::createEntity(uuids::uuid uuid) -> Entity {
+        Entity entity{uuid, m_registry.create(), std::reference_wrapper<entt::registry>(m_registry)};
+        entity.addComponent<TransformComponent>();
+        m_entities.insert({entity.getId(), entity});
+        return entity;
+    }
     
     auto Scene::removeEntity(entt::entity entity) -> bool {
         if (m_entities.contains(entity)) {

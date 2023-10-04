@@ -13,14 +13,70 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include "core/Scene.hpp"
-#include "core/components/SpriteComponent.hpp"
-#include "core/components/TransformComponent.hpp"
-#include <SFML/System/Vector2.hpp>
+#include <core/Scene.hpp>
 #include <core/SceneSerialiser.hpp>
 #include <fstream>
-#include <uuid.h>
-#include <yaml-cpp/emittermanip.h>
+#include <spdlog/spdlog.h>
+#include <sstream>
+#include <string_view>
+#include <core/components/TransformComponent.hpp>
+#include <core/components/SpriteComponent.hpp>
+
+namespace YAML {
+
+    template<>
+    struct convert<sf::Vector2f> {
+        static auto encode(const sf::Vector2f& rhs) -> Node {
+            Node node;
+            node.push_back(rhs.x);
+            node.push_back(rhs.y);
+            return node;
+        }
+
+        static auto decode(const Node& node, sf::Vector2f& rhs) -> bool {
+            if (!node.IsSequence() || node.size() != 2) {
+                return false;
+            }
+
+            rhs.x = node[0].as<float>();
+            rhs.y = node[0].as<float>();
+            return true;
+        }
+    };
+
+    template<>
+    struct convert<sf::Color> {
+        static auto encode(const sf::Color& rhs) -> Node {
+            Node node;
+            node.push_back(rhs.r);
+            node.push_back(rhs.g);
+            node.push_back(rhs.b);
+            node.push_back(rhs.a);
+            return node;
+        }
+
+        static auto decode(const Node& node, sf::Color& rhs) -> bool {
+            if (!node.IsSequence() || node.size() != 4) {
+                return false;
+            }
+
+            rhs.r = node[0].as<sf::Uint8>();
+            rhs.g = node[0].as<sf::Uint8>();
+            rhs.b = node[0].as<sf::Uint8>();
+            rhs.a = node[0].as<sf::Uint8>();
+            return true;
+        }
+    };
+
+    template<>
+    struct convert<uuids::uuid> {
+        static auto decode(const Node& node, uuids::uuid& rhs) -> bool {
+            rhs = uuids::uuid::from_string(node.as<std::string>()).value();
+            return true;
+        }
+    };
+
+} // namespace YAML
 
 namespace rosa {
 
@@ -42,9 +98,9 @@ namespace rosa {
         YAML::Emitter out;
 
         out << YAML::BeginMap; // Main
-        out << YAML::Key << "Version" << YAML::Value << serialiser_version;
-        out << YAML::Key << "Scene" << YAML::Value << YAML::BeginMap; // Scene
-        out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq; // Entities
+        out << YAML::Key << "version" << YAML::Value << serialiser_version;
+        out << YAML::Key << "scene" << YAML::Value << YAML::BeginMap; // Scene
+        out << YAML::Key << "entities" << YAML::Value << YAML::BeginSeq; // Entities
         for (auto& [eid, entity] : m_scene.m_entities) {
             serialise_entity(out, entity);
         }
@@ -58,7 +114,7 @@ namespace rosa {
 
     auto SceneSerialiser::serialise_entity(YAML::Emitter& out, Entity& entity) -> void {
         out << YAML::BeginMap; // Entity
-        out << YAML::Key << "entt_id" << YAML::Value << static_cast<int>(entity.getId());
+        //out << YAML::Key << "entt_id" << YAML::Value << static_cast<int>(entity.getId());
         out << YAML::Key << "uuid" << YAML::Value << entity.getUUID();
         out << YAML::Key << "components" << YAML::Value << YAML::BeginSeq; //components
 
@@ -85,7 +141,47 @@ namespace rosa {
     }
 
     auto SceneSerialiser::deserialiseFromYaml(const std::string& filepath) -> bool {
-        return false;
+        YAML::Node data = YAML::LoadFile(filepath);
+
+        if (!data["version"]) {
+            spdlog::critical("Failed to deserialise scene, no version header.");
+            abort();
+        }
+
+        if (data["version"].as<int>() != serialiser_version) {
+            spdlog::critical("Failed to deserialise scene, version mismatch.");
+            abort();
+        }
+
+        if (data["scene"]) {
+            auto entities = data["entities"];
+            for (auto entity : entities) {
+                if (entity["uuid"]) {
+                    Entity new_entity = m_scene.createEntity(uuids::uuid::from_string(entity["uuid"].as<std::string>()).value());
+
+                    if (entity["components"]) {
+                        for (auto comp : entity["components"]) {
+                            if (entity["type"]) {
+                                auto type = comp["type"].as<std::string>();
+                                if (type == "transform") {
+                                    auto& transform = new_entity.getComponent<TransformComponent>();
+                                    transform.position = comp["position"].as<sf::Vector2f>();
+                                    transform.velocity = comp["velocity"].as<sf::Vector2f>();
+                                    transform.scale = comp["scale"].as<sf::Vector2f>();
+                                    transform.rotation = comp["rotation"].as<float>();
+                                } else if (type == "sprite") {
+                                    auto& sprite = new_entity.addComponent<SpriteComponent>();
+                                    sprite.setTexture(comp["texture"].as<uuids::uuid>());
+                                    sprite.setColor(comp["color"].as<sf::Color>());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 
 } // namespace rosa
