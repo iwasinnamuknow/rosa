@@ -11,6 +11,8 @@ find_package(ImGui-SFML CONFIG REQUIRED)
 find_package(PhysFS REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
+find_package(yaml-cpp CONFIG REQUIRED)
+find_package(stduuid CONFIG REQUIRED)
 #find_package(thor REQUIRED)
 #find_package(entt)
 #find_package(Boost COMPONENTS di REQUIRED)
@@ -42,6 +44,8 @@ target_link_libraries(rosa PRIVATE
   ${vcpkg_LIB_DIR}/libthor-s.a
   spdlog::spdlog_header_only
   fmt::fmt-header-only
+  yaml-cpp
+  stduuid
 )
 
 add_subdirectory(testbed)

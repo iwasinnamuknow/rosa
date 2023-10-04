@@ -37,6 +37,17 @@
     {
       "name": "fmt",
       "version>=": "10.0.0"
+    },
+    {
+      "name": "yaml-cpp",
+      "version>=": "0.7.0#1"
+    },
+    {
+      "name": "stduuid",
+      "version>=": "1.2.2",
+      "features": [
+        "system-gen"
+      ]
     }
   ],
   "default-features": [],
