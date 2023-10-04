@@ -16,11 +16,15 @@
 
 #pragma once
 
+#include <memory>
+#include <optional>
+#include <string>
 #include <unordered_map>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <physfs.h>
 #include <core/PhysFSStream.hpp>
+#include <core/Resource.hpp>
 
 namespace rosa {
 
@@ -31,20 +35,29 @@ namespace rosa {
             ResourceManager(ResourceManager const &&) = delete;
             auto operator=(ResourceManager const &&) -> ResourceManager & = delete;
             
-            auto getTexture(const std::string& path) -> sf::Texture&;
-            auto getFont(const std::string& path) -> sf::Font&;
-            auto getSound(const std::string& path) -> sf::SoundBuffer&;
-            auto getMusicTrack(const std::string& path) -> sf::Music&;
+            auto getTexture(uuids::uuid uuid) -> sf::Texture&;
+            auto getFont(uuids::uuid uuid) -> sf::Font&;
+            auto getSound(uuids::uuid uuid) -> sf::SoundBuffer&;
+            auto getMusicTrack(uuids::uuid uuid) -> sf::Music&;
 
             static auto instance() -> ResourceManager&;
         private:
             ResourceManager();
             ~ResourceManager() = default;
 
-            std::unordered_map<std::string, sf::Texture> m_textures;
-            std::unordered_map<std::string, sf::Font> m_fonts;
-            std::unordered_map<std::string, sf::SoundBuffer> m_sounds;
-            std::unordered_map<std::string, sf::Music> m_music_tracks;
+            // std::unordered_map<std::string, sf::Texture> m_textures;
+            // std::unordered_map<std::string, sf::Font> m_fonts;
+            // std::unordered_map<std::string, sf::SoundBuffer> m_sounds;
+            // std::unordered_map<std::string, sf::Music> m_music_tracks;
+
+            std::unordered_map<uuids::uuid, std::unique_ptr<Resource>> m_resources;
+
+            template<typename T>
+            auto load_asset(const std::string& path) -> T;
+
+            auto populate_resource(Resource& resource) -> bool;
+
+            auto split_lines(const std::string& string, char delimiter) -> std::vector<std::string>;
     };
 
 } // namespace rosa
