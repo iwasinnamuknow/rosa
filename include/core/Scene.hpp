@@ -44,12 +44,13 @@ namespace rosa {
             }
 
             auto createEntity() -> Entity;
-            auto createEntity(uuids::uuid uuid) -> Entity;
-            auto removeEntity(entt::entity) -> bool;
+            auto removeEntity(Entity& entity) -> bool;
         private:
             entt::registry m_registry{};
             sf::RenderWindow& m_render_window;
             std::unordered_map<entt::entity, Entity> m_entities{};
+
+            auto create_entity(uuids::uuid uuid) -> Entity;
 
             friend class NativeScriptEntity;
             friend class Entity;

@@ -19,7 +19,6 @@
 #include <core/Entity.hpp>
 #include <core/components/TransformComponent.hpp>
 #include <core/components/NativeScriptComponent.hpp>
-#include <entt/entity/fwd.hpp>
 #include <functional>
 
 #include "imgui.h"
@@ -36,16 +35,16 @@ namespace rosa {
         return entity;
     }
 
-    auto Scene::createEntity(uuids::uuid uuid) -> Entity {
+    auto Scene::create_entity(uuids::uuid uuid) -> Entity {
         Entity entity{uuid, m_registry.create(), std::reference_wrapper<entt::registry>(m_registry)};
         entity.addComponent<TransformComponent>();
         m_entities.insert({entity.getId(), entity});
         return entity;
     }
     
-    auto Scene::removeEntity(entt::entity entity) -> bool {
-        if (m_entities.contains(entity)) {
-            m_entities.at(entity).m_for_deletion = true;
+    auto Scene::removeEntity(Entity& entity) -> bool {
+        if (m_entities.contains(entity.m_id)) {
+            entity.m_for_deletion = true;
             return true;
         }
 
