@@ -21,6 +21,8 @@
 #include <sol/sol.hpp>
 #include <stduuid/uuid.h>
 #include <spdlog/spdlog.h>
+#include <core/Scene.hpp>
+#include <core/components/TransformComponent.hpp>
 
 namespace rosa {
 
@@ -28,7 +30,7 @@ namespace rosa {
 
     struct LuaScriptComponent {
 
-            LuaScriptComponent() {
+            LuaScriptComponent(std::reference_wrapper<Scene> scene, entt::entity entity) : m_entity(entity), m_scene(scene) {
                 m_state.open_libraries(sol::lib::base);
             }
 
@@ -41,6 +43,16 @@ namespace rosa {
                         m_on_create_function = m_state["onCreate"];
                         m_on_delete_function = m_state["onDelete"];
                         m_on_update_function = m_state["onUpdate"];
+
+                        auto transform = m_state["transform"].get_or_create<sol::table>();
+                        transform.set_function("getPosition", [this]() {
+                            auto& tc = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
+                            return m_state.create_table_with("x", tc.position.x, "y", tc.position.y);
+                        });
+                        transform.set_function("setPosition", [this](float x, float y) {
+                            auto& tc = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
+                            tc.position = sf::Vector2f(x, y);
+                        });
 
                         m_on_create_function();
 
@@ -60,6 +72,9 @@ namespace rosa {
             sol::protected_function m_on_update_function;
             std::string m_script;
             sol::state m_state;
+
+            entt::entity m_entity;
+            std::reference_wrapper<Scene> m_scene;
 
             friend class Scene;
     };

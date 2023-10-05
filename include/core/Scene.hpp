@@ -25,6 +25,7 @@
 namespace rosa {
 
     class NativeScriptEntity;
+    class LuaScriptComponent;
     class SceneSerialiser;
 
     class Scene {
@@ -55,6 +56,7 @@ namespace rosa {
             friend class NativeScriptEntity;
             friend class Entity;
             friend class SceneSerialiser;
+            friend class LuaScriptComponent;
     };
 
 } // namespace rosa
