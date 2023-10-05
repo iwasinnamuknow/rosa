@@ -44,7 +44,7 @@ target_link_libraries(rosa PRIVATE
   sfml-graphics sfml-system sfml-window sfml-audio
   ImGui-SFML::ImGui-SFML
   ${PHYSFS_LIBRARY}
-  ${vcpkg_LIB_DIR}/libthor-s.a
+  ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib/libthor-s.a
   spdlog::spdlog_header_only
   fmt::fmt-header-only
   yaml-cpp
