@@ -45,13 +45,21 @@ namespace rosa {
                         m_on_update_function = m_state["onUpdate"];
 
                         auto transform = m_state["transform"].get_or_create<sol::table>();
-                        transform.set_function("getPosition", [this]() {
+                        transform.set_function("getPosition", [this]() -> sol::table {
                             auto& tc = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
                             return m_state.create_table_with("x", tc.position.x, "y", tc.position.y);
                         });
-                        transform.set_function("setPosition", [this](float x, float y) {
+                        transform.set_function("setPosition", [this](float x, float y) -> void {
                             auto& tc = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
                             tc.position = sf::Vector2f(x, y);
+                        });
+                        transform.set_function("getRotation", [this]() -> float {
+                            auto& tc = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
+                            return tc.rotation;
+                        });
+                        transform.set_function("setRotation", [this](float rotation) -> void {
+                            auto& tc = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
+                            tc.rotation = rotation;
                         });
 
                         m_on_create_function();
