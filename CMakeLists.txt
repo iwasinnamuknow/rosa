@@ -13,6 +13,8 @@ find_package(spdlog CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
 find_package(stduuid CONFIG REQUIRED)
+find_package(sol2 CONFIG REQUIRED)
+find_package(Lua REQUIRED)
 #find_package(thor REQUIRED)
 #find_package(entt)
 #find_package(Boost COMPONENTS di REQUIRED)
@@ -35,6 +37,7 @@ target_include_directories(rosa SYSTEM PUBLIC
     vendor/
     ${PHYSFS_INCLUDE_DIR}
     ${vcpkg_INCLUDE_DIR}
+    ${LUA_INCLUDE_DIR}
 )
 target_link_libraries(rosa PRIVATE
   imgui::imgui
@@ -46,6 +49,9 @@ target_link_libraries(rosa PRIVATE
   fmt::fmt-header-only
   yaml-cpp
   stduuid
+  lua
+  sol2
 )
 
 add_subdirectory(testbed)
+add_subdirectory(luatest)

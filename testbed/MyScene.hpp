@@ -18,6 +18,7 @@
 #include <core/Scene.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <core/components/NativeScriptComponent.hpp>
+#include <core/components/LuaScriptComponent.hpp>
 #include "TestScript.hpp"
 
 class MyScene : public rosa::Scene {

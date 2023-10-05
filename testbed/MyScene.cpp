@@ -14,12 +14,16 @@
  */
 
 #include "MyScene.hpp"
+#include "core/components/LuaScriptComponent.hpp"
 
 MyScene::MyScene(sf::RenderWindow& render_window) : rosa::Scene(render_window) {
     auto new_entity = createEntity();
     new_entity.addComponent<rosa::SpriteComponent>();
 
-    getRegistry().emplace<rosa::NativeScriptComponent>(new_entity).bind<TestScript>();
+    //getRegistry().emplace<rosa::NativeScriptComponent>(new_entity).bind<TestScript>();
+
+    auto& lsc = new_entity.addComponent<rosa::LuaScriptComponent>();
+    lsc.setScript("test.lua");
 }
 
 // auto MyScene::update(float delta_time) -> void {

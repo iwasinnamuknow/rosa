@@ -19,7 +19,10 @@
 #include <core/Entity.hpp>
 #include <core/components/TransformComponent.hpp>
 #include <core/components/NativeScriptComponent.hpp>
+#include <core/components/LuaScriptComponent.hpp>
 #include <functional>
+#include <lua.h>
+#include <spdlog/spdlog.h>
 
 #include "imgui.h"
 #include "imgui-SFML.h"
@@ -66,6 +69,17 @@ namespace rosa {
             nsc.on_update_function(nsc.instance, delta_time);
         });
 
+        // Run updates for lua script components
+        m_registry.view<LuaScriptComponent>().each([delta_time](entt::entity /*entity*/, LuaScriptComponent& lsc) {
+
+//            Entity* actual = &m_entities.at(entity);
+            auto result = lsc.m_on_update_function(delta_time);
+            if (!result.valid()) {
+                sol::error err = result;
+                spdlog::error("Failed to call onUpdate for lua script: {}", err.what());
+            }
+        });
+
         // This function only cares about entities with SpriteComponent and TransformComponent
         auto view = m_registry.view<SpriteComponent, TransformComponent>();
 
@@ -84,9 +98,13 @@ namespace rosa {
 
             if (actual->forDeletion()) {
                 if (actual->hasComponent<NativeScriptComponent>()) {
-                    auto nsc = actual->getComponent<NativeScriptComponent>();
+                    auto& nsc = actual->getComponent<NativeScriptComponent>();
                     nsc.on_destroy_function(nsc.instance);
                     nsc.destroy_instance_function();
+                } else if (actual->hasComponent<LuaScriptComponent>()) {
+                    auto& lsc = actual->getComponent<LuaScriptComponent>();
+                    lsc.m_on_delete_function();
+                    lua_close(lsc.m_state);
                 }
                 m_entities.erase(entity);
                 m_registry.destroy(entity);
