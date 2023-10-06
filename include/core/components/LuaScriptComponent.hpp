@@ -14,7 +14,6 @@
  */
 
 #pragma once
-#include "core/Resource.hpp"
 #define SOL_PRINT_ERRORS 0
 #define SOL_ALL_SAFETIES_ON 1
 
@@ -80,6 +79,7 @@ namespace rosa {
                         if (m_scene.get().getRegistry().all_of<SpriteComponent>(m_entity)) {
                             auto& sprite_component = m_scene.get().getRegistry().get<SpriteComponent>(m_entity);
                             
+                            // Don't re-create if we already have a LuaSprite from a previous call
                             if (!m_lua_sprite) {
                                 m_lua_sprite = std::make_unique<lua_script::LuaSprite>(sprite_component, m_state);
                             }
@@ -90,6 +90,7 @@ namespace rosa {
                             sprite_table.set_function("setColor", &lua_script::LuaSprite::setColor, m_lua_sprite.get());
                         }
 
+                        // Call the lua initialiser
                         m_on_create_function();
 
                         return true;
