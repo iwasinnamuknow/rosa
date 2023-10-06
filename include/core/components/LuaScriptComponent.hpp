@@ -14,7 +14,6 @@
  */
 
 #pragma once
-#include <sol/forward.hpp>
 #define SOL_PRINT_ERRORS 0
 #define SOL_ALL_SAFETIES_ON 1
 
