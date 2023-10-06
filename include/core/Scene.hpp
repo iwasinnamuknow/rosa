@@ -28,6 +28,10 @@ namespace rosa {
     class LuaScriptComponent;
     class SceneSerialiser;
 
+    namespace lua_script {
+        class LuaTransform;
+    } // namespace lua_script
+
     class Scene {
         public:
             explicit Scene(sf::RenderWindow& render_window);
@@ -57,6 +61,7 @@ namespace rosa {
             friend class Entity;
             friend class SceneSerialiser;
             friend class LuaScriptComponent;
+            friend class lua_script::LuaTransform;
     };
 
 } // namespace rosa

@@ -14,6 +14,7 @@
  */
 
 #pragma once
+#include <sol/forward.hpp>
 #define SOL_PRINT_ERRORS 0
 #define SOL_ALL_SAFETIES_ON 1
 
@@ -23,6 +24,7 @@
 #include <spdlog/spdlog.h>
 #include <core/Scene.hpp>
 #include <core/components/TransformComponent.hpp>
+#include <core/lua_script/LuaTransform.hpp>
 
 namespace rosa {
 
@@ -44,23 +46,13 @@ namespace rosa {
                         m_on_delete_function = m_state["onDelete"];
                         m_on_update_function = m_state["onUpdate"];
 
-                        auto transform = m_state["transform"].get_or_create<sol::table>();
-                        transform.set_function("getPosition", [this]() -> sol::table {
-                            auto& tc = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
-                            return m_state.create_table_with("x", tc.position.x, "y", tc.position.y);
-                        });
-                        transform.set_function("setPosition", [this](float x, float y) -> void {
-                            auto& tc = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
-                            tc.position = sf::Vector2f(x, y);
-                        });
-                        transform.set_function("getRotation", [this]() -> float {
-                            auto& tc = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
-                            return tc.rotation;
-                        });
-                        transform.set_function("setRotation", [this](float rotation) -> void {
-                            auto& tc = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
-                            tc.rotation = rotation;
-                        });
+                        auto& tc = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
+                        auto lt = lua_script::LuaTransform(tc, m_state);
+                        auto tn = m_state["transform"].get_or_create<sol::table>();
+                        tn.set_function("getPosition", &lua_script::LuaTransform::getPosition, lt);
+                        tn.set_function("setPosition", &lua_script::LuaTransform::setPosition, lt);
+                        tn.set_function("getRotation", &lua_script::LuaTransform::getRotation, lt);
+                        tn.set_function("setRotation", &lua_script::LuaTransform::setRotation, lt);
 
                         m_on_create_function();
 
