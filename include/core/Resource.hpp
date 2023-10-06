@@ -29,7 +29,8 @@ namespace rosa {
         resource_texture = 0,
         resource_sound   = 1,
         resource_music   = 2,
-        resource_font    = 3
+        resource_font    = 3,
+        resource_script  = 4
     };
 
     class Resource {
@@ -57,6 +58,7 @@ namespace rosa {
             sf::SoundBuffer m_sound_buffer;
             sf::Music m_music;
             PhysFsStream m_stream;
+            std::string m_script;
 
             bool m_loaded{false};
 

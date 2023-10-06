@@ -22,8 +22,6 @@
 #include <string_view>
 #include <core/SceneSerialiser.hpp>
 
-constexpr uuids::uuid rosa_uuid = uuids::uuid::from_string(std::string_view("b79dc541-f2f5-49b2-9af6-22693f3ee4da")).value();
-
 class TestScript : public rosa::NativeScriptEntity {
     public:
         ROSA_CONSTRUCTOR(TestScript)

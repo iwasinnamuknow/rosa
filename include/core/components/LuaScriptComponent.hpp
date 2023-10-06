@@ -14,6 +14,7 @@
  */
 
 #pragma once
+#include "core/Resource.hpp"
 #define SOL_PRINT_ERRORS 0
 #define SOL_ALL_SAFETIES_ON 1
 
@@ -41,11 +42,13 @@ namespace rosa {
                 m_lua_transform = std::make_unique<lua_script::LuaTransform>(transform_component, m_state);
             }
 
-            auto setScript(const std::string& filepath) -> bool {
+            auto setScript(uuids::uuid uuid) -> bool {
                 //auto handler = &sol::script_default_on_error;
 
                 try {
-                    auto result = m_state.script_file(filepath, &sol::script_default_on_error);
+                    const auto& script = ResourceManager::instance().getScript(uuid);
+
+                    auto result = m_state.script(script, &sol::script_default_on_error);
                     if(result.valid()) {
                         m_on_create_function = m_state["onCreate"];
                         m_on_delete_function = m_state["onDelete"];

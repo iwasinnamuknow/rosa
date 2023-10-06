@@ -30,7 +30,7 @@ MyScene::MyScene(sf::RenderWindow& render_window) : rosa::Scene(render_window) {
     //getRegistry().emplace<rosa::NativeScriptComponent>(new_entity).bind<TestScript>();
 
     auto& lsc = new_entity.addComponent<rosa::LuaScriptComponent>(*this, new_entity);
-    lsc.setScript("test.lua");
+    lsc.setScript(lua_uuid);
 }
 
 // auto MyScene::update(float delta_time) -> void {

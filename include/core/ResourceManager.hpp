@@ -39,6 +39,7 @@ namespace rosa {
             auto getFont(uuids::uuid uuid) -> sf::Font&;
             auto getSound(uuids::uuid uuid) -> sf::SoundBuffer&;
             auto getMusicTrack(uuids::uuid uuid) -> sf::Music&;
+            auto getScript(uuids::uuid uuid) -> const std::string&;
 
             static auto instance() -> ResourceManager&;
         private:

@@ -14,6 +14,7 @@
  * bbai. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "core/Resource.hpp"
 #include <SFML/Graphics/Shader.hpp>
 #include <cassert>
 #include <core/ResourceManager.hpp>
@@ -127,6 +128,21 @@ namespace rosa {
         abort();
     }
 
+    auto ResourceManager::getScript(uuids::uuid uuid) -> const std::string& {
+        if (auto search = m_resources.find(uuid); search != m_resources.end()) {
+            assert(search->second->m_type == resource_script);
+
+            if (!search->second->m_loaded) {
+                populate_resource(*(search->second));
+            }
+
+            return search->second->m_script;
+        }
+
+        spdlog::error("Asset not registered {}", uuids::to_string(uuid));
+        abort();
+    }
+
     auto ResourceManager::split_lines(const std::string& string, char delimiter) -> std::vector<std::string> {
         auto result = std::vector<std::string>{};
         auto stream = std::stringstream(string);
@@ -177,6 +193,22 @@ namespace rosa {
                 } else {
                     spdlog::critical("Couldn't load asset: {}", resource.m_name);
                 }
+                break;
+            case resource_script:
+                if (PHYSFS_exists(resource.m_name.c_str()) != 0) {
+                    PHYSFS_file* myfile = PHYSFS_openRead(resource.m_name.c_str());
+                    char *buffer = new char[PHYSFS_fileLength(myfile)];
+                    int length_read = PHYSFS_readBytes (myfile, buffer, PHYSFS_fileLength(myfile));
+                    assert(length_read == PHYSFS_fileLength(myfile));
+                    PHYSFS_close(myfile);
+
+                    std::string string_data(buffer, static_cast<size_t>(length_read));
+
+                    resource.m_script = string_data;
+                } else {
+                    spdlog::critical("Couldn't load asset: {}", resource.m_name);
+                }
+                break;
         }
 
         resource.m_loaded = true;
