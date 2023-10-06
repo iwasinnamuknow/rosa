@@ -28,7 +28,7 @@ namespace rosa::lua_script {
         LuaTransform(std::reference_wrapper<TransformComponent> component, std::reference_wrapper<sol::state> state)
             : m_component(component), m_state(state) {}
 
-        auto getPosition() -> sol::table {
+        auto getPosition() const -> sol::table {
             return m_state.get().create_table_with("x", m_component.get().position.x, "y", m_component.get().position.y);
         }
 
@@ -36,7 +36,7 @@ namespace rosa::lua_script {
             m_component.get().position = sf::Vector2f(x, y);
         }
 
-        auto getRotation() -> float {
+        auto getRotation() const -> float {
             return m_component.get().rotation;
         }
 
