@@ -14,11 +14,11 @@
  */
 
 #pragma once
-#include <memory>
 #include <sol/forward.hpp>
 #define SOL_PRINT_ERRORS 0
 #define SOL_ALL_SAFETIES_ON 1
 
+#include <memory>
 #include <functional>
 #include <sol/sol.hpp>
 #include <stduuid/uuid.h>
@@ -37,6 +37,9 @@ namespace rosa {
 
             LuaScriptComponent(std::reference_wrapper<Scene> scene, entt::entity entity) : m_entity(entity), m_scene(scene) {
                 m_state.open_libraries(sol::lib::base);
+
+                auto& transform_component = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
+                m_lua_transform = std::make_unique<lua_script::LuaTransform>(transform_component, m_state);
             }
 
             auto setScript(const std::string& filepath) -> bool {
@@ -49,17 +52,20 @@ namespace rosa {
                         m_on_delete_function = m_state["onDelete"];
                         m_on_update_function = m_state["onUpdate"];
 
-                        auto& transform_component = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
-                        m_lua_transform = std::make_unique<lua_script::LuaTransform>(transform_component, m_state);
+                        // Transform component
                         auto transform_table = m_state["transform"].get_or_create<sol::table>();
                         transform_table.set_function("getPosition", &lua_script::LuaTransform::getPosition, m_lua_transform.get());
                         transform_table.set_function("setPosition", &lua_script::LuaTransform::setPosition, m_lua_transform.get());
                         transform_table.set_function("getRotation", &lua_script::LuaTransform::getRotation, m_lua_transform.get());
                         transform_table.set_function("setRotation", &lua_script::LuaTransform::setRotation, m_lua_transform.get());
 
+                        // Sprite component
                         if (m_scene.get().getRegistry().all_of<SpriteComponent>(m_entity)) {
                             auto& sprite_component = m_scene.get().getRegistry().get<SpriteComponent>(m_entity);
-                            m_lua_sprite = std::make_unique<lua_script::LuaSprite>(sprite_component, m_state);
+                            
+                            if (!m_lua_sprite) {
+                                m_lua_sprite = std::make_unique<lua_script::LuaSprite>(sprite_component, m_state);
+                            }
                             auto sprite_table = m_state["sprite"].get_or_create<sol::table>();
                             sprite_table.set_function("getTexture", &lua_script::LuaSprite::getTexture, m_lua_sprite.get());
                             sprite_table.set_function("setTexture", &lua_script::LuaSprite::getTexture, m_lua_sprite.get());
