@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include <SFML/Graphics/Color.hpp>
 #include <core/ResourceManager.hpp>
 #include <SFML/Graphics.hpp>
 #include <stduuid/uuid.h>
@@ -27,9 +28,17 @@ namespace rosa {
     struct SpriteComponent {
         sf::Sprite sprite;
 
+        auto getTexture() const -> uuids::uuid {
+            return m_texture_uuid;
+        }
+
         auto setTexture(uuids::uuid uuid) -> void {
             m_texture_uuid = uuid;
             sprite.setTexture(ResourceManager::instance().getTexture(m_texture_uuid));
+        }
+
+        auto getColor() -> sf::Color {
+            return m_color;
         }
 
         auto setColor(sf::Color color) -> void {
