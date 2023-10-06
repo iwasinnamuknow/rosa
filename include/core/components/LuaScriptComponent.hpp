@@ -51,6 +51,21 @@ namespace rosa {
                         m_on_delete_function = m_state["onDelete"];
                         m_on_update_function = m_state["onUpdate"];
 
+                        // logger
+                        auto log_table = m_state["log"].get_or_create<sol::table>();
+                        log_table.set_function("error", [](const std::string& message) {
+                            spdlog::error(message);
+                        });
+                        log_table.set_function("warning", [](const std::string& message) {
+                            spdlog::warn(message);
+                        });
+                        log_table.set_function("info", [](const std::string& message) {
+                            spdlog::info(message);
+                        });
+                        log_table.set_function("debug", [](const std::string& message) {
+                            spdlog::debug(message);
+                        });
+
                         // Transform component
                         auto transform_table = m_state["transform"].get_or_create<sol::table>();
                         transform_table.set_function("getPosition", &lua_script::LuaTransform::getPosition, m_lua_transform.get());
