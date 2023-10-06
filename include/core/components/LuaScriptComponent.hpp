@@ -14,6 +14,7 @@
  */
 
 #pragma once
+#include <memory>
 #include <sol/forward.hpp>
 #define SOL_PRINT_ERRORS 0
 #define SOL_ALL_SAFETIES_ON 1
@@ -24,7 +25,9 @@
 #include <spdlog/spdlog.h>
 #include <core/Scene.hpp>
 #include <core/components/TransformComponent.hpp>
+#include <core/components/SpriteComponent.hpp>
 #include <core/lua_script/LuaTransform.hpp>
+#include <core/lua_script/LuaSprite.hpp>
 
 namespace rosa {
 
@@ -46,13 +49,23 @@ namespace rosa {
                         m_on_delete_function = m_state["onDelete"];
                         m_on_update_function = m_state["onUpdate"];
 
-                        auto& tc = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
-                        auto lt = lua_script::LuaTransform(tc, m_state);
-                        auto tn = m_state["transform"].get_or_create<sol::table>();
-                        tn.set_function("getPosition", &lua_script::LuaTransform::getPosition, lt);
-                        tn.set_function("setPosition", &lua_script::LuaTransform::setPosition, lt);
-                        tn.set_function("getRotation", &lua_script::LuaTransform::getRotation, lt);
-                        tn.set_function("setRotation", &lua_script::LuaTransform::setRotation, lt);
+                        auto& transform_component = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
+                        m_lua_transform = std::make_unique<lua_script::LuaTransform>(transform_component, m_state);
+                        auto transform_table = m_state["transform"].get_or_create<sol::table>();
+                        transform_table.set_function("getPosition", &lua_script::LuaTransform::getPosition, m_lua_transform.get());
+                        transform_table.set_function("setPosition", &lua_script::LuaTransform::setPosition, m_lua_transform.get());
+                        transform_table.set_function("getRotation", &lua_script::LuaTransform::getRotation, m_lua_transform.get());
+                        transform_table.set_function("setRotation", &lua_script::LuaTransform::setRotation, m_lua_transform.get());
+
+                        if (m_scene.get().getRegistry().all_of<SpriteComponent>(m_entity)) {
+                            auto& sprite_component = m_scene.get().getRegistry().get<SpriteComponent>(m_entity);
+                            m_lua_sprite = std::make_unique<lua_script::LuaSprite>(sprite_component, m_state);
+                            auto sprite_table = m_state["sprite"].get_or_create<sol::table>();
+                            sprite_table.set_function("getTexture", &lua_script::LuaSprite::getTexture, m_lua_sprite.get());
+                            sprite_table.set_function("setTexture", &lua_script::LuaSprite::getTexture, m_lua_sprite.get());
+                            sprite_table.set_function("getColor", &lua_script::LuaSprite::getColor, m_lua_sprite.get());
+                            sprite_table.set_function("setColor", &lua_script::LuaSprite::setColor, m_lua_sprite.get());
+                        }
 
                         m_on_create_function();
 
@@ -75,6 +88,9 @@ namespace rosa {
 
             entt::entity m_entity;
             std::reference_wrapper<Scene> m_scene;
+
+            std::unique_ptr<lua_script::LuaTransform> m_lua_transform;
+            std::unique_ptr<lua_script::LuaSprite> m_lua_sprite;
 
             friend class Scene;
     };
