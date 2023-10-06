@@ -29,7 +29,7 @@ namespace rosa {
     class SceneSerialiser;
 
     namespace lua_script {
-        class LuaTransform;
+        struct LuaTransform;
     } // namespace lua_script
 
     class Scene {
