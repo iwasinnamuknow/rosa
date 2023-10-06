@@ -21,6 +21,7 @@
 #include <string_view>
 #include <core/components/TransformComponent.hpp>
 #include <core/components/SpriteComponent.hpp>
+#include <core/components/LuaScriptComponent.hpp>
 
 namespace YAML {
 
@@ -136,8 +137,53 @@ namespace rosa {
             out << YAML::EndMap; // sprite
         }
 
+        if (entity.hasComponent<LuaScriptComponent>()) {
+            auto& lsc = entity.getComponent<LuaScriptComponent>();
+            out << YAML::BeginMap; // lua script
+            out << YAML::Key << "type" << YAML::Value << "lua_script";
+            out << YAML::Key << "script" << YAML::Value << uuids::to_string(lsc.m_uuid);
+
+            // TODO There has to be a neater way of capturing data that doesn't require all data to
+            //      be kept inside a single lua table
+            sol::table table = lsc.m_state["persist"];
+            if (table.valid()) {
+                out << YAML::Key << "data" << YAML::Value << YAML::BeginMap; // script data
+
+                lua_t_to_yaml(out, table);
+
+                out << YAML::EndMap; // script data
+            }
+
+            out << YAML::EndMap; // lua script
+        }
+
         out << YAML::EndSeq; // components
         out << YAML::EndMap; // Entity
+    }
+
+    auto SceneSerialiser::lua_t_to_yaml(YAML::Emitter& out, sol::table& table) -> void {
+        for (auto it = table.begin(); it != table.end(); ++it) {
+            auto [key, val] = *it;
+
+            out << YAML::Key << key.as<std::string>();
+            out << YAML::Value;
+
+            sol::type type = val.get_type();
+
+            if (type == sol::type::number) {
+                const double number = val.as<double>();
+                out << number;
+            } else if (type == sol::type::boolean) {
+                const bool boolean = val.as<bool>();
+                out << boolean;
+            } else if (type == sol::type::string) {
+                const std::string str = val.as<std::string>();
+                out << str;
+            } else if (type == sol::type::table) {
+                sol::table subt = val;
+                lua_t_to_yaml(out, subt);
+            }
+        }
     }
 
     auto SceneSerialiser::deserialiseFromYaml(const std::string& filepath) -> bool {

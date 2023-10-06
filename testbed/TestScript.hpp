@@ -20,7 +20,6 @@
 #include <core/GameManager.hpp>
 #include <spdlog/spdlog.h>
 #include <string_view>
-#include <core/SceneSerialiser.hpp>
 
 class TestScript : public rosa::NativeScriptEntity {
     public:
@@ -35,9 +34,6 @@ class TestScript : public rosa::NativeScriptEntity {
                 (static_cast<float>(getScene().getRenderWindow().getSize().y) / 2.F) - (static_cast<float>(texture.getSize().y) / 2.F)
             );
             getEntity().getComponent<rosa::TransformComponent>().position = position;
-
-            auto ser = rosa::SceneSerialiser(getScene());
-            ser.serialiseToYaml("test.yaml");
         }
 
         void onUpdate(float delta_time) override {

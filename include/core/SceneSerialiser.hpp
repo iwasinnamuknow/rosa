@@ -17,6 +17,7 @@
 
 #include <core/Scene.hpp>
 #include <yaml-cpp/yaml.h>
+#include <sol/sol.hpp>
 
 namespace rosa {
 
@@ -31,6 +32,7 @@ namespace rosa {
 
         private:
             auto serialise_entity(YAML::Emitter& out, Entity& entity) -> void;
+            auto lua_t_to_yaml(YAML::Emitter& out, sol::table& table) -> void;
             Scene& m_scene;
     };
 
