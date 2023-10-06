@@ -25,7 +25,7 @@
 namespace rosa {
 
     class NativeScriptEntity;
-    class LuaScriptComponent;
+    struct LuaScriptComponent;
     class SceneSerialiser;
 
     namespace lua_script {
