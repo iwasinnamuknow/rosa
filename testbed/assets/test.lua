@@ -17,6 +17,8 @@ persist["last_rot"] = 0
 persist["rotation"] = 0
 persist["red"] = 0
 
+general = 2
+
 function onCreate()
 
 end

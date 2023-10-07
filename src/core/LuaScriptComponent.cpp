@@ -25,8 +25,6 @@ namespace rosa {
     }
 
     auto LuaScriptComponent::setScript(uuids::uuid uuid) -> bool {
-        //auto handler = &sol::script_default_on_error;
-
         try {
             const auto& script = ResourceManager::instance().getScript(uuid);
 
@@ -86,6 +84,10 @@ namespace rosa {
         }
         
         return false;
+    }
+
+    auto LuaScriptComponent::set_data(const std::string& key, sol::table& table) -> void {
+        m_state.set(key, table);
     }
 
 } // namespace rosa

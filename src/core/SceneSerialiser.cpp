@@ -16,12 +16,14 @@
 #include <core/Scene.hpp>
 #include <core/SceneSerialiser.hpp>
 #include <fstream>
+#include <limits>
 #include <spdlog/spdlog.h>
 #include <sstream>
 #include <string_view>
 #include <core/components/TransformComponent.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <core/components/LuaScriptComponent.hpp>
+#include <cmath>
 
 namespace YAML {
 
@@ -172,13 +174,18 @@ namespace rosa {
 
             if (type == sol::type::number) {
                 const double number = val.as<double>();
-                out << number;
+                auto floored = std::floor(number);
+                if (floored < number) {
+                    out << YAML::LocalTag("float") << number;
+                } else {
+                    out << YAML::LocalTag("int") << number;
+                } 
             } else if (type == sol::type::boolean) {
                 const bool boolean = val.as<bool>();
-                out << boolean;
+                out << YAML::LocalTag("bool") << boolean;
             } else if (type == sol::type::string) {
                 const std::string str = val.as<std::string>();
-                out << str;
+                out << YAML::LocalTag("str") << str;
             } else if (type == sol::type::table) {
                 sol::table subt = val;
                 lua_t_to_yaml(out, subt);
@@ -219,6 +226,24 @@ namespace rosa {
                                     auto& sprite = new_entity.addComponent<SpriteComponent>();
                                     sprite.setTexture(comp["texture"].as<uuids::uuid>());
                                     sprite.setColor(comp["color"].as<sf::Color>());
+                                } else if (type == "lua_script") {
+                                    auto& lsc = new_entity.addComponent<LuaScriptComponent>(m_scene, new_entity);
+                                    auto script_uuid = comp["script"].as<std::string>();
+
+                                    auto uuid = uuids::uuid::from_string(script_uuid);
+                                    if (uuid.has_value()) {
+
+                                        lsc.setScript(uuid.value());
+
+                                        if (comp["data"]) {
+                                            auto script_data = comp["data"];
+                                            auto table_data = lua_t_from_yaml(script_data);
+                                            lsc.setData(table_data);
+                                        }
+                                    }
+                                    //lsc.setScript(comp["script"].as<uuids::uuid>(), );
+                                    //sprite.setColor(comp["color"].as<sf::Color>());
+                                    
                                 }
                             }
                         }
@@ -227,7 +252,65 @@ namespace rosa {
             }
         }
 
-        return true;
+        return true; // TODO this is pointless, we need to check something
+    }
+
+    auto SceneSerialiser::lua_t_from_yaml(const YAML::Node& node) -> sol::table {
+        // sol::table table{};
+
+        // const auto node_type = node.Type();
+
+        // if (node_type == YAML::NodeType::Map) {
+        //     table = deserialise_map(node);
+
+        // } else if (node_type == YAML::NodeType::Sequence) {
+        //     table = deserialise_sequence(node);
+
+        // } else if (node_type == YAML::NodeType::Scalar) {
+        //     const auto& tag = node.Tag();
+
+        //     if (tag == "int") {
+        //         table[node] = it->second.as<int>();
+
+        //     } else if (it->second.Tag() == "float") {
+        //         table[it->first.as<std::string>()] = it->second.as<float>();
+
+        //     } else if (it->second.Tag() == "bool") {
+        //         table[it->first.as<std::string>()] = it->second.as<bool>();
+
+        //     } else if (it->second.Tag() == "str") {
+        //         table[it->first.as<std::string>()] = it->second.as<std::string>();
+        //     }
+        //     table = deserialise_scalar(node);
+        // }
+
+        // return table;
+    }
+
+    auto SceneSerialiser::deserialise_map(const YAML::Node& node) -> sol::table {
+        sol::table table{};
+
+        for (YAML::const_iterator it = node.begin(); it != node.end(); ++it) {
+            table[it->first.as<std::string>()] = lua_t_from_yaml(it->second);
+        }
+
+        return table;
+    }
+
+    auto SceneSerialiser::deserialise_sequence(const YAML::Node& node) -> sol::table {
+        sol::table table{};
+        int index{0};
+
+        for (YAML::const_iterator seq_it = node.begin(); seq_it != node.end(); ++seq_it) {
+            table[index++] = lua_t_from_yaml(*seq_it);
+        }
+
+        return table;
+    }
+
+    template<typename T>
+    auto SceneSerialiser::deserialise_scalar(const YAML::Node& node) -> T {
+        
     }
 
 } // namespace rosa

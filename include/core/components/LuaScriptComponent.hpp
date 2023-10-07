@@ -45,6 +45,8 @@ namespace rosa {
             uuids::uuid m_uuid;
             sol::state m_state;
 
+            auto set_data(const std::string& key, sol::table& table) -> void;
+
             entt::entity m_entity;
             std::reference_wrapper<Scene> m_scene;
 
