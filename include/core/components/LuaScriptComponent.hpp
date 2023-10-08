@@ -39,11 +39,11 @@ namespace rosa {
             auto setScript(uuids::uuid uuid) -> bool;
 
         private:
+            sol::state m_state;
             sol::protected_function m_on_create_function;
             sol::protected_function m_on_delete_function;
             sol::protected_function m_on_update_function;
             uuids::uuid m_uuid;
-            sol::state m_state;
 
             auto set_data(const std::string& key, sol::table& table) -> void;
 
