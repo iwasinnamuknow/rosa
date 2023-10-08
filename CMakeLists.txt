@@ -4,6 +4,10 @@ project(rosa)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
+if (ROSA_PROFILE)
+  add_definitions(-DROSA_PROFILE)
+endif(ROSA_PROFILE)
+
 #set(Boost_USE_STATIC_LIBS        ON)
 find_package(imgui CONFIG REQUIRED)
 find_package(SFML CONFIG REQUIRED COMPONENTS graphics system window audio)

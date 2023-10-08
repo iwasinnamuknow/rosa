@@ -18,10 +18,13 @@
 #include <memory>
 #include "imgui.h"
 #include "imgui-SFML.h"
+#include <debug/Profiler.hpp>
 
 namespace rosa {
 
     GameManager::GameManager() {
+        ROSA_PROFILE_SESSION_BEGIN("test");
+
         spdlog::set_level(spdlog::level::debug);
         spdlog::info("Rosa is up and running!");
 
@@ -85,6 +88,8 @@ namespace rosa {
             m_render_window.display();
 
         }
+
+        ROSA_PROFILE_SESSION_END();
     }
 
     auto GameManager::changeScene(const std::string& key) -> bool {
