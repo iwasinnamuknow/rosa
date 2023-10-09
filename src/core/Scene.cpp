@@ -13,7 +13,6 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include <SFML/System/Vector2.hpp>
 #include <core/ResourceManager.hpp>
 #include <core/Scene.hpp>
 #include <core/Entity.hpp>
@@ -22,8 +21,7 @@
 #include <core/components/LuaScriptComponent.hpp>
 #include <functional>
 #include <spdlog/spdlog.h>
-
-#include "debug/Profiler.hpp"
+#include <debug/Profiler.hpp>
 #include "imgui.h"
 #include "imgui-SFML.h"
 
@@ -60,11 +58,23 @@ namespace rosa {
         return false;
     }
 
+    auto Scene::input(sf::Event& event) -> void {
+        switch (event.type) {
+            case sf::Event::KeyReleased:
+                if (event.key.code == sf::Keyboard::F12) {
+                    m_show_profile_stats = !m_show_profile_stats;
+                }
+                break;
+        }
+    }
+
     auto Scene::update(float delta_time) -> void {
 
 #ifdef ROSA_PROFILE
         {
-            show_profile_stats();
+            if (m_show_profile_stats) {
+                show_profile_stats(&m_show_profile_stats);
+            }
         }
 #endif // ROSA_PROFILE
 
@@ -152,21 +162,16 @@ namespace rosa {
         });
     }
 
-    auto Scene::show_profile_stats() -> void {
-        bool closeable{true};
+    auto Scene::show_profile_stats(bool* open) -> void {
 
         std::vector<rosa::debug::ProfileUiItem> items;
 
-        ImGui::Begin("Profiler", &closeable, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar
-            | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+        ImGui::Begin("Profiler", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
         ImGui::SetWindowPos(ImVec2(0, 0));
         auto s = m_last_frame_time.restart().asSeconds();
         ImGui::Text("FPS: %d", 1 / s);
         ImGui::Text("Frame Time: %dms", s * 1000);
-
-        ImGui::SetCursorPosY(50);
-        ImGui::Text("Profiler:");
         
         if (items.size() == 0) {
             auto entries = rosa::debug::Profiler::instance().getLastFrame();

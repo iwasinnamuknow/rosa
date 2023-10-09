@@ -66,17 +66,20 @@ namespace rosa {
         sf::Clock delta_clock;
 
         while (m_render_window.isOpen()) {
-            sf::Event event{};
+
+            assert(m_current_scene); // Ensure scene pointer is valid - this needs to be managed internally.
+
+            sf::Event event{};            
 
             while (m_render_window.pollEvent(event)) {
                 ImGui::SFML::ProcessEvent(m_render_window, event);
 
                 if (event.type == sf::Event::Closed) {
                     m_render_window.close();
+                } else {
+                    m_current_scene->input(event);
                 }
             }
-
-            assert(m_current_scene); // Ensure scene pointer is valid - this needs to be managed internally.
 
             ImGui::SFML::Update(m_render_window, delta_clock.getElapsedTime());
             //ImGui::ShowDemoWindow();

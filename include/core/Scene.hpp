@@ -39,6 +39,7 @@ namespace rosa {
             explicit Scene(sf::RenderWindow& render_window);
             virtual auto update(float delta_time) -> void;
             virtual auto render() -> void;
+            virtual auto input(sf::Event& event) -> void;
             virtual ~Scene() = default;
 
             auto getRenderWindow() const -> sf::RenderWindow& {
@@ -65,7 +66,8 @@ namespace rosa {
             friend class LuaScriptComponent;
             friend class lua_script::LuaTransform;
 
-            auto show_profile_stats() -> void;
+            auto show_profile_stats(bool* open) -> void;
+            bool m_show_profile_stats{false};
 
             sf::Clock m_last_frame_time;
     };
