@@ -39,6 +39,7 @@ namespace rosa {
 
             virtual auto onCreate() -> void{}
             virtual auto onUpdate([[maybe_unused]] float delta_time) -> void{} 
+            virtual auto onInput([[maybe_unused]] sf::Event event) -> void{}
             virtual auto onDestroy() -> void{}
 
             auto getScene() -> Scene& {

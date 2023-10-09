@@ -31,6 +31,7 @@ namespace rosa {
         std::function<void(NativeScriptEntity*)> on_create_function;
         std::function<void(NativeScriptEntity*)> on_destroy_function;
         std::function<void(NativeScriptEntity*, float)> on_update_function;
+        std::function<void(NativeScriptEntity*, sf::Event)> on_input_function;
 
         template<typename T>
         void bind() {
@@ -53,6 +54,10 @@ namespace rosa {
 
             on_update_function = [](NativeScriptEntity* p_instance, float delta_time) -> void {
                 p_instance->onUpdate(delta_time);
+            };
+
+            on_input_function = [](NativeScriptEntity* p_instance, sf::Event event) -> void {
+                p_instance->onInput(event);
             };
         }
     };

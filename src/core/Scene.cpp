@@ -66,6 +66,23 @@ namespace rosa {
                 }
                 break;
         }
+
+        {
+            ROSA_PROFILE_SCOPE("Events:NativeScript");
+
+            // Run updates for native script components, instantiating where needed
+            m_registry.view<NativeScriptComponent>().each([this, event](entt::entity entity, auto& nsc) {
+
+                Entity* actual = &m_entities.at(entity);
+
+                if (!nsc.instance) {
+                    nsc.instantiate_function(std::reference_wrapper<Scene>(*this), std::reference_wrapper<Entity>(*actual));
+                    nsc.on_create_function(nsc.instance);
+                }
+
+                nsc.on_input_function(nsc.instance, event);
+            });
+        }
     }
 
     auto Scene::update(float delta_time) -> void {
