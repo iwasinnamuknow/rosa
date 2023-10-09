@@ -14,7 +14,12 @@
  */
 
 #include "MyScene.hpp"
+#include "core/Scene.hpp"
 #include "core/components/LuaScriptComponent.hpp"
+#include "debug/Profiler.hpp"
+#include <cstddef>
+#include <cstdint>
+#include <unordered_map>
 
 MyScene::MyScene(sf::RenderWindow& render_window) : rosa::Scene(render_window) {
     auto new_entity = createEntity();
@@ -32,10 +37,6 @@ MyScene::MyScene(sf::RenderWindow& render_window) : rosa::Scene(render_window) {
     auto& lsc = new_entity.addComponent<rosa::LuaScriptComponent>(*this, new_entity);
     lsc.setScript(lua_uuid);
 }
-
-// auto MyScene::update(float delta_time) -> void {
-
-// }
 
 // auto MyScene::render() -> void {
 

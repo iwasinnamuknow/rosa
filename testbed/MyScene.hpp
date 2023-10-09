@@ -15,6 +15,7 @@
 
 #pragma once
 
+
 #include <core/Scene.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <core/components/NativeScriptComponent.hpp>
@@ -33,6 +34,6 @@ class MyScene : public rosa::Scene {
             ser.serialiseToYaml("test.yaml");
         }
 
-        // auto update(float delta_time) -> void override;
+        //auto update(float delta_time) -> void override;
         // auto render() -> void override;
 };

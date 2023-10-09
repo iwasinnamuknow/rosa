@@ -27,7 +27,14 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "vcpkg_INCLUDE_DIR": "${sourceDir}/build/linux/debug/vcpkg_installed/x64-linux/include",
-                "vcpkg_LIB_DIR": "${sourceDir}/build/linux/debug/vcpkg_installed/x64-linux/lib",
+                "vcpkg_LIB_DIR": "${sourceDir}/build/linux/debug/vcpkg_installed/x64-linux/lib"
+            }
+        },
+        {
+            "name": "linux-debug-profile",
+            "hidden": false,
+            "inherits": ["linux-debug"],
+            "cacheVariables": {
                 "ROSA_PROFILE": true
             }
         },
@@ -47,6 +54,12 @@
         {
             "name": "linux-debug",
             "configurePreset": "linux-debug",
+            "configuration": "Debug",
+            "jobs": 24
+        },
+        {
+            "name": "linux-debug-profile",
+            "configurePreset": "linux-debug-profile",
             "configuration": "Debug",
             "jobs": 24
         },

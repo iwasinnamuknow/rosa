@@ -16,11 +16,13 @@
 #pragma once
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/System/Clock.hpp>
 #include <entt/entt.hpp>
 #include <core/ResourceManager.hpp>
 #include <spdlog/spdlog.h>
 #include <unordered_map>
 #include <core/Entity.hpp>
+#include <debug/Profiler.hpp>
 
 namespace rosa {
 
@@ -62,6 +64,10 @@ namespace rosa {
             friend class SceneSerialiser;
             friend class LuaScriptComponent;
             friend class lua_script::LuaTransform;
+
+            auto show_profile_stats() -> void;
+
+            sf::Clock m_last_frame_time;
     };
 
 } // namespace rosa

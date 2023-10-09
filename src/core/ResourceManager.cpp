@@ -31,6 +31,8 @@
 namespace rosa {
 
     ResourceManager::ResourceManager() {
+        ROSA_PROFILE_SCOPE("Assets:ParseAssetList");
+
         [[maybe_unused]] int mount_success = PHYSFS_mount("base.pak", "", 1);
         assert(mount_success != 0);
 
@@ -69,6 +71,8 @@ namespace rosa {
     }
 
     auto ResourceManager::getTexture(const uuids::uuid uuid) -> sf::Texture& {
+        ROSA_PROFILE_SCOPE("Assets:getTexture");
+
         if (auto search = m_resources.find(uuid); search != m_resources.end()) {
             assert(search->second->m_type == resource_texture);
 
@@ -84,6 +88,8 @@ namespace rosa {
     }
 
     auto ResourceManager::getFont(const uuids::uuid uuid) -> sf::Font& {
+        ROSA_PROFILE_SCOPE("Assets:getFont");
+
         if (auto search = m_resources.find(uuid); search != m_resources.end()) {
             assert(search->second->m_type == resource_font);
 
@@ -99,6 +105,8 @@ namespace rosa {
     }
 
     auto ResourceManager::getSound(const uuids::uuid uuid) -> sf::SoundBuffer& {
+        ROSA_PROFILE_SCOPE("Assets:getSound");
+
         if (auto search = m_resources.find(uuid); search != m_resources.end()) {
             assert(search->second->m_type == resource_sound);
 
@@ -114,6 +122,8 @@ namespace rosa {
     }
 
     auto ResourceManager::getMusicTrack(const uuids::uuid uuid) -> sf::Music& {
+        ROSA_PROFILE_SCOPE("Assets:getMusicTrack");
+
         if (auto search = m_resources.find(uuid); search != m_resources.end()) {
             assert(search->second->m_type == resource_sound);
 
@@ -129,6 +139,8 @@ namespace rosa {
     }
 
     auto ResourceManager::getScript(uuids::uuid uuid) -> const std::string& {
+        ROSA_PROFILE_SCOPE("Assets:getScript");
+
         if (auto search = m_resources.find(uuid); search != m_resources.end()) {
             assert(search->second->m_type == resource_script);
 
@@ -173,6 +185,8 @@ namespace rosa {
     }
 
     auto ResourceManager::populate_resource(Resource& resource) -> bool {
+        ROSA_PROFILE_SCOPE("Assets:Load");
+        
         spdlog::debug("Loading asset {}", resource.m_name);
         switch (resource.m_type) {
             case resource_texture:

@@ -57,6 +57,7 @@ namespace rosa {
     }
 
     auto GameManager::addScene(const std::string& key, std::unique_ptr<Scene> scene) -> bool {
+        ROSA_PROFILE_SCOPE("Scenes:add");
         auto [iterator, inserted] = m_scenes.insert_or_assign(key, std::move(scene));
         return inserted;
     }
@@ -93,6 +94,7 @@ namespace rosa {
     }
 
     auto GameManager::changeScene(const std::string& key) -> bool {
+        ROSA_PROFILE_SCOPE("Scenes:change");
         if (auto search = m_scenes.find(key); search != m_scenes.end()) {
             m_current_scene = search->second.get();
             return true;

@@ -25,6 +25,7 @@
 #include <physfs.h>
 #include <core/PhysFSStream.hpp>
 #include <core/Resource.hpp>
+#include <debug/Profiler.hpp>
 
 namespace rosa {
 

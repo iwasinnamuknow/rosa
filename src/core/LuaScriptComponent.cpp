@@ -14,10 +14,13 @@
  */
 
 #include <core/components/LuaScriptComponent.hpp>
+#include <debug/Profiler.hpp>
 
 namespace rosa {
 
     LuaScriptComponent::LuaScriptComponent(std::reference_wrapper<Scene> scene, entt::entity entity) : m_entity(entity), m_scene(scene) {
+        ROSA_PROFILE_SCOPE("LuaScriptComponent:Initialise");
+
         m_state.open_libraries(sol::lib::base);
 
         auto& transform_component = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
@@ -25,6 +28,8 @@ namespace rosa {
     }
 
     auto LuaScriptComponent::setScript(uuids::uuid uuid) -> bool {
+        ROSA_PROFILE_SCOPE("LuaScriptComponent:setScript");
+
         try {
             const auto& script = ResourceManager::instance().getScript(uuid);
 
