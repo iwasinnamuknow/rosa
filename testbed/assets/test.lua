@@ -24,17 +24,17 @@ function onCreate()
 end
 
 function onUpdate(delta_time)
-  if persist["last_rot"] > 0.02 then
+  if persist["last_rot"] > 0.1 then
     transform.setRotation(persist["rotation"])
     persist["rotation"] = (persist["rotation"] + 1) % 360
     sprite.setColor(persist["red"], 255, 255, 255)
     persist["red"] = (persist["red"] + 1) % 255
-    last_rot = 0
+    persist["last_rot"] = 0
   else
     persist["last_rot"] = persist["last_rot"] + delta_time
   end
   log.debug("hello from lua")
-  --print(dump(transform.getPosition()))
+--   print(dump(transform.getPosition()))
 end
 
 function onDelete()

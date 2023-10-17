@@ -13,15 +13,19 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Transform.hpp>
 #include <core/ResourceManager.hpp>
 #include <core/Scene.hpp>
 #include <core/Entity.hpp>
 #include <core/components/TransformComponent.hpp>
 #include <core/components/NativeScriptComponent.hpp>
 #include <core/components/LuaScriptComponent.hpp>
+#include <entt/entity/fwd.hpp>
 #include <functional>
 #include <spdlog/spdlog.h>
 #include <debug/Profiler.hpp>
+#include <unordered_map>
 #include "imgui.h"
 #include "imgui-SFML.h"
 
@@ -29,22 +33,22 @@ namespace rosa {
 
     Scene::Scene(sf::RenderWindow& render_window) : m_render_window(render_window) { }
 
-    auto Scene::createEntity() -> Entity {
+    auto Scene::createEntity() -> Entity& {
         ROSA_PROFILE_SCOPE("Entity:Create");
 
         Entity entity{m_registry.create(), std::reference_wrapper<entt::registry>(m_registry)};
         entity.addComponent<TransformComponent>();
         m_entities.insert({entity.getId(), entity});
-        return entity;
+        return m_entities.at(entity.getId());
     }
 
-    auto Scene::create_entity(uuids::uuid uuid) -> Entity {
+    auto Scene::create_entity(uuids::uuid uuid) -> Entity& {
         ROSA_PROFILE_SCOPE("Entity:Create_UUID");
 
         Entity entity{uuid, m_registry.create(), std::reference_wrapper<entt::registry>(m_registry)};
         entity.addComponent<TransformComponent>();
         m_entities.insert({entity.getId(), entity});
-        return entity;
+        return m_entities.at(entity.getId());
     }
     
     auto Scene::removeEntity(Entity& entity) -> bool {
@@ -133,11 +137,39 @@ namespace rosa {
             // This function only cares about entities with SpriteComponent and TransformComponent
             auto view = m_registry.view<SpriteComponent, TransformComponent>();
 
-            for (const auto& entity : view)
+            for (const auto& entid : view)
             {
-                const TransformComponent& transform = m_registry.get<TransformComponent>(entity);
-                SpriteComponent& sprite_comp = m_registry.get<SpriteComponent>(entity);
+                const TransformComponent& transform = m_registry.get<TransformComponent>(entid);
+                SpriteComponent& sprite_comp = m_registry.get<SpriteComponent>(entid);
+                // Entity* entity = &m_entities.at(entid);
 
+                // if (entity->m_parent == entt::null) {
+                //     //
+                //     // turn it on its head, work top down, one layer at a time
+                //     //
+                //     // A -> B -> C, no accumulation
+                //     //
+                //     auto p_transform = m_entities.at(entity->getParent()).getComponent<TransformComponent>();
+                    
+                //     auto angle = -(transform.rotation * (std::numbers::pi / 180));
+                //     const float cosine = std::cos(angle);
+                //     const float sine   = std::sin(angle);
+                //     const float sxc    = transform.scale.x * cosine;
+                //     const float syc    = transform.scale.y * cosine;
+                //     const float sxs    = transform.scale.x * sine;
+                //     const float sys    = transform.scale.y * sine;
+                //     const float tx     = -p_transform.position.x * sxc - p_transform.position.y * sys + transform.position.x;
+                //     const float ty     = p_transform.position.x * sxs - p_transform.position.y * syc + transform.position.y;
+
+                //     // parent_pos += p_transform.position;
+                //     parent_rot += p_transform.rotation;
+                    
+                //     entity = &m_entities.at(entity->getParent());
+                // }
+
+                //auto updated_pos = transform.position + parent_pos;
+
+                // todo take parents position
                 sprite_comp.sprite.setPosition(transform.position);
                 sprite_comp.sprite.setScale(transform.scale);
                 sprite_comp.sprite.setRotation(transform.rotation);

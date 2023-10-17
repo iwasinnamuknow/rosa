@@ -180,9 +180,11 @@ namespace rosa::debug {
 
 } // namespace rosa::debug
 
+#define TOKENPASTE(x, y) x ## y
+#define TOKENPASTE2(x, y) TOKENPASTE(x, y)
 #define ROSA_PROFILE_SESSION_BEGIN(name)    ::rosa::debug::Profiler::instance().beginSession(name)
 #define ROSA_PROFILE_SESSION_END()          ::rosa::debug::Profiler::instance().endSession()
-#define ROSA_PROFILE_SCOPE(name)            ::rosa::debug::ProfileScope profile_scope##__LINE__(name)
+#define ROSA_PROFILE_SCOPE(name)            ::rosa::debug::ProfileScope TOKENPASTE2(profile_scope, __LINE__)(name)
 #else
 #define ROSA_PROFILE_SESSION_BEGIN(name)
 #define ROSA_PROFILE_SESSION_END()

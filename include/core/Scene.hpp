@@ -17,6 +17,7 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Clock.hpp>
+#include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
 #include <core/ResourceManager.hpp>
 #include <spdlog/spdlog.h>
@@ -51,20 +52,29 @@ namespace rosa {
                 return m_registry;
             }
 
-            auto createEntity() -> Entity;
+            auto createEntity() -> Entity&;
             auto removeEntity(Entity& entity) -> bool;
+            auto getEntity(entt::entity entt_id) -> Entity& {
+                return m_entities.at(entt_id);
+            }
+
+
         private:
             entt::registry m_registry{};
             sf::RenderWindow& m_render_window;
             std::unordered_map<entt::entity, Entity> m_entities{};
 
-            auto create_entity(uuids::uuid uuid) -> Entity;
+            auto create_entity(uuids::uuid uuid) -> Entity&;
+
+            virtual auto onLoad() -> void {}
+            virtual auto onUnload() ->  void {}
 
             friend class NativeScriptEntity;
             friend class Entity;
             friend class SceneSerialiser;
-            friend class LuaScriptComponent;
-            friend class lua_script::LuaTransform;
+            friend struct LuaScriptComponent;
+            friend struct lua_script::LuaTransform;
+            friend class GameManager;
 
             auto show_profile_stats(bool* open) -> void;
             bool m_show_profile_stats{false};

@@ -38,6 +38,9 @@ namespace rosa {
             auto run() -> void;
             auto changeScene(const std::string& key) -> bool;
             auto addScene(const std::string& key, std::unique_ptr<Scene> scene) -> bool;
+            auto getCurrentScene() -> Scene& {
+                return *m_current_scene;
+            }
 
             auto getRenderWindow() -> sf::RenderWindow& {
                 return m_render_window;
@@ -45,7 +48,6 @@ namespace rosa {
 
             static auto instance() -> GameManager&;
 
-            auto currentScene() -> Scene&;
         private:
             explicit GameManager();
             ~GameManager();

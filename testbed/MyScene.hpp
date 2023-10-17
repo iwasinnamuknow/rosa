@@ -34,6 +34,8 @@ class MyScene : public rosa::Scene {
             ser.serialiseToYaml("test.yaml");
         }
 
+        auto onLoad() -> void override;
+
         //auto update(float delta_time) -> void override;
         // auto render() -> void override;
 };

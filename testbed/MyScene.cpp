@@ -22,19 +22,30 @@
 #include <unordered_map>
 
 MyScene::MyScene(sf::RenderWindow& render_window) : rosa::Scene(render_window) {
-    auto new_entity = createEntity();
-    new_entity.addComponent<rosa::SpriteComponent>();
-    new_entity.getComponent<rosa::SpriteComponent>().setTexture(rosa_uuid);
+    
+    
+}
+
+auto MyScene::onLoad() -> void {
     auto texture = rosa::ResourceManager::instance().getTexture(rosa_uuid);
     const sf::Vector2f position = sf::Vector2f(
         (static_cast<float>(getRenderWindow().getSize().x) / 2.F) - (static_cast<float>(texture.getSize().x) / 2.F),
         (static_cast<float>(getRenderWindow().getSize().y) / 2.F) - (static_cast<float>(texture.getSize().y) / 2.F)
     );
-    new_entity.getComponent<rosa::TransformComponent>().position = position;
 
-    //getRegistry().emplace<rosa::NativeScriptComponent>(new_entity).bind<TestScript>();
+    auto& parent_entity = createEntity();
+    parent_entity.addComponent<rosa::SpriteComponent>();
+    parent_entity.getComponent<rosa::SpriteComponent>().setTexture(rosa_uuid);
+    parent_entity.getComponent<rosa::TransformComponent>().position = position;
 
-    auto& lsc = new_entity.addComponent<rosa::LuaScriptComponent>(*this, new_entity);
+    auto& child_entity = createEntity();
+    child_entity.addComponent<rosa::SpriteComponent>();
+    child_entity.getComponent<rosa::SpriteComponent>().setTexture(rosa_uuid);
+    child_entity.setParent(parent_entity.getId());
+    child_entity.getComponent<rosa::TransformComponent>().position = sf::Vector2f(-50, -50);
+
+    //getRegistry().emplace<rosa::NativeScriptComponent>(parent_entity).bind<TestScript>();
+    auto& lsc = parent_entity.addComponent<rosa::LuaScriptComponent>(*this, parent_entity);
     lsc.setScript(lua_uuid);
 }
 

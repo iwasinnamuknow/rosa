@@ -84,11 +84,49 @@ namespace rosa {
                 m_for_deletion = true;
             }
 
+            auto setParent(entt::entity parent_id) -> bool;
+            auto removeParent() -> bool;
+
+            auto getParent() -> entt::entity {
+                return m_parent;
+            }
+
+            auto getChildren() const -> const std::vector<entt::entity>& {
+                return m_children;
+            }
+
+            // auto addChild(Entity* new_child) -> bool {
+            //     for (const auto& child : m_children) {
+            //         if (new_child == child) {
+            //             return false;
+            //         }
+            //     }
+
+            //     m_children.emplace_back(new_child);
+            //     new_child->setParent(this);
+            //     return true;
+            // }
+
+            // auto removeChild(Entity* target_child) -> bool {
+            //     for (auto child_it = m_children.begin(); child_it != m_children.end(); ++child_it) {
+            //         if (target_child == *child_it) {
+            //             (*child_it)->removeParent();
+            //             m_children.erase(child_it);
+            //             return true;
+            //         }
+            //     }
+
+            //     return false;
+            // }
+
         private:
             entt::entity m_id = entt::null;
             bool m_enabled{true};
             bool m_for_deletion{false};
             uuids::uuid m_uuid;
+
+            std::vector<entt::entity> m_children{};
+            entt::entity m_parent{entt::null};
 
             std::reference_wrapper<entt::registry> m_registry;
             
