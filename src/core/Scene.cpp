@@ -170,9 +170,9 @@ namespace rosa {
                 //auto updated_pos = transform.position + parent_pos;
 
                 // todo take parents position
-                sprite_comp.sprite.setPosition(transform.position);
-                sprite_comp.sprite.setScale(transform.scale);
-                sprite_comp.sprite.setRotation(transform.rotation);
+                sprite_comp.setPosition(transform.position);
+                sprite_comp.setScale(transform.scale);
+                sprite_comp.setRotation(transform.rotation);
             }
         }
 
@@ -207,7 +207,7 @@ namespace rosa {
         // For every entity with a SpriteComponent, draw it.
         m_registry.view<SpriteComponent>().each([&](const auto& sprite_comp)
         {
-            m_render_window.draw(sprite_comp.sprite);
+            m_render_window.draw(sprite_comp);
         });
     }
 

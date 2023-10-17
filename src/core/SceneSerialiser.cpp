@@ -135,7 +135,7 @@ namespace rosa {
             out << YAML::BeginMap; // sprite
             out << YAML::Key << "type" << YAML::Value << "sprite";
             out << YAML::Key << "texture" << YAML::Value << uuids::to_string(sprite.m_texture_uuid);
-            out << YAML::Key << "color" << YAML::Value << sprite.m_color;
+            out << YAML::Key << "color" << YAML::Value << sprite.getColor();
             out << YAML::EndMap; // sprite
         }
 

@@ -25,30 +25,20 @@ namespace rosa {
 
     class SceneSerialiser;
 
-    struct SpriteComponent {
-        sf::Sprite sprite;
-
+    struct SpriteComponent : sf::Sprite {
+        
         auto getTexture() const -> uuids::uuid {
             return m_texture_uuid;
         }
 
         auto setTexture(uuids::uuid uuid) -> void {
             m_texture_uuid = uuid;
-            sprite.setTexture(ResourceManager::instance().getTexture(m_texture_uuid));
-        }
-
-        auto getColor() -> sf::Color {
-            return m_color;
-        }
-
-        auto setColor(sf::Color color) -> void {
-            m_color = color;
-            sprite.setColor(color);
+            sf::Sprite::setTexture(ResourceManager::instance().getTexture(m_texture_uuid));
         }
 
         private:
             uuids::uuid m_texture_uuid;
-            sf::Color m_color{255, 255, 255, 255};
+            //sf::Color m_color{255, 255, 255, 255};
 
             friend class SceneSerialiser;
     };
