@@ -33,7 +33,7 @@ function onUpdate(delta_time)
   else
     persist["last_rot"] = persist["last_rot"] + delta_time
   end
-  log.debug("hello from lua")
+  --log.debug("hello from lua")
 --   print(dump(transform.getPosition()))
 end
 

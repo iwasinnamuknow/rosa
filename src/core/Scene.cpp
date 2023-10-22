@@ -138,8 +138,9 @@ namespace rosa {
 
             for (const auto& entid : view)
             {
-                const TransformComponent& transform = m_registry.get<TransformComponent>(entid);
+                TransformComponent& transform = m_registry.get<TransformComponent>(entid);
                 SpriteComponent& sprite_comp = m_registry.get<SpriteComponent>(entid);
+
                 // Entity* entity = &m_entities.at(entid);
 
                 // if (entity->m_parent == entt::null) {
@@ -209,8 +210,9 @@ namespace rosa {
         for (const auto& entid : view)
         {
             auto sprite_comp = m_registry.get<SpriteComponent>(entid);
+            auto transform = m_registry.get<TransformComponent>(entid);
             //auto sprite_comp = m_registry.get<SpriteComponent>(entid);
-            m_render_window.draw(sprite_comp);
+            m_render_window.draw(sprite_comp, transform.getLocalTransform());
         };
     }
 

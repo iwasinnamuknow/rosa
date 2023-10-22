@@ -22,13 +22,23 @@
 
 namespace rosa {
 
-    auto Sprite::draw(glm::mat4 projection) -> void {
+    auto Sprite::draw(glm::mat4 projection, glm::mat4 transform) -> void {
 
         if (m_texture == nullptr) {
             return;
         }
 
-        update_transform(projection);
+        glm::mat4 mvp = projection * transform;
+        //glm::vec4 transformed = mvp * glm::vec4(1.F, 1.F, 1.F, 1.F);
+
+        if (m_texture != nullptr) {
+            auto size = m_texture->getSize();
+
+            m_vertices[0].position = glm::vec2(0, 0);
+            m_vertices[1].position = glm::vec2(size.x, 0);
+            m_vertices[2].position = glm::vec2(0, size.y);
+            m_vertices[3].position = glm::vec2(size.x, size.y);
+        }
         
         glUseProgram(m_pid);
         glBindVertexArray(m_vertex_array);
@@ -46,36 +56,11 @@ namespace rosa {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_index), m_index, GL_STATIC_DRAW);
 
-        glUniformMatrix4fv(m_mvp_id, 1, GL_FALSE, &m_mvp[0][0]);
+        glUniformMatrix4fv(m_mvp_id, 1, GL_FALSE, &mvp[0][0]);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glUseProgram(0);
-    }
-
-    auto Sprite::update_transform(glm::mat4 projection) -> void {
-
-        //if (transform_dirty) {
-            m_mvp = projection * getLocalTransform();
-            glm::vec4 transformed = m_mvp * glm::vec4(1.F, 1.F, 1.F, 1.F);
-
-            if (m_texture != nullptr) {
-                auto size = m_texture->getSize();
-
-                m_vertices[0].position = glm::vec2(transformed[0], transformed[1]);
-                m_vertices[1].position = glm::vec2(transformed[0] + size.x, transformed[1]);
-                m_vertices[2].position = glm::vec2(transformed[0], transformed[1] + size.y);
-                m_vertices[3].position = glm::vec2(transformed[0] + size.x, transformed[1] + size.y);
-            }
-
-        //     transform_dirty = false;
-        // }
-    }
-
-    auto Sprite::getLocalTransform() const -> const glm::mat4 {
-        glm::mat4 translation_matrix = glm::translate(glm::mat4(1.F), m_position);
-        glm::mat4 scale_matrix = glm::scale(glm::mat4(1.F), m_scale);
-        return translation_matrix * scale_matrix;
     }
 
     auto Sprite::gl_init() -> void {

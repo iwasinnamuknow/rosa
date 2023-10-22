@@ -28,10 +28,6 @@ namespace rosa {
 
         glm::mat4 mvp;
 
-        auto updateTransform(glm::mat4 projection) -> void {
-            mvp = projection * getLocalTransform();
-        }
-
         auto getLocalTransform() const -> const glm::mat4 {
             glm::mat4 translation_matrix = glm::translate(glm::mat4(1.F), position);
             glm::mat4 scale_matrix = glm::scale(glm::mat4(1.F), scale);

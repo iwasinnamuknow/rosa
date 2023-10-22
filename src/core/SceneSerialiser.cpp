@@ -64,10 +64,10 @@ namespace YAML {
                 return false;
             }
 
-            rhs.r = node[0].as<sf::Uint8>();
-            rhs.g = node[0].as<sf::Uint8>();
-            rhs.b = node[0].as<sf::Uint8>();
-            rhs.a = node[0].as<sf::Uint8>();
+            rhs.r = node[0].as<std::uint8_t>();
+            rhs.g = node[0].as<std::uint8_t>();
+            rhs.b = node[0].as<std::uint8_t>();
+            rhs.a = node[0].as<std::uint8_t>();
             return true;
         }
     };

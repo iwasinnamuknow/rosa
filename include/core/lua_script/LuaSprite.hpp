@@ -16,6 +16,7 @@
 #pragma once
 
 #include <core/components/SpriteComponent.hpp>
+#include <cstdint>
 #include <sol/sol.hpp>
 #include <functional>
 
@@ -46,10 +47,10 @@ namespace rosa::lua_script {
 
         auto setColour(int red, int green, int blue, int alpha = 255) -> void {
             m_component.get().setColour(Colour(
-                static_cast<sf::Uint8>(red), 
-                static_cast<sf::Uint8>(green),
-                static_cast<sf::Uint8>(blue), 
-                static_cast<sf::Uint8>(alpha)
+                static_cast<std::uint8_t>(red), 
+                static_cast<std::uint8_t>(green),
+                static_cast<std::uint8_t>(blue), 
+                static_cast<std::uint8_t>(alpha)
                 )
             );
         }

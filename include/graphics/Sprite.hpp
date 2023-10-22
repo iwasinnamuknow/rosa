@@ -33,7 +33,7 @@ namespace rosa {
     class Sprite : public Drawable {
 
         public:
-            Sprite(glm::vec2 pos = glm::vec2(0.F, 0.F)) : m_position(glm::vec4(pos.x, pos.y, 1.F, 1.F)) {
+            Sprite() {
                 gl_init();
             }
 
@@ -52,38 +52,27 @@ namespace rosa {
             //     glm::translate(transform, m_position);
             // }
 
-            auto setPosition(float x, float y) -> void {
-                m_position = glm::vec3(x, y, 1.F);
-            }
+            // auto getBounds() -> Rect<float> {
 
-            auto setScale(float x, float y) -> void {
-                m_scale = glm::vec3(x, y, 1.F);
-            }
+            //     auto pos = getLocalTransform() * glm::vec4(1.F);
 
-            auto getBounds() -> Rect<float> {
-
-                auto pos = getLocalTransform() * glm::vec4(1.F);
-
-                if (m_texture == nullptr) {
-                    return {m_position[0], m_position[1], 0, 0};
-                }
+            //     if (m_texture == nullptr) {
+            //         return {m_position[0], m_position[1], 0, 0};
+            //     }
                 
-                return {pos[0], pos[1], m_texture->getSize().x * m_scale[0], m_texture->getSize().y * m_scale[1]};
-            }
+            //     return {pos[0], pos[1], m_texture->getSize().x * m_scale[0], m_texture->getSize().y * m_scale[1]};
+            // }
 
             auto setTexture(Texture& texture) -> void {
                 m_texture = &texture;
             }
 
-            auto getLocalTransform() const -> const glm::mat4;
-
         protected:
-            auto draw(glm::mat4 projection) -> void override;
+            auto draw(glm::mat4 projection, glm::mat4 transform) -> void override;
 
         private:
             friend class Window;
             Vertex m_vertices[4];
-            auto update_transform(glm::mat4 projection) -> void;
             
             unsigned int m_pid;
             unsigned int m_vertex_buffer;
@@ -101,11 +90,6 @@ namespace rosa {
             };
 
             unsigned int m_mvp_id;
-
-            glm::mat4 m_mvp;
-            glm::vec3 m_position{1.F};
-            glm::vec3 m_scale{1.F};
-            glm::vec3 m_rotation{1.F};
     };
 
 } // namespace rosa

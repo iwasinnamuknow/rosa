@@ -90,6 +90,8 @@ namespace rosa {
             m_updateViewport = false;
         }
 
+        m_projection = glm::ortho(0.F, static_cast<float>(m_vpSize[0]), static_cast<float>(m_vpSize[1]), 0.F);
+
         glfwSwapBuffers(m_wnd);
     }
 
@@ -98,8 +100,8 @@ namespace rosa {
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    auto RenderWindow::draw(Drawable& drawable) -> void {
-        drawable.draw(m_projection);
+    auto RenderWindow::draw(Drawable& drawable, glm::mat4 transform) -> void {
+        drawable.draw(m_projection, transform);
     }
 
     auto RenderWindow::isFullscreen() const -> bool

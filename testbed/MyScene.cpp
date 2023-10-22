@@ -38,7 +38,7 @@ auto MyScene::onLoad() -> void {
     auto& parent_entity = createEntity();
     parent_entity.addComponent<rosa::SpriteComponent>();
     parent_entity.getComponent<rosa::SpriteComponent>().setTexture(dds_uuid);
-    parent_entity.getComponent<rosa::SpriteComponent>().setPosition(position.x, position.y);
+    parent_entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
     // TODO
     //parent_entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
 
