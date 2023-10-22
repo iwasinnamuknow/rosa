@@ -15,7 +15,6 @@
 
 #pragma once
 
-#include <SFML/Config.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <sol/sol.hpp>
 #include <functional>
@@ -40,13 +39,13 @@ namespace rosa::lua_script {
             return false;            
         }
 
-        auto getColor() const -> sol::table {
-            auto color = m_component.get().getColor();
+        auto getColour() const -> sol::table {
+            auto color = m_component.get().getColour();
             return m_state.get().create_table_with("r", color.r, "g", color.g, "b", color.g, "a", color.a);
         }
 
-        auto setColor(int red, int green, int blue, int alpha = 255) -> void {
-            m_component.get().setColor(sf::Color(
+        auto setColour(int red, int green, int blue, int alpha = 255) -> void {
+            m_component.get().setColour(Colour(
                 static_cast<sf::Uint8>(red), 
                 static_cast<sf::Uint8>(green),
                 static_cast<sf::Uint8>(blue), 

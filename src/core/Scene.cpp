@@ -13,11 +13,10 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Graphics/Transform.hpp>
 #include <core/ResourceManager.hpp>
 #include <core/Scene.hpp>
 #include <core/Entity.hpp>
+#include <core/components/SpriteComponent.hpp>
 #include <core/components/TransformComponent.hpp>
 #include <core/components/NativeScriptComponent.hpp>
 #include <core/components/LuaScriptComponent.hpp>
@@ -26,12 +25,12 @@
 #include <spdlog/spdlog.h>
 #include <debug/Profiler.hpp>
 #include <unordered_map>
-#include "imgui.h"
-#include "imgui-SFML.h"
+// #include "imgui.h"
+// #include "imgui-SFML.h"
 
 namespace rosa {
 
-    Scene::Scene(sf::RenderWindow& render_window) : m_render_window(render_window) { }
+    Scene::Scene(RenderWindow& render_window) : m_render_window(render_window) { }
 
     auto Scene::createEntity() -> Entity& {
         ROSA_PROFILE_SCOPE("Entity:Create");
@@ -62,32 +61,32 @@ namespace rosa {
         return false;
     }
 
-    auto Scene::input(sf::Event& event) -> void {
-        switch (event.type) {
-            case sf::Event::KeyReleased:
-                if (event.key.code == sf::Keyboard::F12) {
-                    m_show_profile_stats = !m_show_profile_stats;
-                }
-                break;
-        }
+    // auto Scene::input(sf::Event& event) -> void {
+    //     switch (event.type) {
+    //         case sf::Event::KeyReleased:
+    //             if (event.key.code == sf::Keyboard::F12) {
+    //                 m_show_profile_stats = !m_show_profile_stats;
+    //             }
+    //             break;
+    //     }
 
-        {
-            ROSA_PROFILE_SCOPE("Events:NativeScript");
+    //     {
+    //         ROSA_PROFILE_SCOPE("Events:NativeScript");
 
-            // Run updates for native script components, instantiating where needed
-            m_registry.view<NativeScriptComponent>().each([this, event](entt::entity entity, auto& nsc) {
+    //         // Run updates for native script components, instantiating where needed
+    //         m_registry.view<NativeScriptComponent>().each([this, event](entt::entity entity, auto& nsc) {
 
-                Entity* actual = &m_entities.at(entity);
+    //             Entity* actual = &m_entities.at(entity);
 
-                if (!nsc.instance) {
-                    nsc.instantiate_function(std::reference_wrapper<Scene>(*this), std::reference_wrapper<Entity>(*actual));
-                    nsc.on_create_function(nsc.instance);
-                }
+    //             if (!nsc.instance) {
+    //                 nsc.instantiate_function(std::reference_wrapper<Scene>(*this), std::reference_wrapper<Entity>(*actual));
+    //                 nsc.on_create_function(nsc.instance);
+    //             }
 
-                nsc.on_input_function(nsc.instance, event);
-            });
-        }
-    }
+    //             nsc.on_input_function(nsc.instance, event);
+    //         });
+    //     }
+    // }
 
     auto Scene::update(float delta_time) -> void {
 
@@ -170,9 +169,9 @@ namespace rosa {
                 //auto updated_pos = transform.position + parent_pos;
 
                 // todo take parents position
-                sprite_comp.setPosition(transform.position);
-                sprite_comp.setScale(transform.scale);
-                sprite_comp.setRotation(transform.rotation);
+                // sprite_comp.setPosition(transform.position);
+                // sprite_comp.setScale(transform.scale);
+                // sprite_comp.setRotation(transform.rotation);
             }
         }
 
@@ -204,64 +203,68 @@ namespace rosa {
     auto Scene::render() -> void {
         ROSA_PROFILE_SCOPE("Render:Sprites");
 
+        auto view = m_registry.view<SpriteComponent>();
+
         // For every entity with a SpriteComponent, draw it.
-        m_registry.view<SpriteComponent>().each([&](const auto& sprite_comp)
+        for (const auto& entid : view)
         {
+            auto sprite_comp = m_registry.get<SpriteComponent>(entid);
+            //auto sprite_comp = m_registry.get<SpriteComponent>(entid);
             m_render_window.draw(sprite_comp);
-        });
+        };
     }
 
     auto Scene::show_profile_stats(bool* open) -> void {
 
-        std::vector<rosa::debug::ProfileUiItem> items;
+        // std::vector<rosa::debug::ProfileUiItem> items;
 
-        ImGui::Begin("Profiler", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+        // ImGui::Begin("Profiler", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
-        ImGui::SetWindowPos(ImVec2(0, 0));
-        auto s = m_last_frame_time.restart().asSeconds();
-        ImGui::Text("FPS: %d", 1 / s);
-        ImGui::Text("Frame Time: %dms", s * 1000);
+        // ImGui::SetWindowPos(ImVec2(0, 0));
+        // auto s = m_last_frame_time.restart().asSeconds();
+        // ImGui::Text("FPS: %d", 1 / s);
+        // ImGui::Text("Frame Time: %dms", s * 1000);
         
-        if (items.size() == 0) {
-            auto entries = rosa::debug::Profiler::instance().getLastFrame();
-            items.resize(entries.size(), rosa::debug::ProfileUiItem());
-            int i{0};
+        // if (items.size() == 0) {
+        //     auto entries = rosa::debug::Profiler::instance().getLastFrame();
+        //     items.resize(entries.size(), rosa::debug::ProfileUiItem());
+        //     int i{0};
 
-            for (const auto& [key, data] : entries) {
-                rosa::debug::ProfileUiItem& item = items[i];
-                item.last = data.last_time;
-                std::strcpy(item.name, key.c_str());
-                item.id = i;
-                i++;
-            }
-        }
+        //     for (const auto& [key, data] : entries) {
+        //         rosa::debug::ProfileUiItem& item = items[i];
+        //         item.last = data.last_time;
+        //         std::strcpy(item.name, key.c_str());
+        //         item.id = i;
+        //         i++;
+        //     }
+        // }
 
-        std::sort(items.begin(), items.end(), [](rosa::debug::ProfileUiItem& a, rosa::debug::ProfileUiItem& b) {
-            return a.last > b.last;
-        });
+        // std::sort(items.begin(), items.end(), [](rosa::debug::ProfileUiItem& a, rosa::debug::ProfileUiItem& b) {
+        //     return a.last > b.last;
+        // });
 
-        ImGui::BeginTable("table1", 2, ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable |
-            ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV );
+        // ImGui::BeginTable("table1", 2, ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable |
+        //     ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV );
 
-        ImGui::TableSetupColumn("Function", ImGuiTableColumnFlags_WidthStretch | ImGuiTableColumnFlags_DefaultSort, 3.F, rosa::debug::profile_item_name);
-        ImGui::TableSetupColumn("Last", ImGuiTableColumnFlags_WidthStretch, 1.F, rosa::debug::profile_item_last);
-        ImGui::TableSetupScrollFreeze(0, 1); // Make row always visible
-        ImGui::TableHeadersRow();
+        // ImGui::TableSetupColumn("Function", ImGuiTableColumnFlags_WidthStretch | ImGuiTableColumnFlags_DefaultSort, 3.F, rosa::debug::profile_item_name);
+        // ImGui::TableSetupColumn("Last", ImGuiTableColumnFlags_WidthStretch, 1.F, rosa::debug::profile_item_last);
+        // ImGui::TableSetupScrollFreeze(0, 1); // Make row always visible
+        // ImGui::TableHeadersRow();
 
-        for (const auto& item : items) {
-            ImGui::PushID(item.name);
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn();
-            ImGui::TextUnformatted(item.name);
-            ImGui::TableNextColumn();
-            ImGui::Text("%ldµs", item.last);
-            ImGui::PopID();
-        }
+        // for (const auto& item : items) {
+        //     ImGui::PushID(item.name);
+        //     ImGui::TableNextRow();
+        //     ImGui::TableNextColumn();
+        //     ImGui::TextUnformatted(item.name);
+        //     ImGui::TableNextColumn();
+        //     ImGui::Text("%ldµs", item.last);
+        //     ImGui::PopID();
+        // }
 
-        ImGui::EndTable();
-        ImGui::End();
+        // ImGui::EndTable();
+        // ImGui::End();
 
-        rosa::debug::Profiler::instance().clearLastFrame();
+        // rosa::debug::Profiler::instance().clearLastFrame();
     }
 
 } // namespace rosa

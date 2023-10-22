@@ -9,9 +9,6 @@ if (ROSA_PROFILE)
 endif(ROSA_PROFILE)
 
 #set(Boost_USE_STATIC_LIBS        ON)
-find_package(imgui CONFIG REQUIRED)
-find_package(SFML CONFIG REQUIRED COMPONENTS graphics system window audio)
-find_package(ImGui-SFML CONFIG REQUIRED)
 find_package(PhysFS REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
@@ -44,17 +41,17 @@ target_include_directories(rosa SYSTEM PUBLIC
     ${LUA_INCLUDE_DIR}
 )
 target_link_libraries(rosa PRIVATE
-  imgui::imgui
-  sfml-graphics sfml-system sfml-window sfml-audio
-  ImGui-SFML::ImGui-SFML
   ${PHYSFS_LIBRARY}
-  ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib/libthor-s.a
   spdlog::spdlog_header_only
   fmt::fmt-header-only
   yaml-cpp
   stduuid
   lua
   sol2
+  ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/libglad.a
+  ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/libglfw3.a
+  ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/libuuid.a
+  X11
 )
 
 add_subdirectory(testbed)

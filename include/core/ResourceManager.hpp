@@ -20,8 +20,7 @@
 #include <optional>
 #include <string>
 #include <unordered_map>
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
+#include <graphics/Texture.hpp>
 #include <physfs.h>
 #include <core/PhysFSStream.hpp>
 #include <core/Resource.hpp>
@@ -36,10 +35,10 @@ namespace rosa {
             ResourceManager(ResourceManager const &&) = delete;
             auto operator=(ResourceManager const &&) -> ResourceManager & = delete;
             
-            auto getTexture(uuids::uuid uuid) -> sf::Texture&;
-            auto getFont(uuids::uuid uuid) -> sf::Font&;
-            auto getSound(uuids::uuid uuid) -> sf::SoundBuffer&;
-            auto getMusicTrack(uuids::uuid uuid) -> sf::Music&;
+            auto getTexture(uuids::uuid uuid) -> Texture&;
+            // auto getFont(uuids::uuid uuid) -> sf::Font&;
+            // auto getSound(uuids::uuid uuid) -> sf::SoundBuffer&;
+            // auto getMusicTrack(uuids::uuid uuid) -> sf::Music&;
             auto getScript(uuids::uuid uuid) -> const std::string&;
 
             static auto instance() -> ResourceManager&;
@@ -54,8 +53,8 @@ namespace rosa {
 
             std::unordered_map<uuids::uuid, std::unique_ptr<Resource>> m_resources;
 
-            template<typename T>
-            auto load_asset(const std::string& path) -> T;
+            // template<typename T>
+            // auto load_asset(const std::string& path) -> T;
 
             auto populate_resource(Resource& resource) -> bool;
 

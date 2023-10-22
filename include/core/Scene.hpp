@@ -15,11 +15,10 @@
 
 #pragma once
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/System/Clock.hpp>
 #include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
 #include <core/ResourceManager.hpp>
+#include <graphics/RenderWindow.hpp>
 #include <spdlog/spdlog.h>
 #include <unordered_map>
 #include <core/Entity.hpp>
@@ -37,13 +36,13 @@ namespace rosa {
 
     class Scene {
         public:
-            explicit Scene(sf::RenderWindow& render_window);
+            explicit Scene(RenderWindow& render_window);
             virtual auto update(float delta_time) -> void;
             virtual auto render() -> void;
-            virtual auto input(sf::Event& event) -> void;
+            //virtual auto input(sf::Event& event) -> void;
             virtual ~Scene() = default;
 
-            auto getRenderWindow() const -> sf::RenderWindow& {
+            auto getRenderWindow() const -> RenderWindow& {
                 return m_render_window;
             }
 
@@ -61,7 +60,7 @@ namespace rosa {
 
         private:
             entt::registry m_registry{};
-            sf::RenderWindow& m_render_window;
+            RenderWindow& m_render_window;
             std::unordered_map<entt::entity, Entity> m_entities{};
 
             auto create_entity(uuids::uuid uuid) -> Entity&;
@@ -79,7 +78,7 @@ namespace rosa {
             auto show_profile_stats(bool* open) -> void;
             bool m_show_profile_stats{false};
 
-            sf::Clock m_last_frame_time;
+            double m_last_frame_time;
     };
 
 } // namespace rosa

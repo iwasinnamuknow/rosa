@@ -13,7 +13,7 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include "core/PhysFSStream.hpp"
+#include <core/PhysFSStream.hpp>
 #include <physfs.h>
 
 namespace rosa {
@@ -50,7 +50,7 @@ namespace rosa {
         m_file = nullptr;
     }
 
-    auto PhysFsStream::read(void * data, sf::Int64 size) -> sf::Int64
+    auto PhysFsStream::read(void * data, uint64_t size) -> uint64_t
     {
         if(!isOpen()) {
             return -1;
@@ -61,7 +61,7 @@ namespace rosa {
         return PHYSFS_readBytes(m_file, data, static_cast<PHYSFS_uint32>(size));
     }
 
-    auto PhysFsStream::seek(sf::Int64 position) -> sf::Int64
+    auto PhysFsStream::seek(uint64_t position) -> uint64_t
     {
         if(!isOpen()) {
             return -1;
@@ -75,7 +75,7 @@ namespace rosa {
         return -1;
     }
 
-    auto PhysFsStream::tell() -> sf::Int64
+    auto PhysFsStream::tell() -> uint64_t
     {
         if(!isOpen()) {
             return -1;
@@ -85,7 +85,7 @@ namespace rosa {
         return PHYSFS_tell(m_file);
     }
 
-    auto PhysFsStream::getSize() -> sf::Int64
+    auto PhysFsStream::getSize() -> uint64_t
     {
         if(!isOpen()) {
             return -1;

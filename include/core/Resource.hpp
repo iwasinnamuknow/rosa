@@ -15,11 +15,10 @@
 
 #pragma once
 
-#include "core/PhysFSStream.hpp"
+#include <core/PhysFSStream.hpp>
 #include <string>
 #include <stduuid/uuid.h>
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
+#include <graphics/Texture.hpp>
 
 namespace rosa {
 
@@ -53,10 +52,10 @@ namespace rosa {
             uuids::uuid m_uuid{};
             resource_type m_type{};
 
-            sf::Texture m_texture;
-            sf::Font m_font;
-            sf::SoundBuffer m_sound_buffer;
-            sf::Music m_music;
+            Texture m_texture;
+            // sf::Font m_font;
+            // sf::SoundBuffer m_sound_buffer;
+            // sf::Music m_music;
             PhysFsStream m_stream;
             std::string m_script;
 

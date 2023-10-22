@@ -60,8 +60,8 @@ namespace rosa {
                 auto transform_table = m_state["transform"].get_or_create<sol::table>();
                 transform_table.set_function("getPosition", &lua_script::LuaTransform::getPosition, m_lua_transform.get());
                 transform_table.set_function("setPosition", &lua_script::LuaTransform::setPosition, m_lua_transform.get());
-                transform_table.set_function("getRotation", &lua_script::LuaTransform::getRotation, m_lua_transform.get());
-                transform_table.set_function("setRotation", &lua_script::LuaTransform::setRotation, m_lua_transform.get());
+                // transform_table.set_function("getRotation", &lua_script::LuaTransform::getRotation, m_lua_transform.get());
+                // transform_table.set_function("setRotation", &lua_script::LuaTransform::setRotation, m_lua_transform.get());
 
                 // Sprite component
                 if (m_scene.get().getRegistry().all_of<SpriteComponent>(m_entity)) {
@@ -74,8 +74,8 @@ namespace rosa {
                     auto sprite_table = m_state["sprite"].get_or_create<sol::table>();
                     sprite_table.set_function("getTexture", &lua_script::LuaSprite::getTexture, m_lua_sprite.get());
                     sprite_table.set_function("setTexture", &lua_script::LuaSprite::getTexture, m_lua_sprite.get());
-                    sprite_table.set_function("getColor", &lua_script::LuaSprite::getColor, m_lua_sprite.get());
-                    sprite_table.set_function("setColor", &lua_script::LuaSprite::setColor, m_lua_sprite.get());
+                    sprite_table.set_function("getColour", &lua_script::LuaSprite::getColour, m_lua_sprite.get());
+                    sprite_table.set_function("setColour", &lua_script::LuaSprite::setColour, m_lua_sprite.get());
                 }
 
                 // Call the lua initialiser

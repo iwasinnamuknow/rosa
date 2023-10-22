@@ -26,8 +26,8 @@
 #include <iostream>
 #include <fstream>
 #include <format>
-#include "imgui.h"
-#include "imgui-SFML.h"
+// #include "imgui.h"
+// #include "imgui-SFML.h"
 
 namespace rosa::debug {
 

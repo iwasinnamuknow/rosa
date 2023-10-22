@@ -14,8 +14,7 @@
  * bbai. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "core/Resource.hpp"
-#include <SFML/Graphics/Shader.hpp>
+#include <core/Resource.hpp>
 #include <cassert>
 #include <core/ResourceManager.hpp>
 #include <exception>
@@ -70,7 +69,7 @@ namespace rosa {
         return s_instance;
     }
 
-    auto ResourceManager::getTexture(const uuids::uuid uuid) -> sf::Texture& {
+    auto ResourceManager::getTexture(const uuids::uuid uuid) -> Texture& {
         ROSA_PROFILE_SCOPE("Assets:getTexture");
 
         if (auto search = m_resources.find(uuid); search != m_resources.end()) {
@@ -87,56 +86,56 @@ namespace rosa {
         abort();
     }
 
-    auto ResourceManager::getFont(const uuids::uuid uuid) -> sf::Font& {
-        ROSA_PROFILE_SCOPE("Assets:getFont");
+    // auto ResourceManager::getFont(const uuids::uuid uuid) -> sf::Font& {
+    //     ROSA_PROFILE_SCOPE("Assets:getFont");
 
-        if (auto search = m_resources.find(uuid); search != m_resources.end()) {
-            assert(search->second->m_type == resource_font);
+    //     if (auto search = m_resources.find(uuid); search != m_resources.end()) {
+    //         assert(search->second->m_type == resource_font);
 
-            if (!search->second->m_loaded) {
-                populate_resource(*(search->second));
-            }
+    //         if (!search->second->m_loaded) {
+    //             populate_resource(*(search->second));
+    //         }
 
-            return search->second->m_font;
-        }
+    //         return search->second->m_font;
+    //     }
 
-        spdlog::error("Asset not registered {}", uuids::to_string(uuid));
-        abort();
-    }
+    //     spdlog::error("Asset not registered {}", uuids::to_string(uuid));
+    //     abort();
+    // }
 
-    auto ResourceManager::getSound(const uuids::uuid uuid) -> sf::SoundBuffer& {
-        ROSA_PROFILE_SCOPE("Assets:getSound");
+    // auto ResourceManager::getSound(const uuids::uuid uuid) -> sf::SoundBuffer& {
+    //     ROSA_PROFILE_SCOPE("Assets:getSound");
 
-        if (auto search = m_resources.find(uuid); search != m_resources.end()) {
-            assert(search->second->m_type == resource_sound);
+    //     if (auto search = m_resources.find(uuid); search != m_resources.end()) {
+    //         assert(search->second->m_type == resource_sound);
 
-            if (!search->second->m_loaded) {
-                populate_resource(*(search->second));
-            }
+    //         if (!search->second->m_loaded) {
+    //             populate_resource(*(search->second));
+    //         }
 
-            return search->second->m_sound_buffer;
-        }
+    //         return search->second->m_sound_buffer;
+    //     }
 
-        spdlog::error("Asset not registered {}", uuids::to_string(uuid));
-        abort();
-    }
+    //     spdlog::error("Asset not registered {}", uuids::to_string(uuid));
+    //     abort();
+    // }
 
-    auto ResourceManager::getMusicTrack(const uuids::uuid uuid) -> sf::Music& {
-        ROSA_PROFILE_SCOPE("Assets:getMusicTrack");
+    // auto ResourceManager::getMusicTrack(const uuids::uuid uuid) -> sf::Music& {
+    //     ROSA_PROFILE_SCOPE("Assets:getMusicTrack");
 
-        if (auto search = m_resources.find(uuid); search != m_resources.end()) {
-            assert(search->second->m_type == resource_sound);
+    //     if (auto search = m_resources.find(uuid); search != m_resources.end()) {
+    //         assert(search->second->m_type == resource_sound);
 
-            if (!search->second->m_loaded) {
-                populate_resource(*(search->second));
-            }
+    //         if (!search->second->m_loaded) {
+    //             populate_resource(*(search->second));
+    //         }
 
-            return search->second->m_music;
-        }
+    //         return search->second->m_music;
+    //     }
 
-        spdlog::error("Asset not registered {}", uuids::to_string(uuid));
-        abort();
-    }
+    //     spdlog::error("Asset not registered {}", uuids::to_string(uuid));
+    //     abort();
+    // }
 
     auto ResourceManager::getScript(uuids::uuid uuid) -> const std::string& {
         ROSA_PROFILE_SCOPE("Assets:getScript");
@@ -166,23 +165,23 @@ namespace rosa {
         return result;
     }
 
-    template<typename T>
-    auto ResourceManager::load_asset(const std::string& path) -> T {
-        if (PHYSFS_exists(path.c_str()) != 0) {
-            PhysFsStream stream;
-            [[maybe_unused]] bool stream_success = stream.open(path.c_str());
-            assert(stream_success);
+    // template<typename T>
+    // auto ResourceManager::load_asset(const std::string& path) -> T {
+    //     if (PHYSFS_exists(path.c_str()) != 0) {
+    //         PhysFsStream stream;
+    //         [[maybe_unused]] bool stream_success = stream.open(path.c_str());
+    //         assert(stream_success);
 
-            T asset{};
-            [[maybe_unused]] bool load_success = asset.loadFromStream(stream);
-            assert(load_success);
+    //         T asset{};
+    //         [[maybe_unused]] bool load_success = asset.load(stream);
+    //         assert(load_success);
 
-            return asset;
-        }
+    //         return asset;
+    //     }
         
-        spdlog::critical("Couldn't load asset: {}", path);
-        return T{};
-    }
+    //     spdlog::critical("Couldn't load asset: {}", path);
+    //     return T{};
+    // }
 
     auto ResourceManager::populate_resource(Resource& resource) -> bool {
         ROSA_PROFILE_SCOPE("Assets:Load");
@@ -190,24 +189,25 @@ namespace rosa {
         spdlog::debug("Loading asset {}", resource.m_name);
         switch (resource.m_type) {
             case resource_texture:
-                resource.m_texture = load_asset<sf::Texture>(resource.m_name);
+                resource.m_texture = Texture();
+                resource.m_texture.loadFromPhysFS(resource.m_name);
                 break;
-            case resource_font:
-                resource.m_font = load_asset<sf::Font>(resource.m_name);
-                break;
-            case resource_sound:
-                resource.m_sound_buffer = load_asset<sf::SoundBuffer>(resource.m_name);
-                break;
-            case resource_music:
-                if (PHYSFS_exists(resource.m_name.c_str()) != 0) {
-                    [[maybe_unused]] bool stream_success = resource.m_stream.open(resource.m_name.c_str());
-                    assert(stream_success);
+            // case resource_font:
+            //     resource.m_font = load_asset<sf::Font>(resource.m_name);
+            //     break;
+            // case resource_sound:
+            //     resource.m_sound_buffer = load_asset<sf::SoundBuffer>(resource.m_name);
+            //     break;
+            // case resource_music:
+            //     if (PHYSFS_exists(resource.m_name.c_str()) != 0) {
+            //         [[maybe_unused]] bool stream_success = resource.m_stream.open(resource.m_name.c_str());
+            //         assert(stream_success);
 
-                    resource.m_music.openFromStream(resource.m_stream);
-                } else {
-                    spdlog::critical("Couldn't load asset: {}", resource.m_name);
-                }
-                break;
+            //         resource.m_music.openFromStream(resource.m_stream);
+            //     } else {
+            //         spdlog::critical("Couldn't load asset: {}", resource.m_name);
+            //     }
+            //     break;
             case resource_script:
                 if (PHYSFS_exists(resource.m_name.c_str()) != 0) {
                     PHYSFS_file* myfile = PHYSFS_openRead(resource.m_name.c_str());

@@ -23,20 +23,21 @@
 #include <core/components/TransformComponent.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <core/components/LuaScriptComponent.hpp>
+#include <graphics/Colour.hpp>
 #include <cmath>
 
 namespace YAML {
 
     template<>
-    struct convert<sf::Vector2f> {
-        static auto encode(const sf::Vector2f& rhs) -> Node {
+    struct convert<glm::vec2> {
+        static auto encode(const glm::vec2& rhs) -> Node {
             Node node;
             node.push_back(rhs.x);
             node.push_back(rhs.y);
             return node;
         }
 
-        static auto decode(const Node& node, sf::Vector2f& rhs) -> bool {
+        static auto decode(const Node& node, glm::vec2& rhs) -> bool {
             if (!node.IsSequence() || node.size() != 2) {
                 return false;
             }
@@ -48,8 +49,8 @@ namespace YAML {
     };
 
     template<>
-    struct convert<sf::Color> {
-        static auto encode(const sf::Color& rhs) -> Node {
+    struct convert<rosa::Colour> {
+        static auto encode(const rosa::Colour& rhs) -> Node {
             Node node;
             node.push_back(rhs.r);
             node.push_back(rhs.g);
@@ -58,7 +59,7 @@ namespace YAML {
             return node;
         }
 
-        static auto decode(const Node& node, sf::Color& rhs) -> bool {
+        static auto decode(const Node& node, rosa::Colour& rhs) -> bool {
             if (!node.IsSequence() || node.size() != 4) {
                 return false;
             }
@@ -83,15 +84,15 @@ namespace YAML {
 
 namespace rosa {
 
-    auto operator<<(YAML::Emitter& out, const sf::Vector2f& vec) -> YAML::Emitter& {
+    auto operator<<(YAML::Emitter& out, const glm::vec2& vec) -> YAML::Emitter& {
         out << YAML::Flow;
         out << YAML::BeginSeq << vec.x << vec.y << YAML::EndSeq;
         return out;
     }
 
-    auto operator<<(YAML::Emitter& out, const sf::Color& color) -> YAML::Emitter& {
+    auto operator<<(YAML::Emitter& out, const rosa::Colour& colour) -> YAML::Emitter& {
         out << YAML::Flow;
-        out << YAML::BeginSeq << static_cast<int>(color.r) << static_cast<int>(color.g) << static_cast<int>(color.b) << static_cast<int>(color.a) << YAML::EndSeq;
+        out << YAML::BeginSeq << static_cast<int>(colour.r) << static_cast<int>(colour.g) << static_cast<int>(colour.b) << static_cast<int>(colour.a) << YAML::EndSeq;
         return out;
     }
 
@@ -124,10 +125,10 @@ namespace rosa {
         auto& transform = entity.getComponent<TransformComponent>();
         out << YAML::BeginMap; // transform
         out << YAML::Key << "type" << YAML::Value << "transform";
-        out << YAML::Key << "position" << YAML::Value << transform.position;
-        out << YAML::Key << "scale" << YAML::Value << transform.scale;
-        out << YAML::Key << "velocity" << YAML::Value << transform.velocity;
-        out << YAML::Key << "rotation" << YAML::Value << transform.rotation;
+        // out << YAML::Key << "position" << YAML::Value << transform.position;
+        // out << YAML::Key << "scale" << YAML::Value << transform.scale;
+        // out << YAML::Key << "velocity" << YAML::Value << transform.velocity;
+        // out << YAML::Key << "rotation" << YAML::Value << transform.rotation;
         out << YAML::EndMap; // transform
         
         if (entity.hasComponent<SpriteComponent>()) {
@@ -135,7 +136,7 @@ namespace rosa {
             out << YAML::BeginMap; // sprite
             out << YAML::Key << "type" << YAML::Value << "sprite";
             out << YAML::Key << "texture" << YAML::Value << uuids::to_string(sprite.m_texture_uuid);
-            out << YAML::Key << "color" << YAML::Value << sprite.getColor();
+            out << YAML::Key << "color" << YAML::Value << sprite.getColour();
             out << YAML::EndMap; // sprite
         }
 
@@ -218,14 +219,14 @@ namespace rosa {
                                 auto type = comp["type"].as<std::string>();
                                 if (type == "transform") {
                                     auto& transform = new_entity.getComponent<TransformComponent>();
-                                    transform.position = comp["position"].as<sf::Vector2f>();
-                                    transform.velocity = comp["velocity"].as<sf::Vector2f>();
-                                    transform.scale = comp["scale"].as<sf::Vector2f>();
-                                    transform.rotation = comp["rotation"].as<float>();
+                                    // transform.position = comp["position"].as<sf::Vector2f>();
+                                    // transform.velocity = comp["velocity"].as<sf::Vector2f>();
+                                    // transform.scale = comp["scale"].as<sf::Vector2f>();
+                                    // transform.rotation = comp["rotation"].as<float>();
                                 } else if (type == "sprite") {
                                     auto& sprite = new_entity.addComponent<SpriteComponent>();
                                     sprite.setTexture(comp["texture"].as<uuids::uuid>());
-                                    sprite.setColor(comp["color"].as<sf::Color>());
+                                    sprite.setColour(comp["color"].as<rosa::Colour>());
                                 } else if (type == "lua_script") {
                                     auto& lsc = new_entity.addComponent<LuaScriptComponent>(m_scene, new_entity);
                                     auto script_uuid = comp["script"].as<std::string>();

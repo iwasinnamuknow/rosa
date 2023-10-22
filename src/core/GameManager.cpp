@@ -13,11 +13,12 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include "graphics/Colour.hpp"
 #include <core/GameManager.hpp>
 #include <cstddef>
 #include <memory>
-#include "imgui.h"
-#include "imgui-SFML.h"
+// #include "imgui.h"
+// #include "imgui-SFML.h"
 #include <debug/Profiler.hpp>
 
 namespace rosa {
@@ -28,10 +29,10 @@ namespace rosa {
         spdlog::set_level(spdlog::level::debug);
         spdlog::info("Rosa is up and running!");
 
-        m_render_window.create(sf::VideoMode(window_width, window_height), "SFML Window", sf::Style::None);
+        m_render_window.init(window_width, window_height, "SFML Window");
 
-        [[maybe_unused]] bool imgui_init =  ImGui::SFML::Init(m_render_window);
-        assert(imgui_init);
+        // [[maybe_unused]] bool imgui_init =  ImGui::SFML::Init(m_render_window);
+        // assert(imgui_init);
 
         /*std::unique_ptr<Scene> new_scene = std::make_unique<Scene>(m_render_window);
         m_scenes.insert_or_assign("test", std::move(new_scene));
@@ -47,9 +48,9 @@ namespace rosa {
     }
 
     GameManager::~GameManager() {
-        if (m_render_window.isOpen()) {
-            m_render_window.close();
-        }
+        // if (m_render_window.isOpen()) {
+        //     m_render_window.close();
+        // }
     }
 
     auto GameManager::addScene(const std::string& key, std::unique_ptr<Scene> scene) -> bool {
@@ -59,32 +60,32 @@ namespace rosa {
     }
 
     auto GameManager::run() -> void {
-        sf::Clock delta_clock;
+        float delta_clock{0};
 
         while (m_render_window.isOpen()) {
 
             assert(m_current_scene); // Ensure scene pointer is valid - this needs to be managed internally.
 
-            sf::Event event{};            
+            //sf::Event event{};
 
-            while (m_render_window.pollEvent(event)) {
-                ImGui::SFML::ProcessEvent(m_render_window, event);
+            while (m_render_window.pollEvents()) {
+                //ImGui::SFML::ProcessEvent(m_render_window, event);
 
-                if (event.type == sf::Event::Closed) {
-                    m_render_window.close();
-                } else {
-                    m_current_scene->input(event);
-                }
+                // if (event.type == sf::Event::Closed) {
+                //     m_render_window.close();
+                // } else {
+                //     m_current_scene->input(event);
+                // }
             }
 
-            ImGui::SFML::Update(m_render_window, delta_clock.getElapsedTime());
+            //ImGui::SFML::Update(m_render_window, delta_clock.getElapsedTime());
             //ImGui::ShowDemoWindow();
-            m_current_scene->update(delta_clock.restart().asSeconds());
+            m_current_scene->update(delta_clock);
 
-            m_render_window.clear();
+            m_render_window.clearColour(Colour{0, 255, 128});
             m_current_scene->render();
 
-            ImGui::SFML::Render(m_render_window);
+            //ImGui::SFML::Render(m_render_window);
             m_render_window.display();
 
         }

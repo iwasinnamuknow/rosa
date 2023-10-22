@@ -15,16 +15,44 @@
 
 #pragma once
 
-#include <SFML/Graphics.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <cmath>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace rosa {
 
     struct TransformComponent {
-        sf::Vector2f position{0, 0};
-        sf::Vector2f velocity{0, 0};
-        sf::Vector2f scale{1, 1};
-        float rotation{0};
+        glm::vec3 position{0, 0, 0};
+        glm::vec3 scale{1, 1, 1};
+        //float rotation{0};
+
+        glm::mat4 mvp;
+
+        auto updateTransform(glm::mat4 projection) -> void {
+            mvp = projection * getLocalTransform();
+        }
+
+        auto getLocalTransform() const -> const glm::mat4 {
+            glm::mat4 translation_matrix = glm::translate(glm::mat4(1.F), position);
+            glm::mat4 scale_matrix = glm::scale(glm::mat4(1.F), scale);
+            return translation_matrix * scale_matrix;
+        }
+
+        auto setPosition(float x, float y) -> void {
+            position = glm::vec3(x, y, 1.F);
+        }
+
+        auto getPosition() const -> const glm::vec2 {
+            return glm::vec2(position[0], position[1]);
+        }
+
+        auto setScale(float x, float y) -> void {
+            scale = glm::vec3(x, y, 1.F);
+        }
+
+        auto getScale() const -> const glm::vec2 {
+            return glm::vec2(scale[0], scale[1]);
+        }
     };
 
 } // namespace rosa

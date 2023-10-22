@@ -15,11 +15,10 @@
 
 #pragma once
 
-#include <SFML/Graphics/RenderWindow.hpp>
 #include <unordered_map>
 #include <core/Scene.hpp>
-#include <SFML/Graphics.hpp>
 #include <core/ResourceManager.hpp>
+#include <graphics/RenderWindow.hpp>
 #include <spdlog/spdlog.h>
 #include <memory>
 
@@ -42,7 +41,7 @@ namespace rosa {
                 return *m_current_scene;
             }
 
-            auto getRenderWindow() -> sf::RenderWindow& {
+            auto getRenderWindow() -> RenderWindow& {
                 return m_render_window;
             }
 
@@ -54,7 +53,7 @@ namespace rosa {
 
             std::unordered_map<std::string, std::unique_ptr<Scene>> m_scenes{};
             Scene* m_current_scene{nullptr};
-            sf::RenderWindow m_render_window{};
+            RenderWindow m_render_window{};
     };
 
 } // namespace rosa

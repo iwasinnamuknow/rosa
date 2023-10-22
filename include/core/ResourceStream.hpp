@@ -15,29 +15,21 @@
 
 #pragma once
 
-#include <core/ResourceStream.hpp>
 #include <cstdint>
-
-struct PHYSFS_File;
 
 namespace rosa {
 
-    class PhysFsStream : public ResourceStream
-    {
+    class ResourceStream {
         public:
-            explicit PhysFsStream(const char * filename = nullptr);
-            ~PhysFsStream() override;
-            auto isOpen() const -> bool override;
-            auto open(const char * filename) -> bool override;
-            auto close() -> void override;
-            auto read(void * data, uint64_t size) -> uint64_t override;
-            auto seek(uint64_t position) -> uint64_t override;
-            auto tell() -> uint64_t override;
-            auto getSize() -> uint64_t override;
-
-        private:
-            PHYSFS_File * m_file;
-
+            ResourceStream() = default;
+            virtual ~ResourceStream() = default;
+            virtual auto isOpen() const -> bool = 0;
+            virtual auto open(const char * filename) -> bool = 0;
+            virtual auto close() -> void = 0;
+            virtual auto read(void * data, std::uint64_t size) -> uint64_t = 0;
+            virtual auto seek(uint64_t position) -> uint64_t = 0;
+            virtual auto tell() -> uint64_t = 0;
+            virtual auto getSize() -> uint64_t = 0;
     };
 
 } // namespace rosa
