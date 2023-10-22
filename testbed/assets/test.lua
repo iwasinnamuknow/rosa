@@ -25,11 +25,12 @@ end
 
 function onUpdate(delta_time)
   if persist["last_rot"] > 0.1 then
-    transform.setRotation(persist["rotation"])
-    persist["rotation"] = (persist["rotation"] + 1) % 360
-    sprite.setColor(persist["red"], 255, 255, 255)
-    persist["red"] = (persist["red"] + 1) % 255
+    --transform.setRotation(persist["rotation"])
+    --persist["rotation"] = (persist["rotation"] + 1) % 360
+    sprite.setColour(persist["red"], 255, 255, 255)
+    persist["red"] = (persist["red"] + 5) % 255
     persist["last_rot"] = 0
+    log.debug("Red: " .. tostring(persist["red"]))
   else
     persist["last_rot"] = persist["last_rot"] + delta_time
   end

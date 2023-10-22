@@ -14,12 +14,15 @@
  */
 
 #include "graphics/Colour.hpp"
+#include <bits/chrono.h>
 #include <core/GameManager.hpp>
 #include <cstddef>
 #include <memory>
 // #include "imgui.h"
 // #include "imgui-SFML.h"
 #include <debug/Profiler.hpp>
+#include <chrono>
+#include <ratio>
 
 namespace rosa {
 
@@ -60,9 +63,12 @@ namespace rosa {
     }
 
     auto GameManager::run() -> void {
-        float delta_clock{0};
-
         while (m_render_window.isOpen()) {
+
+            std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+            auto micros = std::chrono::duration_cast<std::chrono::microseconds>(now - m_time);
+            float delta_time = micros.count() / 1000000.F;
+            m_time = now;
 
             assert(m_current_scene); // Ensure scene pointer is valid - this needs to be managed internally.
 
@@ -80,14 +86,13 @@ namespace rosa {
 
             //ImGui::SFML::Update(m_render_window, delta_clock.getElapsedTime());
             //ImGui::ShowDemoWindow();
-            m_current_scene->update(delta_clock);
+            m_current_scene->update(delta_time);
 
             m_render_window.clearColour(Colour{0, 255, 128});
             m_current_scene->render();
 
             //ImGui::SFML::Render(m_render_window);
             m_render_window.display();
-
         }
 
         ROSA_PROFILE_SESSION_END();

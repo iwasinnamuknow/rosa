@@ -51,6 +51,8 @@ namespace rosa {
             explicit GameManager();
             ~GameManager();
 
+            std::chrono::time_point<std::chrono::system_clock> m_time;
+
             std::unordered_map<std::string, std::unique_ptr<Scene>> m_scenes{};
             Scene* m_current_scene{nullptr};
             RenderWindow m_render_window{};
