@@ -76,9 +76,9 @@ namespace rosa {
             friend class GameManager;
 
             auto show_profile_stats(bool* open) -> void;
-            bool m_show_profile_stats{false};
+            bool m_show_profile_stats{true};
 
-            double m_last_frame_time;
+            float m_last_frame_time;
     };
 
 } // namespace rosa

@@ -13,6 +13,12 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+#include <graphics/gl.h>
+#include <GLFW/glfw3.h>
+
 #include <core/ResourceManager.hpp>
 #include <core/Scene.hpp>
 #include <core/Entity.hpp>
@@ -25,8 +31,6 @@
 #include <spdlog/spdlog.h>
 #include <debug/Profiler.hpp>
 #include <unordered_map>
-// #include "imgui.h"
-// #include "imgui-SFML.h"
 
 namespace rosa {
 
@@ -89,6 +93,8 @@ namespace rosa {
     // }
 
     auto Scene::update(float delta_time) -> void {
+
+        m_last_frame_time = delta_time;
 
 #ifdef ROSA_PROFILE
         {
@@ -218,55 +224,56 @@ namespace rosa {
 
     auto Scene::show_profile_stats(bool* open) -> void {
 
-        // std::vector<rosa::debug::ProfileUiItem> items;
+        std::vector<rosa::debug::ProfileUiItem> items;
 
-        // ImGui::Begin("Profiler", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+        ImGui::Begin("Profiler", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
-        // ImGui::SetWindowPos(ImVec2(0, 0));
-        // auto s = m_last_frame_time.restart().asSeconds();
-        // ImGui::Text("FPS: %d", 1 / s);
-        // ImGui::Text("Frame Time: %dms", s * 1000);
+        float fps = 1.F / m_last_frame_time;
+
+        ImGui::SetWindowPos(ImVec2(0, 0));
+        ImGui::Text("FPS: %f", fps);
+        ImGui::Text("Frame Time: %dms", m_last_frame_time * 1000);
         
-        // if (items.size() == 0) {
-        //     auto entries = rosa::debug::Profiler::instance().getLastFrame();
-        //     items.resize(entries.size(), rosa::debug::ProfileUiItem());
-        //     int i{0};
+        if (items.size() == 0) {
+            auto entries = rosa::debug::Profiler::instance().getLastFrame();
+            items.resize(entries.size(), rosa::debug::ProfileUiItem());
+            int i{0};
 
-        //     for (const auto& [key, data] : entries) {
-        //         rosa::debug::ProfileUiItem& item = items[i];
-        //         item.last = data.last_time;
-        //         std::strcpy(item.name, key.c_str());
-        //         item.id = i;
-        //         i++;
-        //     }
-        // }
+            for (const auto& [key, data] : entries) {
+                rosa::debug::ProfileUiItem& item = items[i];
+                item.last = data.last_time;
+                std::strcpy(item.name, key.c_str());
+                item.id = i;
+                i++;
+            }
+        }
 
-        // std::sort(items.begin(), items.end(), [](rosa::debug::ProfileUiItem& a, rosa::debug::ProfileUiItem& b) {
-        //     return a.last > b.last;
-        // });
+        std::sort(items.begin(), items.end(), [](rosa::debug::ProfileUiItem& a, rosa::debug::ProfileUiItem& b) {
+            return a.last > b.last;
+        });
 
-        // ImGui::BeginTable("table1", 2, ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable |
-        //     ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV );
+        ImGui::BeginTable("table1", 2, ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable |
+            ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV );
 
-        // ImGui::TableSetupColumn("Function", ImGuiTableColumnFlags_WidthStretch | ImGuiTableColumnFlags_DefaultSort, 3.F, rosa::debug::profile_item_name);
-        // ImGui::TableSetupColumn("Last", ImGuiTableColumnFlags_WidthStretch, 1.F, rosa::debug::profile_item_last);
-        // ImGui::TableSetupScrollFreeze(0, 1); // Make row always visible
-        // ImGui::TableHeadersRow();
+        ImGui::TableSetupColumn("Function", ImGuiTableColumnFlags_WidthStretch | ImGuiTableColumnFlags_DefaultSort, 3.F, rosa::debug::profile_item_name);
+        ImGui::TableSetupColumn("Last", ImGuiTableColumnFlags_WidthStretch, 1.F, rosa::debug::profile_item_last);
+        ImGui::TableSetupScrollFreeze(0, 1); // Make row always visible
+        ImGui::TableHeadersRow();
 
-        // for (const auto& item : items) {
-        //     ImGui::PushID(item.name);
-        //     ImGui::TableNextRow();
-        //     ImGui::TableNextColumn();
-        //     ImGui::TextUnformatted(item.name);
-        //     ImGui::TableNextColumn();
-        //     ImGui::Text("%ldµs", item.last);
-        //     ImGui::PopID();
-        // }
+        for (const auto& item : items) {
+            ImGui::PushID(item.name);
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted(item.name);
+            ImGui::TableNextColumn();
+            ImGui::Text("%ldµs", item.last);
+            ImGui::PopID();
+        }
 
-        // ImGui::EndTable();
-        // ImGui::End();
+        ImGui::EndTable();
+        ImGui::End();
 
-        // rosa::debug::Profiler::instance().clearLastFrame();
+        rosa::debug::Profiler::instance().clearLastFrame();
     }
 
 } // namespace rosa

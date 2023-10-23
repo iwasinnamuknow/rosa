@@ -13,19 +13,16 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include "graphics/Colour.hpp"
+#include <graphics/Colour.hpp>
 #include <bits/chrono.h>
 #include <core/GameManager.hpp>
 #include <cstddef>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
 #include <memory>
 // #include "imgui.h"
 // #include "imgui-SFML.h"
 #include <debug/Profiler.hpp>
 #include <chrono>
 #include <ratio>
-#include <vcpkg/buildtrees/imgui/src/v1.89.6-3b94b94077.clean/imgui.h>
 
 namespace rosa {
 
@@ -46,9 +43,6 @@ namespace rosa {
         assert(change_scene);*/
 
         [[maybe_unused]]auto& res = ResourceManager::instance();
-
-        // Setup imgui
-        IMGUI_CHECKVERSION();
     }
 
     auto GameManager::instance() -> GameManager& {
@@ -70,6 +64,8 @@ namespace rosa {
 
     auto GameManager::run() -> void {
 
+        // Setup imgui
+        IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGui::StyleColorsDark();
         ImGui_ImplGlfw_InitForOpenGL(m_render_window.getGlWindowPtr(), true);
@@ -100,30 +96,9 @@ namespace rosa {
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            //ImGui::SFML::Update(m_render_window, delta_clock.getElapsedTime());
-            //ImGui::ShowDemoWindow();
             m_current_scene->update(delta_time);
 
             m_render_window.clearColour(Colour{0, 255, 128});
-
-            {
-                static float f = 0.0f;
-                static int counter = 0;
-
-                ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-                ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-                
-                ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-                
-                if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-                    counter++;
-                ImGui::SameLine();
-                ImGui::Text("counter = %d", counter);
-
-                //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-                ImGui::End();
-            }
 
             m_current_scene->render();
 
