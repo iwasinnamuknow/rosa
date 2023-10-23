@@ -30,6 +30,8 @@ add_library(
                                                                 
 #endif (_WIN32)
 
+find_package(imgui CONFIG REQUIRED)
+
 target_compile_features(rosa PRIVATE cxx_std_20)
 target_include_directories(rosa PRIVATE
     include/
@@ -52,6 +54,7 @@ target_link_libraries(rosa PRIVATE
   ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/libglfw3.a
   ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/libuuid.a
   X11
+  imgui::imgui
 )
 
 add_subdirectory(testbed)

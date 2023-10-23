@@ -59,6 +59,14 @@
       "features": [
           "gl-api-33"
       ]
+    },
+    {
+      "name": "imgui",
+      "version>=": "1.89.6#1",
+      "features": [
+        "glfw-binding",
+        "opengl3-binding"
+      ]
     }
   ],
   "default-features": [],

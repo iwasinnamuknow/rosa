@@ -15,6 +15,12 @@
 
 #pragma once
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+#include <graphics/gl.h>
+#include <GLFW/glfw3.h>
+
 #include <unordered_map>
 #include <core/Scene.hpp>
 #include <core/ResourceManager.hpp>
@@ -56,6 +62,8 @@ namespace rosa {
             std::unordered_map<std::string, std::unique_ptr<Scene>> m_scenes{};
             Scene* m_current_scene{nullptr};
             RenderWindow m_render_window{};
+
+            //ImGuiIO& io;
     };
 
 } // namespace rosa

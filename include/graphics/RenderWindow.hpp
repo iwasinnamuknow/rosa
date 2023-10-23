@@ -54,6 +54,10 @@ namespace rosa {
                 return {m_wndSize[0], m_wndSize[1]};
             }
 
+            auto getGlWindowPtr() -> GLFWwindow* {
+                return m_wnd;
+            }
+
             // TODO EVENTS
             auto pollEvents() -> bool;
     };
