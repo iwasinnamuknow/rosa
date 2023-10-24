@@ -27,10 +27,17 @@ find_package(Lua REQUIRED)
 add_library(
   rosa ${SOURCES}
 )
+
+
                                                                 
 #endif (_WIN32)
 
 find_package(imgui CONFIG REQUIRED)
+
+target_precompile_headers(rosa 
+  PUBLIC
+    include/rosa.hpp
+)
 
 target_compile_features(rosa PRIVATE cxx_std_20)
 target_include_directories(rosa PRIVATE
