@@ -33,7 +33,7 @@ namespace rosa::lua_script {
         }
 
         auto setPosition(float x, float y) -> void {
-            m_component.get().setPosition(x, x);
+            m_component.get().setPosition(x, y);
         }
 
         // auto getRotation() const -> float {
