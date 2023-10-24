@@ -86,6 +86,24 @@ namespace rosa {
         abort();
     }
 
+    auto ResourceManager::getShader(const uuids::uuid uuid) -> Shader& {
+        ROSA_PROFILE_SCOPE("Assets:getShader");
+
+        if (auto search = m_resources.find(uuid); search != m_resources.end()) {
+            assert(search->second->m_type == resource_vertex_shader ||
+                    search->second->m_type == resource_fragment_shader);
+
+            if (!search->second->m_loaded) {
+                populate_resource(*(search->second));
+            }
+
+            return search->second->m_shader;
+        }
+
+        spdlog::error("Asset not registered {}", uuids::to_string(uuid));
+        abort();
+    }
+
     // auto ResourceManager::getFont(const uuids::uuid uuid) -> sf::Font& {
     //     ROSA_PROFILE_SCOPE("Assets:getFont");
 
@@ -192,6 +210,13 @@ namespace rosa {
                 resource.m_texture = Texture();
                 resource.m_texture.loadFromPhysFS(resource.m_name);
                 break;
+            case resource_vertex_shader:
+                resource.m_shader = Shader(VertexShader);
+                resource.m_shader.loadFromPhysFS(resource.m_name);
+                break;
+            case resource_fragment_shader:
+                resource.m_shader = Shader(FragmentShader);
+                resource.m_shader.loadFromPhysFS(resource.m_name);
             // case resource_font:
             //     resource.m_font = load_asset<sf::Font>(resource.m_name);
             //     break;

@@ -13,6 +13,9 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include "graphics/Shader.hpp"
+#include <debug/Profiler.hpp>
+#include <cstring>
 #include <glm/glm.hpp>
 #include <graphics/Sprite.hpp>
 #include <graphics/gl.h>
@@ -26,12 +29,7 @@ namespace rosa {
 
         if (m_texture == nullptr) {
             return;
-        }
-
-        glm::mat4 mvp = projection * transform;
-        //glm::vec4 transformed = mvp * glm::vec4(1.F, 1.F, 1.F, 1.F);
-
-        if (m_texture != nullptr) {
+        } else {
             auto size = m_texture->getSize();
 
             m_vertices[0].position = glm::vec2(0, 0);
@@ -39,6 +37,8 @@ namespace rosa {
             m_vertices[2].position = glm::vec2(0, size.y);
             m_vertices[3].position = glm::vec2(size.x, size.y);
         }
+
+        m_mvp = projection * transform;
         
         glUseProgram(m_pid);
         glBindVertexArray(m_vertex_array);
@@ -56,7 +56,9 @@ namespace rosa {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_index), m_index, GL_STATIC_DRAW);
 
-        glUniformMatrix4fv(m_mvp_id, 1, GL_FALSE, &mvp[0][0]);
+        glBindTexture(GL_TEXTURE_2D, m_texture->getOpenGlId());
+
+        glUniformMatrix4fv(m_mvp_id, 1, GL_FALSE, &m_mvp[0][0]);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -65,7 +67,7 @@ namespace rosa {
 
     auto Sprite::gl_init() -> void {
 
-        m_pid = load_shaders("shader_basic.vert", "shader_basic.frag");
+        m_pid = glCreateProgram();
         glUseProgram(m_pid);
 
         // buffers
@@ -90,10 +92,16 @@ namespace rosa {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_index), m_index, GL_STATIC_DRAW);
 
         if (m_texture != nullptr) {
-            glBindTexture(GL_TEXTURE_2D, m_texture->getID());
+            glBindTexture(GL_TEXTURE_2D, m_texture->getOpenGlId());
         }
 
         m_mvp_id = glGetUniformLocation(m_pid, "mvp");
+
+        m_vertex_shader = new Shader(VertexShader);
+        m_vertex_shader->link(m_pid);
+
+        m_fragment_shader = new Shader(FragmentShader);
+        m_fragment_shader->link(m_pid);
 
         glUseProgram(0);
 
@@ -101,96 +109,6 @@ namespace rosa {
         m_vertices[1].texture_coords = glm::vec2{1, 0};
         m_vertices[2].texture_coords = glm::vec2{0, 1};
         m_vertices[3].texture_coords = glm::vec2{1, 1};
-    }
-
-    auto Sprite::load_shaders(const char * vertex_file_path,const char * fragment_file_path) -> unsigned int {
-                
-        // Create the shaders
-        GLuint vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
-        GLuint fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-
-        // Read the Vertex Shader code from the file
-        std::string vertex_shader_source;
-        std::ifstream vertex_shader_stream(vertex_file_path, std::ios::in);
-        if(vertex_shader_stream.is_open()){
-            std::stringstream sstr;
-            sstr << vertex_shader_stream.rdbuf();
-            vertex_shader_source = sstr.str();
-            vertex_shader_stream.close();
-        }else{
-            spdlog::error("Couldn't open vertex shader: {}", vertex_file_path);
-            return 0;
-        }
-
-        // Read the Fragment Shader code from the file
-        std::string fragment_shader_source;
-        std::ifstream fragment_shader_stream(fragment_file_path, std::ios::in);
-        if(fragment_shader_stream.is_open()){
-            std::stringstream sstr;
-            sstr << fragment_shader_stream.rdbuf();
-            fragment_shader_source = sstr.str();
-            fragment_shader_stream.close();
-        } else {
-            spdlog::error("Couldn't open fragment shader: {}", fragment_file_path);
-            return 0;
-        }
-
-        GLint result = GL_FALSE;
-        int info_log_length{0};
-
-        // Compile Vertex Shader
-        spdlog::debug("Compiling shader {}", vertex_file_path);
-        const char* vertex_source_ptr = vertex_shader_source.c_str();
-        glShaderSource(vertex_shader_id, 1, &vertex_source_ptr , nullptr);
-        glCompileShader(vertex_shader_id);
-
-        // Check Vertex Shader
-        glGetShaderiv(vertex_shader_id, GL_COMPILE_STATUS, &result);
-        glGetShaderiv(vertex_shader_id, GL_INFO_LOG_LENGTH, &info_log_length);
-        if ( info_log_length > 0 ){
-            std::vector<char> error(info_log_length + 1);
-            glGetShaderInfoLog(vertex_shader_id, info_log_length, nullptr, error.data());
-            spdlog::error("Failed to compile shader: {}", error.data());
-        }
-
-        // Compile Fragment Shader
-        spdlog::debug("Compiling shader {}", fragment_file_path);
-        char const * fragment_source_ptr = fragment_shader_source.c_str();
-        glShaderSource(fragment_shader_id, 1, &fragment_source_ptr , nullptr);
-        glCompileShader(fragment_shader_id);
-
-        // Check Fragment Shader
-        glGetShaderiv(fragment_shader_id, GL_COMPILE_STATUS, &result);
-        glGetShaderiv(fragment_shader_id, GL_INFO_LOG_LENGTH, &info_log_length);
-        if ( info_log_length > 0 ){
-            std::vector<char> error(info_log_length+1);
-            glGetShaderInfoLog(fragment_shader_id, info_log_length, nullptr, error.data());
-            spdlog::error("Failed to compile shader: {}", error.data());
-        }
-
-        // Link the program
-        spdlog::debug("Linking shaders");
-        GLuint pid = glCreateProgram();
-        glAttachShader(pid, vertex_shader_id);
-        glAttachShader(pid, fragment_shader_id);
-        glLinkProgram(pid);
-
-        // Check the program
-        glGetProgramiv(pid, GL_LINK_STATUS, &result);
-        glGetProgramiv(pid, GL_INFO_LOG_LENGTH, &info_log_length);
-        if ( info_log_length > 0 ){
-            std::vector<char> error(info_log_length + 1);
-            glGetProgramInfoLog(pid, info_log_length, NULL, error.data());
-            spdlog::error("Failed to link shaders: {}", error.data());
-        }
-        
-        glDetachShader(pid, vertex_shader_id);
-        glDetachShader(pid, fragment_shader_id);
-        
-        glDeleteShader(vertex_shader_id);
-        glDeleteShader(fragment_shader_id);
-
-        return pid;
     }
 
 } // namespace rosa

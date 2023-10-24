@@ -18,6 +18,7 @@
 #include "glm/ext/vector_float4.hpp"
 #include <graphics/Vertex.hpp>
 #include <graphics/Texture.hpp>
+#include <graphics/Shader.hpp>
 #include <graphics/Rect.hpp>
 #include <graphics/Drawable.hpp>
 #include <cstddef>
@@ -67,6 +68,16 @@ namespace rosa {
                 m_texture = &texture;
             }
 
+            auto setSetShader(ShaderType type, Shader& shader) -> void {
+                if (type == ShaderType::FragmentShader) {
+                    m_fragment_shader = &shader;
+                    m_fragment_shader->link(m_pid);
+                } else if (type == ShaderType::VertexShader) {
+                    m_vertex_shader = &shader;
+                    m_vertex_shader->link(m_pid);
+                }
+            }
+
         protected:
             auto draw(glm::mat4 projection, glm::mat4 transform) -> void override;
 
@@ -80,9 +91,12 @@ namespace rosa {
             unsigned int m_index_buffer;
 
             Texture* m_texture{nullptr};
+            Shader* m_vertex_shader{nullptr};
+            Shader* m_fragment_shader{nullptr};
+
+            glm::mat4 m_mvp;
 
             auto gl_init() -> void;
-            auto load_shaders(const char * vertex_file_path,const char * fragment_file_path) -> unsigned int;
 
             unsigned int m_index[2*3]{
                 0, 1, 2,

@@ -39,7 +39,7 @@ namespace rosa {
 
             auto loadFromPhysFS(const std::string& name) -> void;
 
-            auto getID() const -> unsigned int {
+            auto getOpenGlId() const -> unsigned int {
                 return m_texture_id;
             }
 
@@ -48,11 +48,8 @@ namespace rosa {
             }
 
         private:
-            unsigned int m_texture_id;
-            glm::vec2 m_size;
-
-            auto load_dds(const std::string& path) -> void;
-
+            unsigned int m_texture_id{0};
+            glm::vec2 m_size{0.F, 0.F};
     };
 
 } // namespace rosa

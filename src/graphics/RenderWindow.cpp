@@ -43,6 +43,7 @@ namespace rosa {
         }
 
         glfwMakeContextCurrent( m_wnd );
+        //glfwSwapInterval(0); // Vsync disable
 
         int version = gladLoadGL(glfwGetProcAddress);
 

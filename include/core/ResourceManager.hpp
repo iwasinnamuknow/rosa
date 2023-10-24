@@ -22,7 +22,6 @@
 #include <unordered_map>
 #include <graphics/Texture.hpp>
 #include <physfs.h>
-#include <core/PhysFSStream.hpp>
 #include <core/Resource.hpp>
 #include <debug/Profiler.hpp>
 
@@ -36,6 +35,7 @@ namespace rosa {
             auto operator=(ResourceManager const &&) -> ResourceManager & = delete;
             
             auto getTexture(uuids::uuid uuid) -> Texture&;
+            auto getShader(uuids::uuid uuid) -> Shader&;
             // auto getFont(uuids::uuid uuid) -> sf::Font&;
             // auto getSound(uuids::uuid uuid) -> sf::SoundBuffer&;
             // auto getMusicTrack(uuids::uuid uuid) -> sf::Music&;

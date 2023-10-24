@@ -15,21 +15,23 @@
 
 #pragma once
 
-#include <core/PhysFSStream.hpp>
 #include <string>
 #include <stduuid/uuid.h>
 #include <graphics/Texture.hpp>
+#include <graphics/Shader.hpp>
 
 namespace rosa {
 
     class ResourceManager;
 
     enum resource_type {
-        resource_texture = 0,
-        resource_sound   = 1,
-        resource_music   = 2,
-        resource_font    = 3,
-        resource_script  = 4
+        resource_texture         = 0,
+        resource_sound           = 1,
+        resource_music           = 2,
+        resource_font            = 3,
+        resource_script          = 4,
+        resource_vertex_shader   = 5,
+        resource_fragment_shader = 6
     };
 
     class Resource {
@@ -53,10 +55,7 @@ namespace rosa {
             resource_type m_type{};
 
             Texture m_texture;
-            // sf::Font m_font;
-            // sf::SoundBuffer m_sound_buffer;
-            // sf::Music m_music;
-            PhysFsStream m_stream;
+            Shader m_shader;
             std::string m_script;
 
             bool m_loaded{false};
