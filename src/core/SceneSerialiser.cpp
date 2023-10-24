@@ -87,9 +87,9 @@ namespace YAML {
             }
 
             rhs.r = node[0].as<std::uint8_t>();
-            rhs.g = node[0].as<std::uint8_t>();
-            rhs.b = node[0].as<std::uint8_t>();
-            rhs.a = node[0].as<std::uint8_t>();
+            rhs.g = node[1].as<std::uint8_t>();
+            rhs.b = node[2].as<std::uint8_t>();
+            rhs.a = node[3].as<std::uint8_t>();
             return true;
         }
     };
