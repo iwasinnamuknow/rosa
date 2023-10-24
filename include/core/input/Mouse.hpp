@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include <graphics/gl.h>
+#include <graphics/gl.hpp>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 

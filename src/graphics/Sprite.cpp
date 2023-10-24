@@ -18,7 +18,7 @@
 #include <cstring>
 #include <glm/glm.hpp>
 #include <graphics/Sprite.hpp>
-#include <graphics/gl.h>
+#include <graphics/gl.hpp>
 #include <GLFW/glfw3.h>
 
 #include <spdlog/spdlog.h>

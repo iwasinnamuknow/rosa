@@ -20,7 +20,7 @@
 #include <imgui_impl_opengl3.h>
 
 #include <fmt/format.h>
-#include <graphics/gl.h>
+#include <graphics/gl.hpp>
 #include <GLFW/glfw3.h>
 #include <array>
 #include <stdexcept>
