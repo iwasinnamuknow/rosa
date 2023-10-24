@@ -43,7 +43,29 @@ namespace YAML {
             }
 
             rhs.x = node[0].as<float>();
-            rhs.y = node[0].as<float>();
+            rhs.y = node[1].as<float>();
+            return true;
+        }
+    };
+
+    template<>
+    struct convert<glm::vec3> {
+        static auto encode(const glm::vec3& rhs) -> Node {
+            Node node;
+            node.push_back(rhs.x);
+            node.push_back(rhs.y);
+            node.push_back(rhs.z);
+            return node;
+        }
+
+        static auto decode(const Node& node, glm::vec3& rhs) -> bool {
+            if (!node.IsSequence() || node.size() != 3) {
+                return false;
+            }
+
+            rhs.x = node[0].as<float>();
+            rhs.y = node[1].as<float>();
+            rhs.z = node[2].as<float>();
             return true;
         }
     };
@@ -90,6 +112,12 @@ namespace rosa {
         return out;
     }
 
+    auto operator<<(YAML::Emitter& out, const glm::vec3& vec) -> YAML::Emitter& {
+        out << YAML::Flow;
+        out << YAML::BeginSeq << vec.x << vec.y << vec.z << YAML::EndSeq;
+        return out;
+    }
+
     auto operator<<(YAML::Emitter& out, const rosa::Colour& colour) -> YAML::Emitter& {
         out << YAML::Flow;
         out << YAML::BeginSeq << static_cast<int>(colour.r) << static_cast<int>(colour.g) << static_cast<int>(colour.b) << static_cast<int>(colour.a) << YAML::EndSeq;
@@ -125,10 +153,8 @@ namespace rosa {
         auto& transform = entity.getComponent<TransformComponent>();
         out << YAML::BeginMap; // transform
         out << YAML::Key << "type" << YAML::Value << "transform";
-        // out << YAML::Key << "position" << YAML::Value << transform.position;
-        // out << YAML::Key << "scale" << YAML::Value << transform.scale;
-        // out << YAML::Key << "velocity" << YAML::Value << transform.velocity;
-        // out << YAML::Key << "rotation" << YAML::Value << transform.rotation;
+        out << YAML::Key << "position" << YAML::Value << transform.position;
+        out << YAML::Key << "scale" << YAML::Value << transform.scale;
         out << YAML::EndMap; // transform
         
         if (entity.hasComponent<SpriteComponent>()) {
@@ -219,10 +245,8 @@ namespace rosa {
                                 auto type = comp["type"].as<std::string>();
                                 if (type == "transform") {
                                     auto& transform = new_entity.getComponent<TransformComponent>();
-                                    // transform.position = comp["position"].as<sf::Vector2f>();
-                                    // transform.velocity = comp["velocity"].as<sf::Vector2f>();
-                                    // transform.scale = comp["scale"].as<sf::Vector2f>();
-                                    // transform.rotation = comp["rotation"].as<float>();
+                                    transform.position = comp["position"].as<glm::vec3>();
+                                    transform.scale = comp["scale"].as<glm::vec3>();
                                 } else if (type == "sprite") {
                                     auto& sprite = new_entity.addComponent<SpriteComponent>();
                                     sprite.setTexture(comp["texture"].as<uuids::uuid>());

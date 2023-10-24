@@ -22,7 +22,7 @@
 #include <core/components/LuaScriptComponent.hpp>
 #include <graphics/RenderWindow.hpp>
 //#include "TestScript.hpp"
-//#include <core/SceneSerialiser.hpp>
+#include <core/SceneSerialiser.hpp>
 
 constexpr uuids::uuid rosa_uuid = uuids::uuid::from_string(std::string_view("b79dc541-f2f5-49b2-9af6-22693f3ee4da")).value();
 constexpr uuids::uuid lua_uuid = uuids::uuid::from_string(std::string_view("5f20e19c-3749-465b-98ff-d36ead0405ad")).value();
@@ -32,8 +32,8 @@ class MyScene : public rosa::Scene {
     public:
         explicit MyScene(rosa::RenderWindow& render_window);
         ~MyScene() override {
-            // auto ser = rosa::SceneSerialiser(*this);
-            // ser.serialiseToYaml("test.yaml");
+            auto ser = rosa::SceneSerialiser(*this);
+            ser.serialiseToYaml("test.yaml");
         }
 
         auto onLoad() -> void override;
