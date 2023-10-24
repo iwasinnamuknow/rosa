@@ -15,7 +15,6 @@
 
 #pragma once
 
-#include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
 #include <core/ResourceManager.hpp>
 #include <graphics/RenderWindow.hpp>

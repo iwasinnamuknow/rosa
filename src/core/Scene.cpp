@@ -13,7 +13,6 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include "core/input/Keyboard.hpp"
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -22,16 +21,11 @@
 
 #include <core/ResourceManager.hpp>
 #include <core/Scene.hpp>
-#include <core/Entity.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <core/components/TransformComponent.hpp>
 #include <core/components/NativeScriptComponent.hpp>
 #include <core/components/LuaScriptComponent.hpp>
-#include <entt/entity/fwd.hpp>
 #include <functional>
-#include <spdlog/spdlog.h>
-#include <debug/Profiler.hpp>
-#include <unordered_map>
 
 namespace rosa {
 
