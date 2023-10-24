@@ -13,6 +13,7 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include "core/Event.hpp"
 #include <graphics/Colour.hpp>
 #include <bits/chrono.h>
 #include <core/GameManager.hpp>
@@ -23,6 +24,7 @@
 #include <debug/Profiler.hpp>
 #include <chrono>
 #include <ratio>
+#include <core/EventManager.hpp>
 
 namespace rosa {
 
@@ -80,16 +82,19 @@ namespace rosa {
 
             assert(m_current_scene); // Ensure scene pointer is valid - this needs to be managed internally.
 
-            //sf::Event event{};
+            {
+                ROSA_PROFILE_SCOPE("DispatchEvents");
+                EventManager::getInstance().pollEvents(m_render_window);
 
-            while (m_render_window.pollEvents()) {
-                //ImGui::SFML::ProcessEvent(m_render_window, event);
+                while (EventManager::getInstance().hasEvents()) {
 
-                // if (event.type == sf::Event::Closed) {
-                //     m_render_window.close();
-                // } else {
-                //     m_current_scene->input(event);
-                // }
+                    auto event = EventManager::getInstance().popEvent();
+                    if (event.type == EventType::EventClose) {
+                        m_render_window.close();
+                    } else {
+                        m_current_scene->input(event);
+                    }
+                }
             }
 
             ImGui_ImplOpenGL3_NewFrame();

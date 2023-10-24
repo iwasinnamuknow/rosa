@@ -13,6 +13,7 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include "core/input/Keyboard.hpp"
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -65,32 +66,35 @@ namespace rosa {
         return false;
     }
 
-    // auto Scene::input(sf::Event& event) -> void {
-    //     switch (event.type) {
-    //         case sf::Event::KeyReleased:
-    //             if (event.key.code == sf::Keyboard::F12) {
-    //                 m_show_profile_stats = !m_show_profile_stats;
-    //             }
-    //             break;
-    //     }
+    auto Scene::input(const Event& event) -> void {
+        {
+            ROSA_PROFILE_SCOPE("Events:Scene");
+            switch (event.keyboard.type) {
+                case KeyboardEventType::KeyReleased:
+                    if (event.keyboard.key == KeyF12) {
+                        m_show_profile_stats = !m_show_profile_stats;
+                    }
+                    break;
+            }
+        }
 
-    //     {
-    //         ROSA_PROFILE_SCOPE("Events:NativeScript");
+        {
+            ROSA_PROFILE_SCOPE("Events:NativeScript");
 
-    //         // Run updates for native script components, instantiating where needed
-    //         m_registry.view<NativeScriptComponent>().each([this, event](entt::entity entity, auto& nsc) {
+            // Run updates for native script components, instantiating where needed
+            m_registry.view<NativeScriptComponent>().each([this, event](entt::entity entity, auto& nsc) {
 
-    //             Entity* actual = &m_entities.at(entity);
+                Entity* actual = &m_entities.at(entity);
 
-    //             if (!nsc.instance) {
-    //                 nsc.instantiate_function(std::reference_wrapper<Scene>(*this), std::reference_wrapper<Entity>(*actual));
-    //                 nsc.on_create_function(nsc.instance);
-    //             }
+                if (!nsc.instance) {
+                    nsc.instantiate_function(std::reference_wrapper<Scene>(*this), std::reference_wrapper<Entity>(*actual));
+                    nsc.on_create_function(nsc.instance);
+                }
 
-    //             nsc.on_input_function(nsc.instance, event);
-    //         });
-    //     }
-    // }
+                nsc.on_input_function(nsc.instance, event);
+            });
+        }
+    }
 
     auto Scene::update(float delta_time) -> void {
 

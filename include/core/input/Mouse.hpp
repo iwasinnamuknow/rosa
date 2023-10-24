@@ -15,29 +15,31 @@
 
 #pragma once
 
-#include <core/input/Keyboard.hpp>
-#include <core/input/Mouse.hpp>
+#include <graphics/gl.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 namespace rosa {
 
-    enum EventType {
-        EventKeyboard,
-        EventMouse,
-        EventResize,
-        EventClose
+    enum MouseButton {
+        MouseButtonLeft = GLFW_MOUSE_BUTTON_LEFT,
+        MouseButtonRight = GLFW_MOUSE_BUTTON_RIGHT,
+        MouseButtonMiddle = GLFW_MOUSE_BUTTON_MIDDLE
     };
 
-    struct ResizeEvent {
-        glm::vec2 size;
+    enum MouseEventType {
+        MouseButtonPressed,
+        MouseButtonReleased,
+        MouseMoved,
+        MouseScrolled
     };
 
-    struct Event {
-        EventType type;
+    struct MouseEvent {
+        MouseEventType type;
 
         union {
-            MouseEvent mouse;
-            KeyboardEvent keyboard;
-            ResizeEvent resize;
+            MouseButton button;
+            glm::vec2 position;
         };
     };
 

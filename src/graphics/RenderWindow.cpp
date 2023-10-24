@@ -13,16 +13,57 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include "core/input/Mouse.hpp"
+#include <GLFW/glfw3.h>
 #include <graphics/RenderWindow.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include <core/EventManager.hpp>
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
     // TODO EVENTS
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
+    //if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    //    glfwSetWindowShouldClose(window, GL_TRUE);
+
+    rosa::KeyboardEvent kb_event{};
+    kb_event.key = static_cast<rosa::Key>(key);
+    kb_event.type = static_cast<rosa::KeyboardEventType>(action);
+    kb_event.modifiers = static_cast<rosa::KeyboardModifier>(mode);
+
+    rosa::Event event{};
+    event.type = rosa::EventType::EventKeyboard;
+    event.keyboard = kb_event;
+    rosa::EventManager::getInstance().pushEvent(event);
+}
+
+void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos) {
+    rosa::MouseEvent m_event{};
+    m_event.type = rosa::MouseEventType::MouseMoved;
+    m_event.position = glm::vec2(xpos, ypos);
+
+    rosa::Event event{};
+    event.type = rosa::EventType::EventMouse;
+    event.mouse = m_event;
+    rosa::EventManager::getInstance().pushEvent(event);
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+    rosa::MouseEvent m_event{};
+
+    if (action == GLFW_PRESS) {
+        m_event.type = rosa::MouseEventType::MouseButtonPressed;
+    } else if (action == GLFW_RELEASE) {
+        m_event.type = rosa::MouseEventType::MouseButtonReleased;
+    }
+
+    m_event.button = static_cast<rosa::MouseButton>(button);
+
+    rosa::Event event{};
+    event.type = rosa::EventType::EventMouse;
+    event.mouse = m_event;
+    rosa::EventManager::getInstance().pushEvent(event);
 }
 
 namespace rosa {
@@ -48,6 +89,8 @@ namespace rosa {
         int version = gladLoadGL(glfwGetProcAddress);
 
         glfwSetKeyCallback(m_wnd, key_callback);
+        glfwSetCursorPosCallback(m_wnd, cursor_pos_callback);
+        glfwSetMouseButtonCallback(m_wnd, mouse_button_callback);
 
         glfwSetWindowUserPointer( m_wnd, this );
         glfwSetWindowSizeCallback( m_wnd, RenderWindow::callback_resize );

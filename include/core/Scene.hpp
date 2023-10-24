@@ -23,6 +23,7 @@
 #include <unordered_map>
 #include <core/Entity.hpp>
 #include <debug/Profiler.hpp>
+#include <core/Event.hpp>
 
 namespace rosa {
 
@@ -39,7 +40,7 @@ namespace rosa {
             explicit Scene(RenderWindow& render_window);
             virtual auto update(float delta_time) -> void;
             virtual auto render() -> void;
-            //virtual auto input(sf::Event& event) -> void;
+            virtual auto input(const Event& event) -> void;
             virtual ~Scene() = default;
 
             auto getRenderWindow() const -> RenderWindow& {

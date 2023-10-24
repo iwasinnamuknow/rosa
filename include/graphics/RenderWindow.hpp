@@ -62,6 +62,10 @@ namespace rosa {
                 return m_wnd;
             }
 
+            auto close() -> void {
+                glfwSetWindowShouldClose(m_wnd, 1);
+            }
+
             // TODO EVENTS
             auto pollEvents() -> bool;
     };
