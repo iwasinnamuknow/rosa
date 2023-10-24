@@ -31,43 +31,4 @@ namespace rosa {
         assert(length_read == PHYSFS_fileLength(myfile));
     }
 
-    auto Shader::link(unsigned int program_id) -> void {
-        m_shader_id = glCreateShader(m_type);
-
-        GLint result = GL_FALSE;
-        int info_log_length{0};
-
-        // Compile shader
-        spdlog::debug("Compiling shader");
-        const char* vertex_source_ptr = m_content.c_str();
-        glShaderSource(m_shader_id, 1, &vertex_source_ptr , nullptr);
-        glCompileShader(m_shader_id);
-
-        // Check shader
-        glGetShaderiv(m_shader_id, GL_COMPILE_STATUS, &result);
-        glGetShaderiv(m_shader_id, GL_INFO_LOG_LENGTH, &info_log_length);
-        if ( info_log_length > 0 ){
-            std::vector<char> error(info_log_length + 1);
-            glGetShaderInfoLog(m_shader_id, info_log_length, nullptr, error.data());
-            spdlog::error("Failed to compile shader: {}", error.data());
-        }
-
-        // Link shader to program
-        spdlog::debug("Linking shader");
-        glAttachShader(program_id, m_shader_id);
-        glLinkProgram(program_id);
-
-        // Check the program
-        glGetProgramiv(program_id, GL_LINK_STATUS, &result);
-        glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &info_log_length);
-        if ( info_log_length > 0 ){
-            std::vector<char> error(info_log_length + 1);
-            glGetProgramInfoLog(program_id, info_log_length, NULL, error.data());
-            spdlog::error("Failed to link shaders: {}", error.data());
-        }
-
-        glDetachShader(program_id, m_shader_id);
-        glDeleteShader(m_shader_id);
-    }
-
 } // namespace rosa

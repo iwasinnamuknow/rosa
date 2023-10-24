@@ -75,12 +75,15 @@ void main()
                 }
             }
 
-            auto getType() -> ShaderType {
+            auto getType() const -> ShaderType {
                 return m_type;
             }
 
             auto loadFromPhysFS(const std::string& name) -> void;
-            auto link(unsigned int program_id) -> void;
+
+            auto getSource() const -> const std::string& {
+                return m_content;
+            }
 
         private:
             ShaderType m_type;

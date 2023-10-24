@@ -71,11 +71,11 @@ namespace rosa {
             auto setSetShader(ShaderType type, Shader& shader) -> void {
                 if (type == ShaderType::FragmentShader) {
                     m_fragment_shader = &shader;
-                    m_fragment_shader->link(m_pid);
                 } else if (type == ShaderType::VertexShader) {
                     m_vertex_shader = &shader;
-                    m_vertex_shader->link(m_pid);
                 }
+
+                link_shaders();
             }
 
         protected:
@@ -94,7 +94,7 @@ namespace rosa {
             Shader* m_vertex_shader{nullptr};
             Shader* m_fragment_shader{nullptr};
 
-            glm::mat4 m_mvp;
+            glm::mat4 m_mvp{1.F};
 
             auto gl_init() -> void;
 
@@ -103,7 +103,9 @@ namespace rosa {
                 1, 2, 3
             };
 
-            unsigned int m_mvp_id;
+            int m_mvp_id;
+
+            auto link_shaders() -> void;
     };
 
 } // namespace rosa

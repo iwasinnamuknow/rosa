@@ -27,6 +27,8 @@ namespace rosa {
 
     auto Sprite::draw(glm::mat4 projection, glm::mat4 transform) -> void {
 
+        m_mvp = projection * transform;
+
         if (m_texture == nullptr) {
             return;
         } else {
@@ -37,8 +39,6 @@ namespace rosa {
             m_vertices[2].position = glm::vec2(0, size.y);
             m_vertices[3].position = glm::vec2(size.x, size.y);
         }
-
-        m_mvp = projection * transform;
         
         glUseProgram(m_pid);
         glBindVertexArray(m_vertex_array);
@@ -55,10 +55,9 @@ namespace rosa {
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_index), m_index, GL_STATIC_DRAW);
+        glUniformMatrix4fv(m_mvp_id, 1, GL_FALSE, &m_mvp[0][0]);
 
         glBindTexture(GL_TEXTURE_2D, m_texture->getOpenGlId());
-
-        glUniformMatrix4fv(m_mvp_id, 1, GL_FALSE, &m_mvp[0][0]);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -68,6 +67,10 @@ namespace rosa {
     auto Sprite::gl_init() -> void {
 
         m_pid = glCreateProgram();
+        m_vertex_shader = new Shader(VertexShader);
+        m_fragment_shader = new Shader(FragmentShader);
+        link_shaders();
+
         glUseProgram(m_pid);
 
         // buffers
@@ -91,17 +94,11 @@ namespace rosa {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_index), m_index, GL_STATIC_DRAW);
 
+        m_mvp_id = glGetUniformLocation(m_pid, "mvp");
+
         if (m_texture != nullptr) {
             glBindTexture(GL_TEXTURE_2D, m_texture->getOpenGlId());
         }
-
-        m_mvp_id = glGetUniformLocation(m_pid, "mvp");
-
-        m_vertex_shader = new Shader(VertexShader);
-        m_vertex_shader->link(m_pid);
-
-        m_fragment_shader = new Shader(FragmentShader);
-        m_fragment_shader->link(m_pid);
 
         glUseProgram(0);
 
@@ -109,6 +106,64 @@ namespace rosa {
         m_vertices[1].texture_coords = glm::vec2{1, 0};
         m_vertices[2].texture_coords = glm::vec2{0, 1};
         m_vertices[3].texture_coords = glm::vec2{1, 1};
+    }
+
+    auto Sprite::link_shaders() -> void {
+        auto vshader_id = glCreateShader(VertexShader);
+        auto fshader_id = glCreateShader(FragmentShader);
+
+        GLint result = GL_FALSE;
+        int info_log_length{0};
+
+        // Compile vertex shader
+        spdlog::debug("Compiling vertex shader");
+        const char* vertex_source_ptr = m_vertex_shader->getSource().c_str();
+        glShaderSource(vshader_id, 1, &vertex_source_ptr , nullptr);
+        glCompileShader(vshader_id);
+
+        // Check shader
+        glGetShaderiv(vshader_id, GL_COMPILE_STATUS, &result);
+        glGetShaderiv(vshader_id, GL_INFO_LOG_LENGTH, &info_log_length);
+        if ( info_log_length > 0 ){
+            std::vector<char> error(info_log_length + 1);
+            glGetShaderInfoLog(vshader_id, info_log_length, nullptr, error.data());
+            spdlog::error("Failed to compile shader: {}", error.data());
+        }
+        
+        // Compile fragment shader
+        spdlog::debug("Compiling fragment shader");
+        const char* frag_source_ptr = m_fragment_shader->getSource().c_str();
+        glShaderSource(fshader_id, 1, &frag_source_ptr , nullptr);
+        glCompileShader(fshader_id);
+
+        // Check shader
+        glGetShaderiv(fshader_id, GL_COMPILE_STATUS, &result);
+        glGetShaderiv(fshader_id, GL_INFO_LOG_LENGTH, &info_log_length);
+        if ( info_log_length > 0 ){
+            std::vector<char> error(info_log_length + 1);
+            glGetShaderInfoLog(fshader_id, info_log_length, nullptr, error.data());
+            spdlog::error("Failed to compile shader: {}", error.data());
+        }
+
+        // Link shader to program
+        spdlog::debug("Linking shaders");
+        glAttachShader(m_pid, vshader_id);
+        glAttachShader(m_pid, fshader_id);
+        glLinkProgram(m_pid);
+
+        // Check the program
+        glGetProgramiv(m_pid, GL_LINK_STATUS, &result);
+        glGetProgramiv(m_pid, GL_INFO_LOG_LENGTH, &info_log_length);
+        if ( info_log_length > 0 ){
+            std::vector<char> error(info_log_length + 1);
+            glGetProgramInfoLog(m_pid, info_log_length, NULL, error.data());
+            spdlog::error("Failed to link shaders: {}", error.data());
+        }
+
+        glDetachShader(m_pid, vshader_id);
+        glDetachShader(m_pid, fshader_id);
+        glDeleteShader(vshader_id);
+        glDeleteShader(fshader_id);
     }
 
 } // namespace rosa
