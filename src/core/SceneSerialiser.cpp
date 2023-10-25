@@ -155,6 +155,7 @@ namespace rosa {
         out << YAML::Key << "type" << YAML::Value << "transform";
         out << YAML::Key << "position" << YAML::Value << transform.position;
         out << YAML::Key << "scale" << YAML::Value << transform.scale;
+        out << YAML::Key << "rotation" << YAML::Value << transform.rotation;
         out << YAML::EndMap; // transform
         
         if (entity.hasComponent<SpriteComponent>()) {
@@ -247,6 +248,7 @@ namespace rosa {
                                     auto& transform = new_entity.getComponent<TransformComponent>();
                                     transform.position = comp["position"].as<glm::vec3>();
                                     transform.scale = comp["scale"].as<glm::vec3>();
+                                    transform.rotation = comp["rotation"].as<float>();
                                 } else if (type == "sprite") {
                                     auto& sprite = new_entity.addComponent<SpriteComponent>();
                                     sprite.setTexture(comp["texture"].as<uuids::uuid>());
