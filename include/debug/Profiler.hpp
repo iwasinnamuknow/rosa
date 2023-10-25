@@ -42,7 +42,7 @@ namespace rosa::debug {
 
     struct ProfileUiItem {
         int id;
-        char name[128];
+        std::string name;
         int64_t last;
 
     };
@@ -159,7 +159,7 @@ namespace rosa::debug {
 
     class ProfileScope {
         public:
-            ProfileScope(char* name) : m_name(name) {
+            ProfileScope(const char* name) : m_name(name) {
                 m_start_time = std::chrono::high_resolution_clock::now();
             }
 
@@ -177,7 +177,7 @@ namespace rosa::debug {
             }
 
         private:
-            char* m_name;
+            const char* m_name;
             std::chrono::time_point<std::chrono::high_resolution_clock> m_start_time;
             bool m_stopped{false};
     };

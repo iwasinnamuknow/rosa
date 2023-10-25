@@ -55,7 +55,7 @@ namespace rosa {
 
         private:
             explicit GameManager();
-            ~GameManager();
+            ~GameManager() = default;
 
             std::chrono::time_point<std::chrono::system_clock> m_time;
 

@@ -37,6 +37,11 @@ namespace rosa {
     class Scene {
         public:
             explicit Scene(RenderWindow& render_window);
+            Scene(Scene const &) = delete;
+            auto operator=(Scene const &) -> Scene & = delete;
+            Scene(Scene const &&) = delete;
+            auto operator=(Scene const &&) -> Scene & = delete;
+
             virtual auto update(float delta_time) -> void;
             virtual auto render() -> void;
             virtual auto input(const Event& event) -> void;
@@ -75,10 +80,10 @@ namespace rosa {
             friend struct lua_script::LuaTransform;
             friend class GameManager;
 
-            auto show_profile_stats(bool* open) -> void;
+            auto show_profile_stats(bool* open) const -> void;
             bool m_show_profile_stats{true};
 
-            float m_last_frame_time;
+            double m_last_frame_time{};
     };
 
 } // namespace rosa

@@ -13,14 +13,11 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include "core/Event.hpp"
 #include <graphics/Colour.hpp>
 #include <bits/chrono.h>
 #include <core/GameManager.hpp>
 #include <cstddef>
 #include <memory>
-// #include "imgui.h"
-// #include "imgui-SFML.h"
 #include <debug/Profiler.hpp>
 #include <chrono>
 #include <ratio>
@@ -52,12 +49,6 @@ namespace rosa {
         return s_instance;
     }
 
-    GameManager::~GameManager() {
-        // if (m_render_window.isOpen()) {
-        //     m_render_window.close();
-        // }
-    }
-
     auto GameManager::addScene(const std::string& key, std::unique_ptr<Scene> scene) -> bool {
         ROSA_PROFILE_SCOPE("Scenes:add");
         auto [iterator, inserted] = m_scenes.insert_or_assign(key, std::move(scene));
@@ -77,7 +68,7 @@ namespace rosa {
 
             std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
             auto micros = std::chrono::duration_cast<std::chrono::microseconds>(now - m_time);
-            float delta_time = micros.count() / 1000000.F;
+            float delta_time = static_cast<float>(micros.count()) / 1000000.F;
             m_time = now;
 
             assert(m_current_scene); // Ensure scene pointer is valid - this needs to be managed internally.

@@ -17,6 +17,7 @@
 #include <core/Resource.hpp>
 #include <cassert>
 #include <core/ResourceManager.hpp>
+#include <cstdint>
 #include <exception>
 #include <memory>
 #include <optional>
@@ -26,6 +27,17 @@
 #include <utility>
 
 #define ROSA_PRELOAD_ASSETS
+
+auto split_lines(const std::string& string, char delimiter) -> std::vector<std::string> {
+    auto result = std::vector<std::string>{};
+    auto stream = std::stringstream(string);
+
+    for (std::string line; std::getline(stream, line, delimiter);) {
+        result.push_back(line);
+    }
+
+    return result;
+}
 
 namespace rosa {
 
@@ -38,8 +50,8 @@ namespace rosa {
         // Attempt to read assets.lst
         if (PHYSFS_exists("assets.lst") != 0) {
             PHYSFS_file* myfile = PHYSFS_openRead("assets.lst");
-            char *buffer = new char[PHYSFS_fileLength(myfile)];
-            int length_read = PHYSFS_readBytes (myfile, buffer, PHYSFS_fileLength(myfile));
+            std::string buffer{};
+            std::int64_t length_read = PHYSFS_readBytes(myfile, buffer.data(), static_cast<std::uint64_t>(PHYSFS_fileLength(myfile)));
             assert(length_read == PHYSFS_fileLength(myfile));
             PHYSFS_close(myfile);
 
@@ -48,7 +60,13 @@ namespace rosa {
 
             for (const auto& line : lines) {
                 std::vector line_data = split_lines(line, ':');
-                auto uuid = uuids::uuid::from_string(line_data.at(2)).value();
+                auto uuid_g = uuids::uuid::from_string(line_data.at(2));
+                if (!uuid_g.has_value()) {
+                    spdlog::error("Bad UUID in assets.lst: {}", line_data.at(2));
+                    continue;
+                }
+
+                auto uuid = uuid_g.value();
                 auto new_resource = std::make_unique<Resource>( line_data.at(1), uuid, static_cast<resource_type>(std::stoi(line_data.at(0))) );
 
 #ifdef ROSA_PRELOAD_ASSETS
@@ -172,17 +190,6 @@ namespace rosa {
         abort();
     }
 
-    auto ResourceManager::split_lines(const std::string& string, char delimiter) -> std::vector<std::string> {
-        auto result = std::vector<std::string>{};
-        auto stream = std::stringstream(string);
-
-        for (std::string line; std::getline(stream, line, delimiter);) {
-            result.push_back(line);
-        }
-
-        return result;
-    }
-
     // template<typename T>
     // auto ResourceManager::load_asset(const std::string& path) -> T {
     //     if (PHYSFS_exists(path.c_str()) != 0) {
@@ -217,6 +224,7 @@ namespace rosa {
             case resource_fragment_shader:
                 resource.m_shader = Shader(FragmentShader);
                 resource.m_shader.loadFromPhysFS(resource.m_name);
+                break;
             // case resource_font:
             //     resource.m_font = load_asset<sf::Font>(resource.m_name);
             //     break;
@@ -236,8 +244,8 @@ namespace rosa {
             case resource_script:
                 if (PHYSFS_exists(resource.m_name.c_str()) != 0) {
                     PHYSFS_file* myfile = PHYSFS_openRead(resource.m_name.c_str());
-                    char *buffer = new char[PHYSFS_fileLength(myfile)];
-                    int length_read = PHYSFS_readBytes (myfile, buffer, PHYSFS_fileLength(myfile));
+                    std::string buffer{};
+                    std::int64_t length_read = PHYSFS_readBytes(myfile, buffer.data(), static_cast<std::uint64_t>(PHYSFS_fileLength(myfile)));
                     assert(length_read == PHYSFS_fileLength(myfile));
                     PHYSFS_close(myfile);
 

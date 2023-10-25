@@ -56,9 +56,7 @@ namespace rosa {
             // template<typename T>
             // auto load_asset(const std::string& path) -> T;
 
-            auto populate_resource(Resource& resource) -> bool;
-
-            auto split_lines(const std::string& string, char delimiter) -> std::vector<std::string>;
+            static auto populate_resource(Resource& resource) -> bool;
     };
 
 } // namespace rosa

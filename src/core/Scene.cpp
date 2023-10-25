@@ -71,6 +71,9 @@ namespace rosa {
                         m_render_window.close();
                     }
                     break;
+                case KeyboardEventType::KeyPressed:
+                case KeyboardEventType::KeyRepeated:
+                    break;
             }
         }
 
@@ -94,7 +97,7 @@ namespace rosa {
 
     auto Scene::update(float delta_time) -> void {
 
-        m_last_frame_time = delta_time;
+        m_last_frame_time = static_cast<double>(delta_time);
 
 #ifdef ROSA_PROFILE
         {
@@ -222,38 +225,44 @@ namespace rosa {
         };
     }
 
-    auto Scene::show_profile_stats(bool* open) -> void {
+    auto Scene::show_profile_stats(bool* open) const -> void {
 
         std::vector<rosa::debug::ProfileUiItem> items;
 
-        ImGui::Begin("Profiler", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+        ImGui::Begin("Profiler", open, static_cast<ImGuiWindowFlags>(
+            static_cast<unsigned int>(ImGuiWindowFlags_NoCollapse) | static_cast<unsigned int>(ImGuiWindowFlags_NoSavedSettings) | 
+            static_cast<unsigned int>(ImGuiWindowFlags_NoMove) | static_cast<unsigned int>(ImGuiWindowFlags_NoResize)
+        ));
 
-        float fps = 1.F / m_last_frame_time;
+        double fps = 1.0 / m_last_frame_time;
 
         ImGui::SetWindowPos(ImVec2(0, 0));
         ImGui::Text("FPS: %f", fps);
-        ImGui::Text("Frame Time: %dms", m_last_frame_time * 1000);
+        ImGui::Text("Frame Time: %dms", static_cast<int>(m_last_frame_time * 1000));
         
-        if (items.size() == 0) {
+        if (items.empty()) {
             auto entries = rosa::debug::Profiler::instance().getLastFrame();
             items.resize(entries.size(), rosa::debug::ProfileUiItem());
-            int i{0};
+            int index{0};
 
             for (const auto& [key, data] : entries) {
-                rosa::debug::ProfileUiItem& item = items[i];
+                rosa::debug::ProfileUiItem& item = items[index];
                 item.last = data.last_time;
-                std::strcpy(item.name, key.c_str());
-                item.id = i;
-                i++;
+                item.name = key;
+                item.id = index;
+                index++;
             }
         }
 
-        std::sort(items.begin(), items.end(), [](rosa::debug::ProfileUiItem& a, rosa::debug::ProfileUiItem& b) {
-            return a.last > b.last;
+        std::sort(items.begin(), items.end(), [](rosa::debug::ProfileUiItem& first, rosa::debug::ProfileUiItem& second) {
+            return first.last > second.last;
         });
 
-        ImGui::BeginTable("table1", 2, ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable |
-            ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV );
+        ImGui::BeginTable("table1", 2, static_cast<ImGuiWindowFlags>(
+            static_cast<unsigned int>(ImGuiTableFlags_NoHostExtendX) | static_cast<unsigned int>(ImGuiTableFlags_SizingFixedFit) | 
+            static_cast<unsigned int>(ImGuiTableFlags_Resizable) | static_cast<unsigned int>(ImGuiTableFlags_BordersOuter) | 
+            static_cast<unsigned int>(ImGuiTableFlags_BordersV)
+        ));
 
         ImGui::TableSetupColumn("Function", ImGuiTableColumnFlags_WidthStretch | ImGuiTableColumnFlags_DefaultSort, 3.F, rosa::debug::profile_item_name);
         ImGui::TableSetupColumn("Last", ImGuiTableColumnFlags_WidthStretch, 1.F, rosa::debug::profile_item_last);
@@ -261,10 +270,10 @@ namespace rosa {
         ImGui::TableHeadersRow();
 
         for (const auto& item : items) {
-            ImGui::PushID(item.name);
+            ImGui::PushID(item.name.c_str());
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
-            ImGui::TextUnformatted(item.name);
+            ImGui::TextUnformatted(item.name.c_str());
             ImGui::TableNextColumn();
             ImGui::Text("%ldµs", item.last);
             ImGui::PopID();
