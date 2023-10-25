@@ -30,13 +30,33 @@ Rosa is my attempt to write a fairly simple, code-only 2d game engine. It is bui
     * Keypress/release
     * Window resize
     * Window close
+* Scene serialisation/deserialisation
+    * Using UUIDs for all indices for portability
+    * Supports all three component types but no support for serialising NativeScript yet.
 
 I hope to keep extending Rosa, particularly LuaScript support and general code quality/architecture. Additional platforms will also be added hopefully, starting with Windows.
 
 # Building
 
-coming soon :)
+## vcpkg
+
+`./vendor/vcpkg/bootstrap-vcpkg.sh`
+
+## Rosa
+
+### Configure
+
+`cmake --preset={preset} -B build/`
+
+Where **{preset}** is one of:
+* linux-debug
+* linux-debug-profile (enables built-in profiling)
+* linux-release
+
+### Build
+
+`cmake --build build/`
 
 # Using
 
-yep, this too.
+coming soon
