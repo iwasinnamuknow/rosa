@@ -34,10 +34,10 @@ namespace rosa {
         } else {
             auto size = m_texture->getSize();
 
-            m_vertices[0].position = glm::vec2(0, 0);
-            m_vertices[1].position = glm::vec2(size.x, 0);
-            m_vertices[2].position = glm::vec2(0, size.y);
-            m_vertices[3].position = glm::vec2(size.x, size.y);
+            m_vertices[0].position = glm::vec2(-(size.x/2), -(size.y/2));
+            m_vertices[1].position = glm::vec2(  size.x/2,  -(size.y/2));
+            m_vertices[2].position = glm::vec2(-(size.x/2),   size.y/2);
+            m_vertices[3].position = glm::vec2(  size.x/2,    size.y/2);
         }
         
         glUseProgram(m_pid);

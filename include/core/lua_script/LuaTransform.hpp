@@ -36,13 +36,13 @@ namespace rosa::lua_script {
             m_component.get().setPosition(x, y);
         }
 
-        // auto getRotation() const -> float {
-        //     return m_component.get().rotation;
-        // }
+        auto getRotation() const -> float {
+            return m_component.get().getRotation();
+        }
 
-        // auto setRotation(float rotation) -> void {
-        //     m_component.get().rotation = rotation;
-        // }
+        auto setRotation(float rotation) -> void {
+            m_component.get().setRotation(rotation);
+        }
 
         private:
             std::reference_wrapper<TransformComponent> m_component;

@@ -24,14 +24,15 @@ namespace rosa {
     struct TransformComponent {
         glm::vec3 position{0, 0, 0};
         glm::vec3 scale{1, 1, 1};
-        //float rotation{0};
+        float rotation{0};
 
         glm::mat4 mvp;
 
         auto getLocalTransform() const -> const glm::mat4 {
             glm::mat4 translation_matrix = glm::translate(glm::mat4(1.F), position);
             glm::mat4 scale_matrix = glm::scale(glm::mat4(1.F), scale);
-            return translation_matrix * scale_matrix;
+            glm::mat4 rotate_matrix = glm::rotate(glm::mat4(1.F), rotation, glm::vec3(0.F, 0.F, 1.F));
+            return translation_matrix * rotate_matrix * scale_matrix;
         }
 
         auto setPosition(float x, float y) -> void {
@@ -48,6 +49,14 @@ namespace rosa {
 
         auto getScale() const -> const glm::vec2 {
             return glm::vec2(scale[0], scale[1]);
+        }
+
+        auto setRotation(float rot) -> void {
+            rotation = rot;
+        }
+
+        auto getRotation() -> float {
+            return rotation;
         }
     };
 

@@ -60,8 +60,8 @@ namespace rosa {
                 auto transform_table = m_state["transform"].get_or_create<sol::table>();
                 transform_table.set_function("getPosition", &lua_script::LuaTransform::getPosition, m_lua_transform.get());
                 transform_table.set_function("setPosition", &lua_script::LuaTransform::setPosition, m_lua_transform.get());
-                // transform_table.set_function("getRotation", &lua_script::LuaTransform::getRotation, m_lua_transform.get());
-                // transform_table.set_function("setRotation", &lua_script::LuaTransform::setRotation, m_lua_transform.get());
+                transform_table.set_function("getRotation", &lua_script::LuaTransform::getRotation, m_lua_transform.get());
+                transform_table.set_function("setRotation", &lua_script::LuaTransform::setRotation, m_lua_transform.get());
 
                 // Sprite component
                 if (m_scene.get().getRegistry().all_of<SpriteComponent>(m_entity)) {

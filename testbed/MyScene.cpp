@@ -31,8 +31,8 @@ auto MyScene::onLoad() -> void {
     auto texture_size = texture.getSize();
     auto window_size = getRenderWindow().getSize();
     const auto position = glm::vec2(
-        (static_cast<float>(getRenderWindow().getSize().x) / 2.F) - (static_cast<float>(texture.getSize().x) / 2.F),
-        (static_cast<float>(getRenderWindow().getSize().y) / 2.F) - (static_cast<float>(texture.getSize().y) / 2.F)
+        (static_cast<float>(getRenderWindow().getSize().x) / 2.F),
+        (static_cast<float>(getRenderWindow().getSize().y) / 2.F)
     );
 
     auto& parent_entity = createEntity();
