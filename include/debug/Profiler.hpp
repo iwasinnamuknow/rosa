@@ -57,92 +57,19 @@ namespace rosa::debug {
     };
 
     class Profiler {
-        private:
-            Profiler() = default;
-            std::string m_session_name;
-            std::unordered_map<std::string, ProfilerResult> m_results;
-            std::unordered_map<std::string, ProfilerResult> m_last_result;
-            bool m_running{false};
-            
-            friend class ProfileScope;
-
-            ~Profiler() {
-                auto filename = std::format("profile-{}.csv", m_session_name);
-                std::ofstream fout(filename);
-                endSession();
-
-                fout << "Function,Calls,Last Time,Min Time,Avg Time,Max Time\n";
-
-                for (const auto& [key, result] : m_results) {
-                    fout << std::format("{},{},{},{},{},{}", key, result.calls, result.last_time, result.min_time, result.avg_time, result.max_time) << "\n";
-                }
-            }
-
-            auto record_result(const std::string& name, int64_t usec) -> void {
-
-                if (!m_running) {
-                    return;
-                }
-
-                if (m_last_result.contains(name)) {
-                    auto& result = m_last_result.at(name);
-                    result.last_time = usec;
-                } else {
-                    ProfilerResult result{};
-                    result.last_time = usec;
-                    m_last_result.insert_or_assign(std::string(name), result);
-                }
-
-                if (m_results.contains(name)) {
-                    auto& result = m_results.at(name);
-                    result.calls++;
-                    if (usec < result.min_time) {
-                        result.min_time = usec;
-                    }
-                    if (usec > result.max_time) {
-                        result.max_time = usec;
-                    }
-                    result.total_time += usec;
-                    result.avg_time = result.total_time / result.calls;
-                    result.last_time = usec;
-                } else {
-                    ProfilerResult result{};
-                    result.calls++;
-                    if (usec < result.min_time) {
-                        result.min_time = usec;
-                    }
-                    if (usec > result.max_time) {
-                        result.max_time = usec;
-                    }
-                    result.total_time += usec;
-                    result.avg_time = result.total_time / result.calls;
-                    result.last_time = usec;
-                    m_results.insert_or_assign(std::string(name), result);
-                }
-            }
-
         public:
+            Profiler(Profiler const &) = delete;
+            auto operator=(Profiler const &) -> Profiler & = delete;
+            Profiler(Profiler const &&) = delete;
+            auto operator=(Profiler const &&) -> Profiler & = delete;
 
             static auto instance() -> Profiler& {
                 static Profiler instance;
                 return instance;
             }
 
-            auto beginSession(std::string name) -> void {
-                
-                if (m_running) {
-                    return;
-                }
-
-                m_running = true;
-                m_session_name = std::move(name);
-            }
-
-            auto endSession() -> void {
-                if (m_running) {
-                    m_running = false;
-                }
-            }
+            auto beginSession(std::string name) -> void;
+            auto endSession() -> void;
 
             auto getEntries() -> const std::unordered_map<std::string, ProfilerResult>& {
                 return m_results;
@@ -155,11 +82,25 @@ namespace rosa::debug {
             auto clearLastFrame() -> void {
                 m_last_result.clear();
             }
+
+        private:
+            Profiler() = default;
+            ~Profiler();
+
+            std::string m_session_name;
+            std::unordered_map<std::string, ProfilerResult> m_results;
+            std::unordered_map<std::string, ProfilerResult> m_last_result;
+            bool m_running{false};
+            
+            friend class ProfileScope;
+
+            auto record_result(const std::string& name, int64_t usec) -> void;
+
     };
 
     class ProfileScope {
         public:
-            ProfileScope(const char* name) : m_name(name) {
+            explicit ProfileScope(const char* name) : m_name(name) {
                 m_start_time = std::chrono::high_resolution_clock::now();
             }
 
@@ -176,6 +117,11 @@ namespace rosa::debug {
                 }
             }
 
+            ProfileScope(ProfileScope const &) = delete;
+            auto operator=(ProfileScope const &) -> ProfileScope & = delete;
+            ProfileScope(ProfileScope const &&) = delete;
+            auto operator=(ProfileScope const &&) -> ProfileScope & = delete;
+
         private:
             const char* m_name;
             std::chrono::time_point<std::chrono::high_resolution_clock> m_start_time;
@@ -184,11 +130,13 @@ namespace rosa::debug {
 
 } // namespace rosa::debug
 
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
 #define TOKENPASTE(x, y) x ## y
 #define TOKENPASTE2(x, y) TOKENPASTE(x, y)
 #define ROSA_PROFILE_SESSION_BEGIN(name)    ::rosa::debug::Profiler::instance().beginSession(name)
 #define ROSA_PROFILE_SESSION_END()          ::rosa::debug::Profiler::instance().endSession()
 #define ROSA_PROFILE_SCOPE(name)            ::rosa::debug::ProfileScope TOKENPASTE2(profile_scope, __LINE__)(name)
+// NOLINTEND(cppcoreguidelines-macro-usage)
 #else
 #define ROSA_PROFILE_SESSION_BEGIN(name)
 #define ROSA_PROFILE_SESSION_END()
