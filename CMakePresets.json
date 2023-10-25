@@ -55,19 +55,19 @@
             "name": "linux-debug",
             "configurePreset": "linux-debug",
             "configuration": "Debug",
-            "jobs": 24
+            "jobs": 4
         },
         {
             "name": "linux-debug-profile",
             "configurePreset": "linux-debug-profile",
             "configuration": "Debug",
-            "jobs": 24
+            "jobs": 4
         },
         {
             "name": "linux-release",
             "configurePreset": "linux-release",
             "configuration": "Release",
-            "jobs": 24
+            "jobs": 4
         }
     ]
 }
