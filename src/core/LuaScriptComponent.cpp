@@ -13,10 +13,216 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include "core/input/Keyboard.hpp"
+#include "core/input/Mouse.hpp"
 #include <core/components/LuaScriptComponent.hpp>
+#include <core/Event.hpp>
 #include <debug/Profiler.hpp>
+#include <sol/raii.hpp>
+#include <sstream>
 
 namespace rosa {
+
+    auto init_events(sol::state& state) -> void {
+        state["EventType"] = state.create_table_with( 
+            "Keyboard", EventType::EventKeyboard, 
+            "Mouse", EventType::EventMouse,
+            "Resize", EventType::EventResize
+        );
+
+        state["EventKeyboardType"] = state.create_table_with( 
+            "KeyPressed", KeyboardEventType::KeyPressed, 
+            "KeyReleased", KeyboardEventType::KeyReleased,
+            "KeyRepeated", KeyboardEventType::KeyRepeated
+        );
+
+        state["EventKeyboardMods"] = state.create_table_with( 
+            "CapsLock", KeyboardModifier::ModifierCapsLock, 
+            "NumLock", KeyboardModifier::ModifierNumLock,
+            "Alt", KeyboardModifier::ModifierKeyAlt,
+            "Control", KeyboardModifier::ModifierKeyControl,
+            "None", KeyboardModifier::ModifierKeyNone,
+            "Shift", KeyboardModifier::ModifierKeyShift,
+            "Super", KeyboardModifier::ModifierSuper
+        );
+
+        state["EventKeyboardKey"] = state.create_table_with( 
+            "Space", Key::KeySpace,
+            "KeyApostrophe", Key::KeyApostrophe,
+            "KeyComma", Key::KeyComma,
+            "KeyMinus", Key::KeyMinus,
+            "KeyPeriod", Key::KeyPeriod,
+            "KeySlash", Key::KeySlash,
+            "Key0", Key::Key0,
+            "Key1", Key::Key1,
+            "Key2", Key::Key2,
+            "Key3", Key::Key3,
+            "Key4", Key::Key4,
+            "Key5", Key::Key5,
+            "Key6", Key::Key6,
+            "Key7", Key::Key7,
+            "Key8", Key::Key8,
+            "Key9", Key::Key9,
+            "KeySemicolon", Key::KeySemicolon,
+            "KeyEquals", Key::KeyEquals,
+            "KeyA", Key::KeyA,
+            "KeyB", Key::KeyB,
+            "KeyC", Key::KeyC,
+            "KeyD", Key::KeyD,
+            "KeyE", Key::KeyE,
+            "KeyF", Key::KeyF,
+            "KeyG", Key::KeyG,
+            "KeyH", Key::KeyH,
+            "KeyI", Key::KeyI,
+            "KeyJ", Key::KeyJ,
+            "KeyK", Key::KeyK,
+            "KeyL", Key::KeyL,
+            "KeyM", Key::KeyM,
+            "KeyN", Key::KeyN,
+            "KeyO", Key::KeyO,
+            "KeyP", Key::KeyP,
+            "KeyQ", Key::KeyQ,
+            "KeyR", Key::KeyR,
+            "KeyS", Key::KeyS,
+            "KeyT", Key::KeyT,
+            "KeyU", Key::KeyU,
+            "KeyV", Key::KeyV,
+            "KeyW", Key::KeyW,
+            "KeyX", Key::KeyX,
+            "KeyY", Key::KeyY,
+            "KeyZ", Key::KeyZ,
+            "KeyLeftBracket", Key::KeyLeftBracket,
+            "KeyBackslash", Key::KeyBackslash,
+            "KeyRightBracket", Key::KeyRightBracket,
+            "KeyGraveAccent", Key::KeyGraveAccent,
+            "KeyEscape", Key::KeyEscape,
+            "KeyEnter", Key::KeyEnter,
+            "KeyTab", Key::KeyTab,
+            "KeyBackspace", Key::KeyBackspace,
+            "KeyInsert", Key::KeyInsert,
+            "KeyDelete", Key::KeyDelete,
+            "KeyRight", Key::KeyRight,
+            "KeyLeft", Key::KeyLeft,
+            "KeyDown", Key::KeyDown,
+            "KeyUp", Key::KeyUp,
+            "KeyPageUp", Key::KeyPageUp,
+            "KeyPageDown", Key::KeyPageDown,
+            "KeyHome", Key::KeyHome,
+            "KeyEnd", Key::KeyEnd,
+            "KeyCapsLock", Key::KeyCapsLock,
+            "KeyScrollLock", Key::KeyScrollLock,
+            "KeyNumLock", Key::KeyNumLock,
+            "KeyPrintScreen", Key::KeyPrintScreen,
+            "KeyPause", Key::KeyPause,
+            "KeyF1", Key::KeyF1,
+            "KeyF2", Key::KeyF2,
+            "KeyF3", Key::KeyF3,
+            "KeyF4", Key::KeyF4,
+            "KeyF5", Key::KeyF5,
+            "KeyF6", Key::KeyF6,
+            "KeyF7", Key::KeyF7,
+            "KeyF8", Key::KeyF8,
+            "KeyF9", Key::KeyF9,
+            "KeyF10", Key::KeyF10,
+            "KeyF11", Key::KeyF11,
+            "KeyF12", Key::KeyF12,
+            "KeyF13", Key::KeyF13,
+            "KeyF14", Key::KeyF14,
+            "KeyF15", Key::KeyF15,
+            "KeyF16", Key::KeyF16,
+            "KeyF17", Key::KeyF17,
+            "KeyF18", Key::KeyF18,
+            "KeyF19", Key::KeyF19,
+            "KeyF20", Key::KeyF20,
+            "KeyF21", Key::KeyF21,
+            "KeyF22", Key::KeyF22,
+            "KeyF23", Key::KeyF23,
+            "KeyF24", Key::KeyF24,
+            "KeyF25", Key::KeyF25,
+            "KeyKp0", Key::KeyKp0,
+            "KeyKp1", Key::KeyKp1,
+            "KeyKp2", Key::KeyKp2,
+            "KeyKp3", Key::KeyKp3,
+            "KeyKp4", Key::KeyKp4,
+            "KeyKp5", Key::KeyKp5,
+            "KeyKp6", Key::KeyKp6,
+            "KeyKp7", Key::KeyKp7,
+            "KeyKp8", Key::KeyKp8,
+            "KeyKp9", Key::KeyKp9,
+            "KeyKpDecimal", Key::KeyKpDecimal,
+            "KeyKpDivide", Key::KeyKpDivide,
+            "KeyKpMultiply", Key::KeyKpMultiply,
+            "KeyKpSubtract", Key::KeyKpSubtract,
+            "KeyKpAdd", Key::KeyKpAdd,
+            "KeyKpEnter", Key::KeyKpEnter,
+            "KeyKpEquals", Key::KeyKpEquals,
+            "KeyLeftShift", Key::KeyLeftShift,
+            "KeyLeftControl", Key::KeyLeftControl,
+            "KeyLeftAlt", Key::KeyLeftAlt,
+            "KeyLeftSuper", Key::KeyLeftSuper,
+            "KeyRightShift", Key::KeyRightShift,
+            "KeyRightControl", Key::KeyRightControl,
+            "KeyRightAlt", Key::KeyRightAlt,
+            "KeyRightSuper", Key::KeyRightSuper,
+            "KeyMenu", Key::KeyMenu
+        );
+
+        state["EventMouseButton"] = state.create_table_with( 
+            "ButtonLeft", MouseButton::MouseButtonLeft,
+            "ButtonRight", MouseButton::MouseButtonRight,
+            "ButtonMiddle", MouseButton::MouseButtonMiddle
+        );
+
+        state["EventMouseType"] = state.create_table_with(
+            "ButtonPressed", MouseEventType::MouseButtonPressed,
+            "ButtonReleased", MouseEventType::MouseButtonReleased,
+            "MouseMoved", MouseEventType::MouseMoved,
+            "MouseScrolled", MouseEventType::MouseScrolled
+        );
+
+        state.new_usertype<rosa::Event>("event",
+            "type", &rosa::Event::type,
+            "keyboard", &rosa::Event::keyboard,
+            "mouse", &rosa::Event::mouse
+        );
+
+        state.new_usertype<rosa::KeyboardEvent>("keyboard",
+            "type", &rosa::KeyboardEvent::type,
+            "key", &rosa::KeyboardEvent::key,
+            "modifiers", &rosa::KeyboardEvent::modifiers
+        );
+
+        state.new_usertype<rosa::MouseEvent>("mouse",
+            "type", &rosa::MouseEvent::type,
+            "button", &rosa::MouseEvent::button,
+            "position", &rosa::MouseEvent::position
+        );
+    }
+
+    auto init_types(sol::state& state) -> void {
+        state.new_usertype<glm::vec2>("vec2",
+            sol::constructors<glm::vec2(float, float)>(),
+            "x", &glm::vec2::x,
+            "y", &glm::vec2::y,
+            "to_string", [](glm::vec2 vec) {
+                std::stringstream pvalue{};
+                pvalue << vec.x << ", " << vec.y;
+                return pvalue.str();
+            }
+        );
+
+        state.new_usertype<glm::vec3>("vec2",
+            sol::constructors<glm::vec3(float, float, float)>(),
+            "x", &glm::vec2::x,
+            "y", &glm::vec2::y,
+            "z", &glm::vec2::y,
+            "to_string", [](glm::vec3 vec) {
+                std::stringstream pvalue{};
+                pvalue << vec.x << ", " << vec.y << ", " << vec.z;
+                return pvalue.str();
+            }
+        );
+    }
 
     LuaScriptComponent::LuaScriptComponent(std::reference_wrapper<Scene> scene, entt::entity entity) : m_entity(entity), m_scene(scene) {
         ROSA_PROFILE_SCOPE("LuaScriptComponent:Initialise");
@@ -38,9 +244,13 @@ namespace rosa {
                 m_on_create_function = m_state["onCreate"];
                 m_on_delete_function = m_state["onDelete"];
                 m_on_update_function = m_state["onUpdate"];
+                m_on_input_function =  m_state["onInput"];
 
                 m_uuid = uuid;
 
+                init_events(m_state);
+                init_types(m_state);
+                
                 // logger
                 auto log_table = m_state["log"].get_or_create<sol::table>();
                 log_table.set_function("error", [](const std::string& message) {

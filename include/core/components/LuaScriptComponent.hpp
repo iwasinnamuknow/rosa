@@ -14,6 +14,7 @@
  */
 
 #pragma once
+#include <sol/forward.hpp>
 #define SOL_PRINT_ERRORS 0
 #define SOL_ALL_SAFETIES_ON 1
 
@@ -43,6 +44,7 @@ namespace rosa {
             sol::protected_function m_on_create_function;
             sol::protected_function m_on_delete_function;
             sol::protected_function m_on_update_function;
+            sol::protected_function m_on_input_function;
             uuids::uuid m_uuid;
 
             auto set_data(const std::string& key, sol::table& table) -> void;

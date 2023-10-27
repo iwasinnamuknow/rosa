@@ -93,6 +93,22 @@ namespace rosa {
                 nsc.on_input_function(nsc.instance, event);
             });
         }
+
+        {
+            ROSA_PROFILE_SCOPE("Events:LuaScript");
+
+            // Run updates for native script components, instantiating where needed
+            m_registry.view<LuaScriptComponent>().each([event](auto& lsc) {
+
+                //Entity* actual = &m_entities.at(entity);
+
+                auto result = lsc.m_on_input_function(Event(event));
+                if (!result.valid()) {
+                    sol::error err = result;
+                    spdlog::error("Failed to call onInput for lua script: {}", err.what());
+                }
+            });
+        }
     }
 
     auto Scene::update(float delta_time) -> void {

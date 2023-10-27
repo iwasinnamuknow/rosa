@@ -38,6 +38,17 @@ function onUpdate(delta_time)
 --   print(dump(transform.getPosition()))
 end
 
+function onInput(event)
+  if (event.type == EventType.Mouse) then
+    if (event.mouse.type == EventMouseType.MouseMoved) then
+      --print(event.mouse.position.x .. ", " .. event.mouse.position.y)
+      print(event.mouse.position:to_string())
+
+      print(event.mouse.position == vec2.new(100.0, 100.0))
+    end
+  end
+end
+
 function onDelete()
 
 end

@@ -51,12 +51,12 @@ namespace rosa {
         if (PHYSFS_exists("assets.lst") != 0) {
             PHYSFS_file* myfile = PHYSFS_openRead("assets.lst");
             std::string buffer{};
+            buffer.resize(PHYSFS_fileLength(myfile));
             std::int64_t length_read = PHYSFS_readBytes(myfile, buffer.data(), static_cast<std::uint64_t>(PHYSFS_fileLength(myfile)));
             assert(length_read == PHYSFS_fileLength(myfile));
             PHYSFS_close(myfile);
 
-            std::string string_data(buffer, static_cast<size_t>(length_read));
-            std::vector<std::string> lines = split_lines(string_data, '\n');
+            std::vector<std::string> lines = split_lines(buffer, '\n');
 
             for (const auto& line : lines) {
                 std::vector line_data = split_lines(line, ':');
@@ -245,13 +245,12 @@ namespace rosa {
                 if (PHYSFS_exists(resource.m_name.c_str()) != 0) {
                     PHYSFS_file* myfile = PHYSFS_openRead(resource.m_name.c_str());
                     std::string buffer{};
+                    buffer.resize(PHYSFS_fileLength(myfile));
                     std::int64_t length_read = PHYSFS_readBytes(myfile, buffer.data(), static_cast<std::uint64_t>(PHYSFS_fileLength(myfile)));
                     assert(length_read == PHYSFS_fileLength(myfile));
                     PHYSFS_close(myfile);
 
-                    std::string string_data(buffer, static_cast<size_t>(length_read));
-
-                    resource.m_script = string_data;
+                    resource.m_script = buffer;
                 } else {
                     spdlog::critical("Couldn't load asset: {}", resource.m_name);
                 }
