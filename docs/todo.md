@@ -69,5 +69,5 @@ for (auto it = m_state.globals().begin(); it != m_state.globals().end(); ++it) {
 
 # Quality
 
-- [ ] Warnings pass
+- [x] Warnings pass
 - [ ] Figure out how to write some unit tests
