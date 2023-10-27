@@ -46,7 +46,7 @@ namespace rosa {
         glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
         glBufferData(GL_ARRAY_BUFFER, sizeof(m_vertices), m_vertices, GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), static_cast<void *>(nullptr));
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void *)(offsetof(Vertex, texture_coords.x)));
         glEnableVertexAttribArray(1);
@@ -59,7 +59,7 @@ namespace rosa {
 
         glBindTexture(GL_TEXTURE_2D, m_texture->getOpenGlId());
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         glUseProgram(0);
     }
@@ -81,7 +81,7 @@ namespace rosa {
         glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
         glBufferData(GL_ARRAY_BUFFER, sizeof(m_vertices), m_vertices, GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), static_cast<void *>(nullptr));
         glEnableVertexAttribArray(0);
 
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void *)(offsetof(Vertex, texture_coords.x)));

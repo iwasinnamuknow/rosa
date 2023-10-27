@@ -22,7 +22,7 @@
 #include <iostream>
 #include <core/EventManager.hpp>
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
+void key_callback(GLFWwindow* /*window*/, int key, int /*scancode*/, int action, int mode) {
     // TODO EVENTS
     //if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     //    glfwSetWindowShouldClose(window, GL_TRUE);
@@ -38,7 +38,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     rosa::EventManager::getInstance().pushEvent(event);
 }
 
-void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos) {
+void cursor_pos_callback(GLFWwindow* /*window*/, double xpos, double ypos) {
     rosa::MouseEvent m_event{};
     m_event.type = rosa::MouseEventType::MouseMoved;
     m_event.position = glm::vec2(xpos, ypos);
@@ -49,7 +49,7 @@ void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos) {
     rosa::EventManager::getInstance().pushEvent(event);
 }
 
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+void mouse_button_callback(GLFWwindow* /*window*/, int button, int action, int /*mods*/) {
     rosa::MouseEvent m_event{};
 
     if (action == GLFW_PRESS) {
@@ -87,7 +87,7 @@ namespace rosa {
         glfwMakeContextCurrent( m_wnd );
         //glfwSwapInterval(0); // Vsync disable
 
-        int version = gladLoadGL(glfwGetProcAddress);
+        [[maybe_unused]] int version = gladLoadGL(glfwGetProcAddress);
 
         glfwSetKeyCallback(m_wnd, key_callback);
         glfwSetCursorPosCallback(m_wnd, cursor_pos_callback);
@@ -97,8 +97,8 @@ namespace rosa {
         glfwSetWindowSizeCallback( m_wnd, RenderWindow::callback_resize );
 
         m_monitor =  glfwGetPrimaryMonitor();
-        glfwGetWindowSize( m_wnd, &m_wndSize[0], &m_wndSize[1] );
-        glfwGetWindowPos( m_wnd, &m_wndPos[0], &m_wndPos[1] );
+        glfwGetWindowSize( m_wnd, m_wndSize.data(), &m_wndSize[1] );
+        glfwGetWindowPos( m_wnd, m_wndPos.data(), &m_wndPos[1] );
         m_updateViewport = true;
 
         m_projection = glm::ortho(0.F, static_cast<float>(width), static_cast<float>(height), 0.F);
@@ -107,8 +107,8 @@ namespace rosa {
     void RenderWindow::callback_resize(GLFWwindow* window, int cx, int cy)
     {
         void *ptr = glfwGetWindowUserPointer( window );
-        if (auto *wndPtr = static_cast<RenderWindow*>(ptr)) {
-            wndPtr->resize(cx, cy );
+        if (auto *wnd_ptr = static_cast<RenderWindow*>(ptr)) {
+            wnd_ptr->resize(cx, cy );
         }
     }
 
@@ -163,8 +163,8 @@ namespace rosa {
         if (fullscreen)
         {
             // backup window position and window size
-            glfwGetWindowPos( m_wnd, &m_wndPos[0], &m_wndPos[1] );
-            glfwGetWindowSize( m_wnd, &m_wndSize[0], &m_wndSize[1] );
+            glfwGetWindowPos( m_wnd, m_wndPos.data(), &m_wndPos[1] );
+            glfwGetWindowSize( m_wnd, m_wndSize.data(), &m_wndSize[1] );
             
             // get resolution of monitor
             const GLFWvidmode * mode = glfwGetVideoMode(m_monitor);

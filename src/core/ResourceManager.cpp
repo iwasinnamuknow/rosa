@@ -256,6 +256,10 @@ namespace rosa {
                     spdlog::critical("Couldn't load asset: {}", resource.m_name);
                 }
                 break;
+            case resource_font:
+            case resource_music:
+            case resource_sound:
+                break;
         }
 
         resource.m_loaded = true;
