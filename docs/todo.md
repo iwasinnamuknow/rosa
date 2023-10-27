@@ -72,3 +72,4 @@ for (auto it = m_state.globals().begin(); it != m_state.globals().end(); ++it) {
 
 - [x] Warnings pass
 - [ ] Figure out how to write some unit tests
+- [ ] Add doxygen comments for public interfaces
