@@ -211,14 +211,27 @@ namespace rosa {
             }
         );
 
-        state.new_usertype<glm::vec3>("vec2",
+        state.new_usertype<glm::vec3>("vec3",
             sol::constructors<glm::vec3(float, float, float)>(),
-            "x", &glm::vec2::x,
-            "y", &glm::vec2::y,
-            "z", &glm::vec2::y,
+            "x", &glm::vec3::x,
+            "y", &glm::vec3::y,
+            "z", &glm::vec3::z,
             "to_string", [](glm::vec3 vec) {
                 std::stringstream pvalue{};
                 pvalue << vec.x << ", " << vec.y << ", " << vec.z;
+                return pvalue.str();
+            }
+        );
+
+        state.new_usertype<glm::vec4>("vec4",
+            sol::constructors<glm::vec4(float, float, float, float)>(),
+            "x", &glm::vec4::x,
+            "y", &glm::vec4::y,
+            "z", &glm::vec4::z,
+            "w", &glm::vec4::w,
+            "to_string", [](glm::vec4 vec) {
+                std::stringstream pvalue{};
+                pvalue << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w;
                 return pvalue.str();
             }
         );

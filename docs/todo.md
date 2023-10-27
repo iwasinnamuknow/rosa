@@ -2,7 +2,7 @@
 
 - [x] Create containers to organise opengl event data
 - [x] Pass event containers to NativeScript
-- [ ] Pass event containers to LuaScript
+- [x] Pass event containers to LuaScript
 
 ```cpp
 enum class Direction {
@@ -53,9 +53,10 @@ for (auto it = m_state.globals().begin(); it != m_state.globals().end(); ++it) {
 
 # LuaScript
 
-- [ ] Add texture support
+- [x] Add (set)texture by uuid
 - [ ] Add Native/Lua interop?
 - [ ] Add component support?
+- [x] Represent glm::vec2/3/4
 
 # Profiling
 
