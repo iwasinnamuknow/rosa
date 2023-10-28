@@ -27,18 +27,19 @@ namespace rosa {
 
     auto Sprite::draw(glm::mat4 projection, glm::mat4 transform) -> void {
 
-        m_mvp = projection * transform;
+        m_mvp = parent_transform * transform;
+        m_mvp = projection * m_mvp;
 
         if (m_texture == nullptr) {
             return;
-        } else {
-            auto size = m_texture->getSize();
-
-            m_vertices[0].position = glm::vec2(-(size.x/2), -(size.y/2));
-            m_vertices[1].position = glm::vec2(  size.x/2,  -(size.y/2));
-            m_vertices[2].position = glm::vec2(-(size.x/2),   size.y/2);
-            m_vertices[3].position = glm::vec2(  size.x/2,    size.y/2);
         }
+        
+        auto size = m_texture->getSize();
+
+        m_vertices[0].position = glm::vec2(-(size.x/2), -(size.y/2));
+        m_vertices[1].position = glm::vec2(  size.x/2,  -(size.y/2));
+        m_vertices[2].position = glm::vec2(-(size.x/2),   size.y/2);
+        m_vertices[3].position = glm::vec2(  size.x/2,    size.y/2);
         
         glUseProgram(m_pid);
         glBindVertexArray(m_vertex_array);

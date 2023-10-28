@@ -63,10 +63,11 @@ for (auto it = m_state.globals().begin(); it != m_state.globals().end(); ++it) {
 - [ ] Add better ImGui profiler output. Maybe some kind of histogram
 - [ ] Improve profiler output file format. Perhaps the one cherno used?
 
-# Core tools
+# Core
 
 - [ ] Generic timer
 - [ ] Slots
+- [ ] Hierarchical transforms
 
 # Quality
 

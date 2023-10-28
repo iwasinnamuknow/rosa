@@ -163,41 +163,18 @@ namespace rosa {
 
         //     for (const auto& entid : view)
         //     {
-        //         TransformComponent& transform = m_registry.get<TransformComponent>(entid);
-        //         SpriteComponent& sprite_comp = m_registry.get<SpriteComponent>(entid);
+        //         Entity* entity = &m_entities.at(entid);
+        //         if (entity->m_parent != entt::null) {
+        //             TransformComponent& transform = m_registry.get<TransformComponent>(entity->getId());
+        //             SpriteComponent& sprite_comp = m_registry.get<SpriteComponent>(entity->getId());
 
-        //         // Entity* entity = &m_entities.at(entid);
+        //             for (const auto child : entity->m_children) {
+        //                 TransformComponent& child_transform = m_registry.get<TransformComponent>(child);
+        //                 SpriteComponent& child_sprite = m_registry.get<SpriteComponent>(child);
 
-        //         // if (entity->m_parent == entt::null) {
-        //         //     //
-        //         //     // turn it on its head, work top down, one layer at a time
-        //         //     //
-        //         //     // A -> B -> C, no accumulation
-        //         //     //
-        //         //     auto p_transform = m_entities.at(entity->getParent()).getComponent<TransformComponent>();
-                    
-        //         //     auto angle = -(transform.rotation * (std::numbers::pi / 180));
-        //         //     const float cosine = std::cos(angle);
-        //         //     const float sine   = std::sin(angle);
-        //         //     const float sxc    = transform.scale.x * cosine;
-        //         //     const float syc    = transform.scale.y * cosine;
-        //         //     const float sxs    = transform.scale.x * sine;
-        //         //     const float sys    = transform.scale.y * sine;
-        //         //     const float tx     = -p_transform.position.x * sxc - p_transform.position.y * sys + transform.position.x;
-        //         //     const float ty     = p_transform.position.x * sxs - p_transform.position.y * syc + transform.position.y;
-
-        //         //     // parent_pos += p_transform.position;
-        //         //     parent_rot += p_transform.rotation;
-                    
-        //         //     entity = &m_entities.at(entity->getParent());
-        //         // }
-
-        //         //auto updated_pos = transform.position + parent_pos;
-
-        //         // todo take parents position
-        //         // sprite_comp.setPosition(transform.position);
-        //         // sprite_comp.setScale(transform.scale);
-        //         // sprite_comp.setRotation(transform.rotation);
+        //                 child_sprite.parent_transform = transform.getLocalTransform();
+        //             }
+        //         }
         //     }
         // }
 

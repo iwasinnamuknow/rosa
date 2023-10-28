@@ -24,6 +24,8 @@ namespace rosa {
             friend class RenderWindow;
             virtual ~Drawable() = default;
             virtual auto draw(glm::mat4 projection, glm::mat4 transform) -> void{}
+
+            glm::mat4 parent_transform{1.F};
     };
 
 } // namespace rosa
