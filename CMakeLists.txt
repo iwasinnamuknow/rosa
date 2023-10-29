@@ -64,5 +64,5 @@ target_link_libraries(rosa PRIVATE
   imgui::imgui
 )
 
-add_subdirectory(testbed)
+add_subdirectory(examples)
 add_subdirectory(docs)
