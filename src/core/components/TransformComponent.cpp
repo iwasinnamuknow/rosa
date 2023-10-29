@@ -13,17 +13,21 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include <glm/glm.hpp>
+#include <core/components/TransformComponent.hpp>
 
 namespace rosa {
 
-    class Drawable {
-        public:
-            friend class RenderWindow;
-            virtual ~Drawable() = default;
-            virtual auto draw(glm::mat4 projection, glm::mat4 transform) -> void{}
-    };
+    auto TransformComponent::getLocalTransform() const -> const glm::mat4 {
+        glm::mat4 translation_matrix = glm::translate(glm::mat4(1.F), position);
+        glm::mat4 scale_matrix = glm::scale(glm::mat4(1.F), scale);
+        glm::mat4 rotate_matrix = glm::rotate(glm::mat4(1.F), rotation, glm::vec3(0.F, 0.F, 1.F));
+        return translation_matrix * rotate_matrix * scale_matrix;
+    }
+
+    auto TransformComponent::getGlobalTransform() const -> const glm::mat4 {
+        glm::mat4 temp = parent_transform * getLocalTransform();
+        temp[3][2] = 0;
+        return temp;
+    }
 
 } // namespace rosa

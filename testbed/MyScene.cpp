@@ -42,11 +42,11 @@ auto MyScene::onLoad() -> void {
     // TODO
     //parent_entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
 
-    // auto& child_entity = createEntity();
-    // child_entity.addComponent<rosa::SpriteComponent>();
-    // child_entity.getComponent<rosa::SpriteComponent>().setTexture(rosa_uuid);
-    // child_entity.setParent(parent_entity.getId());
-    // child_entity.getComponent<rosa::TransformComponent>().setPosition(-50, -50);
+    auto& child_entity = createEntity();
+    child_entity.addComponent<rosa::SpriteComponent>();
+    child_entity.getComponent<rosa::SpriteComponent>().setTexture(dds_uuid);
+    child_entity.setParent(parent_entity.getId());
+    child_entity.getComponent<rosa::TransformComponent>().setPosition(-50, -50);
 
     //getRegistry().emplace<rosa::NativeScriptComponent>(parent_entity).bind<TestScript>();
     auto& lsc = parent_entity.addComponent<rosa::LuaScriptComponent>(*this, parent_entity);

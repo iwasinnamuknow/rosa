@@ -67,7 +67,7 @@ for (auto it = m_state.globals().begin(); it != m_state.globals().end(); ++it) {
 
 - [ ] Generic timer
 - [ ] Slots
-- [ ] Hierarchical transforms
+- [x] Hierarchical transforms
 
 # Quality
 

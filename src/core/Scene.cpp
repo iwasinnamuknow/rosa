@@ -13,6 +13,7 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include <chrono>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -26,6 +27,7 @@
 #include <core/components/NativeScriptComponent.hpp>
 #include <core/components/LuaScriptComponent.hpp>
 #include <functional>
+#include <stack>
 
 namespace rosa {
 
@@ -155,28 +157,39 @@ namespace rosa {
             });
         }
 
-        // {
-        //     ROSA_PROFILE_SCOPE("Updates:SpriteTransformUpdate");
+        {
+            ROSA_PROFILE_SCOPE("Updates:SpriteTransformUpdate");
 
-        //     // This function only cares about entities with SpriteComponent and TransformComponent
-        //     auto view = m_registry.view<SpriteComponent, TransformComponent>();
+            // This function only cares about entities with TransformComponent, which is all of them i guess
+            auto view = m_registry.view<TransformComponent>();
 
-        //     for (const auto& entid : view)
-        //     {
-        //         Entity* entity = &m_entities.at(entid);
-        //         if (entity->m_parent != entt::null) {
-        //             TransformComponent& transform = m_registry.get<TransformComponent>(entity->getId());
-        //             SpriteComponent& sprite_comp = m_registry.get<SpriteComponent>(entity->getId());
+            for (const auto& entid : view)
+            {
+                Entity* entity = &m_entities.at(entid);
 
-        //             for (const auto child : entity->m_children) {
-        //                 TransformComponent& child_transform = m_registry.get<TransformComponent>(child);
-        //                 SpriteComponent& child_sprite = m_registry.get<SpriteComponent>(child);
+                if (entity->m_children.empty()) {
+                    std::stack<Entity*> stack;
 
-        //                 child_sprite.parent_transform = transform.getLocalTransform();
-        //             }
-        //         }
-        //     }
-        // }
+                    
+                    stack.push(entity);
+
+                    while (entity->m_parent != entt::null) {
+                        entity = &m_entities.at(entity->m_parent);
+                        stack.push(entity);
+                    }
+
+                    glm::mat4 combined_transform{1.F};
+                    while(!stack.empty()) {
+                        entity = stack.top();
+                        stack.pop();
+
+                        auto& transform = entity->getComponent<TransformComponent>();
+                        transform.parent_transform = combined_transform;
+                        combined_transform *= transform.getLocalTransform();
+                    }
+                }
+            }
+        }
 
         {
             ROSA_PROFILE_SCOPE("Updates:EntitiesForDeletion");
@@ -214,7 +227,7 @@ namespace rosa {
             auto sprite_comp = m_registry.get<SpriteComponent>(entid);
             auto transform = m_registry.get<TransformComponent>(entid);
             //auto sprite_comp = m_registry.get<SpriteComponent>(entid);
-            m_render_window.draw(sprite_comp, transform.getLocalTransform());
+            m_render_window.draw(sprite_comp, transform.getGlobalTransform());
         };
     }
 

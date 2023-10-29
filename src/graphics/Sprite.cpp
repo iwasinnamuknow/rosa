@@ -26,9 +26,7 @@
 namespace rosa {
 
     auto Sprite::draw(glm::mat4 projection, glm::mat4 transform) -> void {
-
-        m_mvp = parent_transform * transform;
-        m_mvp = projection * m_mvp;
+        m_mvp = projection * transform;
 
         if (m_texture == nullptr) {
             return;
