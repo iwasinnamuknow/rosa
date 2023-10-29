@@ -44,6 +44,7 @@
             "inherits": [ "base-linux" ],
             "binaryDir": "${sourceDir}/build/linux/release",
             "cacheVariables": {
+                "BUILD_DOCUMENTATION": "true",
                 "CMAKE_BUILD_TYPE": "Release",
                 "vcpkg_INCLUDE_DIR": "${sourceDir}/build/linux/release/vcpkg_installed/x64-linux/include",
                 "vcpkg_LIB_DIR": "${sourceDir}/build/linux/release/vcpkg_installed/x64-linux/lib"

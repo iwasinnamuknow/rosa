@@ -65,3 +65,4 @@ target_link_libraries(rosa PRIVATE
 )
 
 add_subdirectory(testbed)
+add_subdirectory(docs)
