@@ -28,6 +28,7 @@
 #include <core/components/LuaScriptComponent.hpp>
 #include <functional>
 #include <stack>
+#include <core/Entity.hpp>
 
 namespace rosa {
 
@@ -36,7 +37,7 @@ namespace rosa {
     auto Scene::createEntity() -> Entity& {
         ROSA_PROFILE_SCOPE("Entity:Create");
 
-        Entity entity{m_registry.create(), std::reference_wrapper<entt::registry>(m_registry)};
+        Entity entity{m_registry.create(), *this};
         entity.addComponent<TransformComponent>();
         m_entities.insert({entity.getId(), entity});
         return m_entities.at(entity.getId());
@@ -45,7 +46,7 @@ namespace rosa {
     auto Scene::create_entity(uuids::uuid uuid) -> Entity& {
         ROSA_PROFILE_SCOPE("Entity:Create_UUID");
 
-        Entity entity{uuid, m_registry.create(), std::reference_wrapper<entt::registry>(m_registry)};
+        Entity entity{uuid, m_registry.create(), *this};
         entity.addComponent<TransformComponent>();
         m_entities.insert({entity.getId(), entity});
         return m_entities.at(entity.getId());
