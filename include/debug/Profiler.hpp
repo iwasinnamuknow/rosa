@@ -15,8 +15,6 @@
 
 #pragma once
 
-#ifdef ROSA_PROFILE
-
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -130,6 +128,7 @@ namespace rosa::debug {
 
 } // namespace rosa::debug
 
+#ifdef ROSA_PROFILE
 // NOLINTBEGIN(cppcoreguidelines-macro-usage)
 #define TOKENPASTE(x, y) x ## y
 #define TOKENPASTE2(x, y) TOKENPASTE(x, y)

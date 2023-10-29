@@ -232,7 +232,7 @@ namespace rosa {
     }
 
     auto Scene::show_profile_stats(bool* open) const -> void {
-
+#ifdef ROSA_PROFILE
         std::vector<rosa::debug::ProfileUiItem> items;
 
         ImGui::Begin("Profiler", open, static_cast<ImGuiWindowFlags>(
@@ -289,6 +289,7 @@ namespace rosa {
         ImGui::End();
 
         rosa::debug::Profiler::instance().clearLastFrame();
+#endif // ROSA_PROFILE
     }
 
 } // namespace rosa
