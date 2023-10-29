@@ -35,8 +35,6 @@
 #include <climits>
 #endif
 
-#define ROSA_PRELOAD_ASSETS
-
 auto split_lines(const std::string& string, char delimiter) -> std::vector<std::string> {
     auto result = std::vector<std::string>{};
     auto stream = std::stringstream(string);
@@ -102,16 +100,13 @@ namespace rosa {
                 auto uuid = uuid_g.value();
                 auto new_resource = std::make_unique<Resource>( line_data.at(1), uuid, static_cast<resource_type>(std::stoi(line_data.at(0))) );
 
-#ifdef ROSA_PRELOAD_ASSETS
                 populate_resource(*new_resource);
-#endif // ROSA_PRELOAD_ASSETS
                 m_resources[uuid] = std::move(new_resource);
             }
 
         } else {
             // doesn't exists..
-            spdlog::critical("Couldn't find asset registry inside base base.pak");
-            abort();
+            throw Exception("Couldn't find asset manifest inside base.pak");
         }
     }
 

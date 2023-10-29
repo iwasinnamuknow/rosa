@@ -22,6 +22,7 @@
 #include <chrono>
 #include <ratio>
 #include <core/EventManager.hpp>
+#include <spdlog/spdlog.h>
 
 namespace rosa {
 
@@ -34,11 +35,17 @@ namespace rosa {
         spdlog::set_level(spdlog::level::info);
         #endif
 
-        spdlog::info("Setting up OpenGL context");
-        m_render_window.init(window_width, window_height, "SFML Window");
+        try {
+            spdlog::info("Setting up OpenGL context");
+            m_render_window.init(window_width, window_height, "SFML Window");
 
-        spdlog::info("Initialising resource management");
-        [[maybe_unused]]auto& res = ResourceManager::instance();
+            spdlog::info("Initialising resource management");
+            [[maybe_unused]]auto& res = ResourceManager::instance();
+        
+        } catch(Exception& e) {
+            spdlog::critical(e.what());
+            abort();
+        }
 
         spdlog::info("Rosa is up and running!");
     }
