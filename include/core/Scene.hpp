@@ -34,6 +34,14 @@ namespace rosa {
         struct LuaTransform;
     } // namespace lua_script
 
+    /**
+     * @brief The Scene class calls update and render functions for every entity it contains.
+     *
+     *  It contains a collection of entities and handles the necessary calls for all of the
+     *  different components an entity may contain.
+     * 
+     *  It can be extended by your own class, see the testbed for an example scene.
+     */
     class Scene {
         public:
             explicit Scene(RenderWindow& render_window);
@@ -47,17 +55,49 @@ namespace rosa {
             virtual auto input(const Event& event) -> void;
             virtual ~Scene() = default;
 
+            /**
+             * @brief Get the render window
+             * 
+             * @return RenderWindow& reference to the render window
+             */
             auto getRenderWindow() const -> RenderWindow& {
                 return m_render_window;
             }
 
         protected:
+            /**
+             * @brief Get the ECS registry
+             * 
+             * @return entt::registry& reference to the registry
+             */
             auto getRegistry() -> entt::registry& {
                 return m_registry;
             }
 
+            /**
+             * @brief Create a new entity in the scene.
+             *
+             *  The new entity will contain only a transform component
+             * 
+             * @return Entity& reference to a new entity
+             */
             auto createEntity() -> Entity&;
+
+            /**
+             * @brief Remove an entity from the scene
+             * 
+             * @param entity reference to the entity to remove
+             * @return true if the entity was removed
+             * @return false if the entity didn't exist
+             */
             auto removeEntity(Entity& entity) -> bool;
+
+            /**
+             * @brief Get a specific entity
+             * 
+             * @param entt_id entt ID of the entity
+             * @return Entity& reference to the entity
+             */
             auto getEntity(entt::entity entt_id) -> Entity& {
                 return m_entities.at(entt_id);
             }
