@@ -1,7 +1,19 @@
 PROJECT_NAME           = "@CMAKE_PROJECT_NAME@"
 STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@ \
                          @PROJECT_BINARY_DIR@
-INPUT                  = @PROJECT_SOURCE_DIR@/include
-FILE_PATTERNS          = *.hpp
+INPUT                  = @PROJECT_SOURCE_DIR@
+EXCLUDE_PATTERNS       = */vendor/* \
+                         */build/* \
+                         */testbed/* \
+                         */doxygen-awesome-css/docs/* \
+                         */doxygen-awesome-css/*.md \
+                         */doxygen-awesome-css/include/* 
+FILE_PATTERNS          = *.hpp README.md
 RECURSIVE              = YES
-USE_MDFILE_AS_MAINPAGE = @doxy_main_page@
+USE_MDFILE_AS_MAINPAGE = @PROJECT_SOURCE_DIR@/README.md
+GENERATE_TREEVIEW      = YES # optional. Also works without treeview
+DISABLE_INDEX = NO
+FULL_SIDEBAR = NO
+HTML_EXTRA_STYLESHEET  = @PROJECT_SOURCE_DIR@/docs/doxygen-awesome-css/doxygen-awesome.css
+HTML_COLORSTYLE        = LIGHT # required with Doxygen >= 1.9.5
+USE_PDFLATEX           = NO
