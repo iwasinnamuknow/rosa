@@ -68,6 +68,7 @@ for (auto it = m_state.globals().begin(); it != m_state.globals().end(); ++it) {
 - [ ] Generic timer
 - [ ] Slots
 - [x] Hierarchical transforms
+- [ ] Allow specifying window size
 
 # Quality
 
