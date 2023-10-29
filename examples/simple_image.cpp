@@ -61,11 +61,7 @@ class MyScene : public rosa::Scene {
         }
 };
 
-auto main(int argc, char** argv) -> int {
-
-    // We need to pass the path so ResourceManager can find the assets. this is wrong and will be changed.
-    auto args = std::span(argv, static_cast<size_t>(argc));
-    PHYSFS_init(args[0]);
+auto main() -> int {
 
     // Grab the GameManager
     auto& game_mgr = rosa::GameManager::instance();

@@ -21,10 +21,19 @@
 #include <exception>
 #include <memory>
 #include <optional>
+#include <physfs.h>
 #include <spdlog/spdlog.h>
 #include <sstream>
 #include <string>
 #include <utility>
+#include <filesystem>
+
+#if (_WIN32)
+#include <stdlib.h>
+#elif (__linux__)
+#include <unistd.h>
+#include <climits>
+#endif
 
 #define ROSA_PRELOAD_ASSETS
 
@@ -39,13 +48,37 @@ auto split_lines(const std::string& string, char delimiter) -> std::vector<std::
     return result;
 }
 
+auto get_exe_dir() -> std::string {
+    #if (_WIN32)
+        char *exePath;
+        if (_get_pgmptr(&exePath) != 0) {
+            exePath = "";
+        }
+    #elif (__linux__)
+        char exePath[PATH_MAX];
+        ssize_t len = ::readlink("/proc/self/exe", exePath, sizeof(exePath));
+        if (len == -1 || len == sizeof(exePath)) {
+            len = 0;
+        }
+        exePath[len] = '\0';
+    #endif
+
+    std::string directory{exePath};
+
+    return directory.substr(0, directory.find_last_of("\\/"));
+}
+
 namespace rosa {
 
     ResourceManager::ResourceManager() {
         ROSA_PROFILE_SCOPE("Assets:ParseAssetList");
 
-        [[maybe_unused]] int mount_success = PHYSFS_mount("base.pak", "", 1);
-        assert(mount_success != 0);
+        PHYSFS_init(nullptr);
+        int mount_success = PHYSFS_mount(
+            std::format("{}{}base.pak", get_exe_dir(), std::filesystem::path::preferred_separator).data(), "", 1);
+        if (mount_success == 0) {
+            throw Exception("Failed to locate base.pak");
+        }
 
         // Attempt to read assets.lst
         if (PHYSFS_exists("assets.lst") != 0) {
