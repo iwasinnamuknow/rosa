@@ -37,13 +37,13 @@ class MyScene : public rosa::Scene {
             // Like the size
             auto texture_size = texture.getSize();
 
-            // Currently the window size is fixed, so silly. Lets get it
+            // Grab the window size
             auto window_size = getRenderWindow().getSize();
 
             // Calculate a screen-centered position for the image
             const auto position = glm::vec2(
-                (static_cast<float>(getRenderWindow().getSize().x) / 2.F),
-                (static_cast<float>(getRenderWindow().getSize().y) / 2.F)
+                (static_cast<float>(window_size.x) / 2.F),
+                (static_cast<float>(window_size.y) / 2.F)
             );
 
             // Create a blank entity. It's not really blank, every entity has a TransformComponent
