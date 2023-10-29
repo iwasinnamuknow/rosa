@@ -28,20 +28,19 @@ namespace rosa {
     GameManager::GameManager() {
         ROSA_PROFILE_SESSION_BEGIN("test");
 
+        #if (DEBUG)
         spdlog::set_level(spdlog::level::debug);
-        spdlog::info("Rosa is up and running!");
+        #else
+        spdlog::set_level(spdlog::level::info);
+        #endif
 
+        spdlog::info("Setting up OpenGL context");
         m_render_window.init(window_width, window_height, "SFML Window");
 
-        // [[maybe_unused]] bool imgui_init =  ImGui::SFML::Init(m_render_window);
-        // assert(imgui_init);
-
-        /*std::unique_ptr<Scene> new_scene = std::make_unique<Scene>(m_render_window);
-        m_scenes.insert_or_assign("test", std::move(new_scene));
-        bool change_scene =  changeScene("test");
-        assert(change_scene);*/
-
+        spdlog::info("Initialising resource management");
         [[maybe_unused]]auto& res = ResourceManager::instance();
+
+        spdlog::info("Rosa is up and running!");
     }
 
     auto GameManager::instance() -> GameManager& {

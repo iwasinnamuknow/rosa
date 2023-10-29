@@ -43,6 +43,7 @@ target_compile_features(rosa PRIVATE cxx_std_20)
 target_include_directories(rosa PRIVATE
     include/
 )
+target_compile_definitions(rosa PUBLIC "$<$<CONFIG:DEBUG>:DEBUG>")
 target_include_directories(rosa SYSTEM PUBLIC
     vendor/
     ${PHYSFS_INCLUDE_DIR}
