@@ -73,4 +73,7 @@ for (auto it = m_state.globals().begin(); it != m_state.globals().end(); ++it) {
 
 - [x] Warnings pass
 - [ ] Figure out how to write some unit tests
+
+	https://github.com/g-truc/ogl-samples/blob/master/framework/test.cpp
+
 - [ ] Add doxygen comments for public interfaces
