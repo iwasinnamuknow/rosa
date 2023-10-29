@@ -26,7 +26,7 @@
 
 namespace rosa {
 
-    GameManager::GameManager() {
+    auto GameManager::init(int window_width, int window_height) -> void {
         ROSA_PROFILE_SESSION_BEGIN("test");
 
         #if (DEBUG)
@@ -47,6 +47,7 @@ namespace rosa {
             abort();
         }
 
+        m_initialised = true;
         spdlog::info("Rosa is up and running!");
     }
 
@@ -61,7 +62,11 @@ namespace rosa {
         return inserted;
     }
 
-    auto GameManager::run() -> void {
+    auto GameManager::run(int window_width, int window_height) -> void {
+        
+        if (!m_initialised) {
+            init(window_width, window_height);
+        }
 
         // Setup imgui
         IMGUI_CHECKVERSION();

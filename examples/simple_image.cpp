@@ -72,8 +72,8 @@ auto main() -> int {
     // Set the scene as active
     game_mgr.changeScene("simple_image");
 
-    // Away we go
-    game_mgr.run();
+    // Away we go with our desired window size
+    game_mgr.run(800, 600);
 
     return 0;
 }

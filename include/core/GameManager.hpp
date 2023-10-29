@@ -46,15 +46,17 @@ namespace rosa {
             auto operator=(GameManager const &&) -> GameManager & = delete;
 
             /**
-             * @brief Main game loop.
+             * @brief Main initialisation and game loop.
              *
              *  Responsible for polling events and calling into the current scenes'
              *  update and render handlers.
              *
              *  Also handles ImGUI setup/rendering.
+             *
+             *  @param window_size desired size of the render window
              * 
              */
-            auto run() -> void;
+            auto run(int window_width, int window_height) -> void;
 
             /**
              * @brief Change the currently active scene
@@ -110,8 +112,10 @@ namespace rosa {
             static auto instance() -> GameManager&;
 
         private:
-            explicit GameManager();
+            explicit GameManager() = default;
             ~GameManager() = default;
+
+            auto init(int window_width, int window_height) -> void;
 
             std::chrono::time_point<std::chrono::system_clock> m_time; /**< used to calculate the frame delta time */
 
@@ -121,7 +125,7 @@ namespace rosa {
 
             Colour m_clear_colour{0,0,0,1};
 
-            //ImGuiIO& io;
+            bool m_initialised{false};
     };
 
 } // namespace rosa
