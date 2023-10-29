@@ -13,6 +13,10 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include "core/components/LuaScriptComponent.hpp"
+#include "core/components/NativeScriptComponent.hpp"
+#include "core/components/SpriteComponent.hpp"
+#include "core/components/TransformComponent.hpp"
 #include <core/Entity.hpp>
 #include <core/GameManager.hpp>
 
@@ -25,12 +29,11 @@ namespace rosa {
             return false;
         }
 
-        Scene& scene = GameManager::instance().getCurrentScene();
-        Entity& new_parent = scene.m_entities.at(parent_id);
+        Entity& new_parent = m_scene.getEntity(parent_id);
 
         // Remove ourself from the previous parents' children
         if (m_parent != entt::null) {
-            Entity& old_parent = scene.m_entities.at(m_parent);
+            Entity& old_parent = m_scene.getEntity(m_parent);
 
             for (auto ch_it = old_parent.m_children.begin(); ch_it != old_parent.m_children.end(); ++ch_it) {
                 if (*ch_it == m_id) {
@@ -49,8 +52,7 @@ namespace rosa {
     auto Entity::removeParent() -> bool {
         if (m_parent != entt::null) {
 
-            Scene& scene = GameManager::instance().getCurrentScene();
-            Entity& old_parent = scene.m_entities.at(m_parent);
+            Entity& old_parent = m_scene.getEntity(m_parent);
 
             for (auto ch_it = old_parent.m_children.begin(); ch_it != old_parent.m_children.end(); ++ch_it) {
                 if (*ch_it == m_id) {

@@ -30,9 +30,6 @@
 #include <memory>
 
 namespace rosa {
-    
-    constexpr int window_width{800};
-    constexpr int window_height{600};
 
     /**
      * The main entrypoint to the engine. Handles scene operations and the main loop.
@@ -40,6 +37,10 @@ namespace rosa {
      */
     class GameManager {
         public:
+
+            explicit GameManager(int window_width, int window_height);
+            ~GameManager() = default;
+
             GameManager(GameManager const &) = delete;
             auto operator=(GameManager const &) -> GameManager & = delete;
             GameManager(GameManager const &&) = delete;
@@ -52,11 +53,9 @@ namespace rosa {
              *  update and render handlers.
              *
              *  Also handles ImGUI setup/rendering.
-             *
-             *  @param window_size desired size of the render window
              * 
              */
-            auto run(int window_width, int window_height) -> void;
+            auto run() -> void;
 
             /**
              * @brief Change the currently active scene
@@ -104,18 +103,7 @@ namespace rosa {
                 m_clear_colour = colour;
             }
 
-            /**
-             * @brief Singleton accessor
-             * 
-             * @return GameManager& reference to ourself
-             */
-            static auto instance() -> GameManager&;
-
         private:
-            explicit GameManager() = default;
-            ~GameManager() = default;
-
-            auto init(int window_width, int window_height) -> void;
 
             std::chrono::time_point<std::chrono::system_clock> m_time; /**< used to calculate the frame delta time */
 

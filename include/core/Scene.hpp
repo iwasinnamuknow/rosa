@@ -20,7 +20,7 @@
 #include <graphics/RenderWindow.hpp>
 #include <spdlog/spdlog.h>
 #include <unordered_map>
-#include <core/Entity.hpp>
+//#include <core/Entity.hpp>
 #include <debug/Profiler.hpp>
 #include <core/Event.hpp>
 
@@ -29,6 +29,8 @@ namespace rosa {
     class NativeScriptEntity;
     struct LuaScriptComponent;
     class SceneSerialiser;
+
+    class Entity;
 
     namespace lua_script {
         struct LuaTransform;

@@ -15,15 +15,17 @@
 
 #pragma once
 
+#include "core/components/TransformComponent.hpp"
 #include <entt/entt.hpp>
 #include <stduuid/uuid.h>
 #include <functional>
+#include <core/Scene.hpp>
 
 namespace rosa {
 
     class Entity {
         public:
-            Entity(entt::entity ent_id, std::reference_wrapper<entt::registry> registry) : m_id(ent_id), m_registry(registry) {
+            Entity(entt::entity ent_id, Scene& scene) : m_id(ent_id), m_scene(scene) {
                 std::random_device rd;
                 auto seed_data = std::array<int, std::mt19937::state_size> {};
                 std::generate(std::begin(seed_data), std::end(seed_data), std::ref(rd));
@@ -33,7 +35,7 @@ namespace rosa {
                 m_uuid = gen();
             }
 
-            Entity(uuids::uuid uuid, entt::entity ent_id, std::reference_wrapper<entt::registry> registry) : m_id(ent_id), m_uuid(uuid), m_registry(registry) {}
+            Entity(uuids::uuid uuid, entt::entity ent_id, Scene& scene) : m_id(ent_id), m_uuid(uuid), m_scene(scene) {}
 
             Entity(Entity&&) = default;
             Entity(const Entity&) = default;
@@ -48,24 +50,24 @@ namespace rosa {
             template<typename T>
             auto getComponent() -> T& {
                 assert(hasComponent<T>());
-                return m_registry.get().get<T>(m_id);
+                return m_scene.getRegistry().get<T>(m_id);
             }
 
             template<typename T>
             auto hasComponent() -> bool {
-                return m_registry.get().any_of<T>(m_id);
+                return m_scene.getRegistry().any_of<T>(m_id);
             }
 
             template<typename T, typename... Args>
             auto addComponent(Args&&... args) -> T& {
                 assert(!hasComponent<T>());
-                return m_registry.get().emplace<T>(m_id, std::forward<Args>(args)...);
+                return m_scene.getRegistry().emplace<T>(m_id, std::forward<Args>(args)...);
             }
 
             template<typename T>
             auto removeComponent() -> bool {
                 assert(hasComponent<T>());
-                return m_registry.get().remove<T>(m_id);
+                return m_scene.getRegistry().remove<T>(m_id);
             }
 
             auto getId() const -> entt::entity {
@@ -128,7 +130,7 @@ namespace rosa {
             std::vector<entt::entity> m_children{};
             entt::entity m_parent{entt::null};
 
-            std::reference_wrapper<entt::registry> m_registry;
+            Scene& m_scene;
             
             friend class NativeScriptEntity;
             friend class Scene;

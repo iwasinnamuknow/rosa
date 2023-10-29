@@ -64,7 +64,7 @@ class MyScene : public rosa::Scene {
 auto main() -> int {
 
     // Grab the GameManager
-    auto& game_mgr = rosa::GameManager::instance();
+    auto game_mgr = rosa::GameManager(800, 600);
 
     // Instantiate our scene from the class above and register it
     game_mgr.addScene("simple_image", std::make_unique<MyScene>(game_mgr.getRenderWindow()));
@@ -73,7 +73,7 @@ auto main() -> int {
     game_mgr.changeScene("simple_image");
 
     // Away we go with our desired window size
-    game_mgr.run(800, 600);
+    game_mgr.run();
 
     return 0;
 }

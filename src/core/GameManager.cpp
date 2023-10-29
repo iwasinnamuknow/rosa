@@ -26,7 +26,7 @@
 
 namespace rosa {
 
-    auto GameManager::init(int window_width, int window_height) -> void {
+    GameManager::GameManager(int window_width, int window_height) {
         ROSA_PROFILE_SESSION_BEGIN("test");
 
         #if (DEBUG)
@@ -51,23 +51,14 @@ namespace rosa {
         spdlog::info("Rosa is up and running!");
     }
 
-    auto GameManager::instance() -> GameManager& {
-        static GameManager s_instance;
-        return s_instance;
-    }
-
     auto GameManager::addScene(const std::string& key, std::unique_ptr<Scene> scene) -> bool {
         ROSA_PROFILE_SCOPE("Scenes:add");
         auto [iterator, inserted] = m_scenes.insert_or_assign(key, std::move(scene));
         return inserted;
     }
 
-    auto GameManager::run(int window_width, int window_height) -> void {
-        
-        if (!m_initialised) {
-            init(window_width, window_height);
-        }
-
+    auto GameManager::run() -> void {
+    
         // Setup imgui
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
