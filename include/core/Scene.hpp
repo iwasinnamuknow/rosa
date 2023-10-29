@@ -64,7 +64,6 @@ namespace rosa {
                 return m_render_window;
             }
 
-        protected:
             /**
              * @brief Get the ECS registry
              * 
