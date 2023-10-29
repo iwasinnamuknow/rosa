@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include "graphics/Colour.hpp"
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -93,6 +94,15 @@ namespace rosa {
             }
 
             /**
+             * @brief Set the colour used to clear the screen each frame
+             * 
+             * @param colour rgb(a) values for the clear colour
+             */
+            auto setClearColour(Colour colour) -> void {
+                m_clear_colour = colour;
+            }
+
+            /**
              * @brief Singleton accessor
              * 
              * @return GameManager& reference to ourself
@@ -108,6 +118,8 @@ namespace rosa {
             std::unordered_map<std::string, std::unique_ptr<Scene>> m_scenes{}; /**< collection of all the registered scenes */
             Scene* m_current_scene{nullptr};
             RenderWindow m_render_window{};
+
+            Colour m_clear_colour{0,0,0,1};
 
             //ImGuiIO& io;
     };

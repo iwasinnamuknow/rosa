@@ -100,7 +100,7 @@ namespace rosa {
 
             m_current_scene->update(delta_time);
 
-            m_render_window.clearColour(Colour{0, 255, 128});
+            m_render_window.clearColour(m_clear_colour);
 
             m_current_scene->render();
 
