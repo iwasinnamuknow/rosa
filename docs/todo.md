@@ -69,6 +69,7 @@ for (auto it = m_state.globals().begin(); it != m_state.globals().end(); ++it) {
 - [ ] Slots
 - [x] Hierarchical transforms
 - [x] Allow specifying window size
+- [ ] Make error handling more consistent
 
 # Quality
 
