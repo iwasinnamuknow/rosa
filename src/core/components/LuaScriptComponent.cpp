@@ -237,12 +237,12 @@ namespace rosa {
         );
     }
 
-    LuaScriptComponent::LuaScriptComponent(std::reference_wrapper<Scene> scene, entt::entity entity) : m_entity(entity), m_scene(scene) {
+    LuaScriptComponent::LuaScriptComponent(Scene* scene, entt::entity entity) : m_entity(entity), m_scene(scene) {
         ROSA_PROFILE_SCOPE("LuaScriptComponent:Initialise");
 
         m_state.open_libraries(sol::lib::base);
 
-        auto& transform_component = m_scene.get().getRegistry().get<TransformComponent>(m_entity);
+        auto& transform_component = m_scene->getRegistry().get<TransformComponent>(m_entity);
         m_lua_transform = std::make_unique<lua_script::LuaTransform>(transform_component, m_state);
     }
 
@@ -287,8 +287,8 @@ namespace rosa {
                 transform_table.set_function("setRotation", &lua_script::LuaTransform::setRotation, m_lua_transform.get());
 
                 // Sprite component
-                if (m_scene.get().getRegistry().all_of<SpriteComponent>(m_entity)) {
-                    auto& sprite_component = m_scene.get().getRegistry().get<SpriteComponent>(m_entity);
+                if (m_scene->getRegistry().all_of<SpriteComponent>(m_entity)) {
+                    auto& sprite_component = m_scene->getRegistry().get<SpriteComponent>(m_entity);
                     
                     // Don't re-create if we already have a LuaSprite from a previous call
                     if (!m_lua_sprite) {

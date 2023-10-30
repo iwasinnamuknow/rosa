@@ -36,7 +36,7 @@ namespace rosa {
 
     struct LuaScriptComponent {
 
-            LuaScriptComponent(std::reference_wrapper<Scene> scene, entt::entity entity);
+            LuaScriptComponent(Scene* scene, entt::entity entity);
             auto setScript(uuids::uuid uuid) -> bool;
 
         private:
@@ -50,7 +50,7 @@ namespace rosa {
             auto set_data(const std::string& key, sol::table& table) -> void;
 
             entt::entity m_entity;
-            std::reference_wrapper<Scene> m_scene;
+            Scene* m_scene;
 
             std::unique_ptr<lua_script::LuaTransform> m_lua_transform;
             std::unique_ptr<lua_script::LuaSprite> m_lua_sprite;

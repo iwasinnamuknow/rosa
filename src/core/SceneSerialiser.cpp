@@ -254,7 +254,7 @@ namespace rosa {
                                     sprite.setTexture(comp["texture"].as<uuids::uuid>());
                                     sprite.setColour(comp["color"].as<rosa::Colour>());
                                 } else if (type == "lua_script") {
-                                    auto& lsc = new_entity.addComponent<LuaScriptComponent>(m_scene, new_entity);
+                                    auto& lsc = new_entity.addComponent<LuaScriptComponent>(&m_scene, new_entity);
                                     auto script_uuid = comp["script"].as<std::string>();
 
                                     auto uuid = uuids::uuid::from_string(script_uuid);
