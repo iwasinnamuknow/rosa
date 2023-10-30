@@ -37,24 +37,49 @@ namespace rosa {
     } // namespace lua_script
 
     /**
-     * @brief The Scene class calls update and render functions for every entity it contains.
-     *
-     *  It contains a collection of entities and handles the necessary calls for all of the
-     *  different components an entity may contain.
+     * @brief Contains a registry of Entity and methods for handling them.
      * 
      *  It can be extended by your own class, see the testbed for an example scene.
      */
     class Scene {
         public:
+
+            /**
+             * @brief Construct a new Scene
+             * 
+             * @param render_window The OpenGL render window
+             */
             explicit Scene(RenderWindow& render_window);
+
             Scene(Scene const &) = delete;
             auto operator=(Scene const &) -> Scene & = delete;
             Scene(Scene const &&) = delete;
             auto operator=(Scene const &&) -> Scene & = delete;
 
+            /**
+             * @brief Update is called each frame of the game loop.
+             *
+             *  This function calls into the update function of any LuaScript of NativeScript components.
+             *  I also calculates heirarchical transforms and handles deferred entity deletions.
+             *
+             *  It can be overridden if you are deriving your own Scene class from here.
+             * 
+             * @param delta_time Seconds since the last frame update
+             */
             virtual auto update(float delta_time) -> void;
+
+            /**
+             * @brief Calls draw methods once per frame, for entities that support them.
+             */
             virtual auto render() -> void;
+
+            /**
+             * @brief Used to pass input events into entities with LuaScript or NativeScript components.
+             * 
+             * @param event 
+             */
             virtual auto input(const Event& event) -> void;
+            
             virtual ~Scene() = default;
 
             /**

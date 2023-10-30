@@ -47,79 +47,124 @@ namespace rosa {
                 return m_id;
             }
 
+            /**
+             * @brief Get a specific component
+             * 
+             * @tparam T Component type
+             * @return T& reference to the component
+             */
             template<typename T>
             auto getComponent() -> T& {
                 assert(hasComponent<T>());
                 return m_scene.getRegistry().get<T>(m_id);
             }
 
+            /**
+             * @brief Enquire if the Entity contains a specific component type
+             * 
+             * @tparam T Component type
+             * @return true if the component exists
+             * @return false otherwise.
+             */
             template<typename T>
             auto hasComponent() -> bool {
                 return m_scene.getRegistry().any_of<T>(m_id);
             }
 
+            /**
+             * @brief Add a specific component type to the Entity
+             * 
+             * @tparam T Component type
+             * @return T& reference to the created component
+             */
             template<typename T, typename... Args>
             auto addComponent(Args&&... args) -> T& {
                 assert(!hasComponent<T>());
                 return m_scene.getRegistry().emplace<T>(m_id, std::forward<Args>(args)...);
             }
 
+            /**
+             * @brief Remove a specific component type from the Entity
+             * 
+             * @tparam T Component type
+             * @return true if the component was removed
+             * @return false otherwise.
+             */
             template<typename T>
             auto removeComponent() -> bool {
                 assert(hasComponent<T>());
                 return m_scene.getRegistry().remove<T>(m_id);
             }
 
+            /**
+             * @brief Get the entt identifier of the Entity
+             * 
+             * @return entt::entity identifier
+             */
             auto getId() const -> entt::entity {
                 return m_id;
             }
 
+            /**
+             * @brief Get the UUID identifier of the Entity
+             * 
+             * @return std::string UUID
+             */
             auto getUUID() const -> std::string {
                 return uuids::to_string(m_uuid);
             }
 
+            /**
+             * @brief Check if the Entity is due for deletion on the next frame
+             * 
+             * @return true the Entity will be deleted
+             * @return false no deletion will happen
+             */
             auto forDeletion() const -> bool {
                 return m_for_deletion;
             }
 
+            /**
+             * @brief Queues the Entity for destruction on the next frame
+             */
             auto die() -> void {
                 m_for_deletion = true;
             }
 
+            /**
+             * @brief Set this Entity as the child of another for transforms
+             * 
+             * @param parent_id entt identifier of the parent Entity
+             * @return true relationship was created
+             * @return false relationship was not created (empty parent_id?)
+             */
             auto setParent(entt::entity parent_id) -> bool;
+
+            /**
+             * @brief Remove this Entity as the child of another
+             * 
+             * @return true relationship was removed
+             * @return false relationship was not removed (is there a parent to remove?)
+             */
             auto removeParent() -> bool;
 
+            /**
+             * @brief Get the entt identifier of the parent Entity 
+             * 
+             * @return entt::entity identifier
+             */
             auto getParent() -> entt::entity {
                 return m_parent;
             }
 
+            /**
+             * @brief Get the collection of children for this Entity
+             * 
+             * @return const std::vector<entt::entity>& A vector of child references
+             */
             auto getChildren() const -> const std::vector<entt::entity>& {
                 return m_children;
             }
-
-            // auto addChild(Entity* new_child) -> bool {
-            //     for (const auto& child : m_children) {
-            //         if (new_child == child) {
-            //             return false;
-            //         }
-            //     }
-
-            //     m_children.emplace_back(new_child);
-            //     new_child->setParent(this);
-            //     return true;
-            // }
-
-            // auto removeChild(Entity* target_child) -> bool {
-            //     for (auto child_it = m_children.begin(); child_it != m_children.end(); ++child_it) {
-            //         if (target_child == *child_it) {
-            //             (*child_it)->removeParent();
-            //             m_children.erase(child_it);
-            //             return true;
-            //         }
-            //     }
-
-            //     return false;
-            // }
 
         private:
             entt::entity m_id = entt::null;

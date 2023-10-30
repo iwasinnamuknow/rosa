@@ -38,7 +38,14 @@ namespace rosa {
     class GameManager {
         public:
 
+            /**
+             * @brief Construct a new Game Manager with the desired window size
+             * 
+             * @param window_width in pixels
+             * @param window_height in pixels
+             */
             explicit GameManager(int window_width, int window_height);
+            
             ~GameManager() = default;
 
             GameManager(GameManager const &) = delete;
