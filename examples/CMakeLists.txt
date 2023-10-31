@@ -1,7 +1,11 @@
 project(rosa_testbed)
 
 # Per-example targets
-add_executable(simple_image simple_image.cpp) 
+if (_WIN32)
+    add_executable(simple_image WIN32 simple_image.cpp) 
+else (_WIN32)
+    add_executable(simple_image simple_image.cpp) 
+endif (_WIN32)
 target_compile_features(simple_image PRIVATE cxx_std_20)
 target_include_directories(simple_image PRIVATE ../include/)
 target_link_libraries(simple_image PRIVATE rosa)
