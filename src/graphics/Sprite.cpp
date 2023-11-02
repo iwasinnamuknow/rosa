@@ -53,12 +53,14 @@ namespace rosa {
             glBindTexture(GL_TEXTURE_2D, m_texture->getOpenGlId());
         }
 
-        auto size = m_texture->getSize();
+        if (m_vertices.size() == 4) {
+            auto size = m_texture->getSize();
 
-        m_vertices[0].position = glm::vec2(-(size.x/2), -(size.y/2));
-        m_vertices[1].position = glm::vec2(  size.x/2,  -(size.y/2));
-        m_vertices[2].position = glm::vec2(-(size.x/2),   size.y/2);
-        m_vertices[3].position = glm::vec2(  size.x/2,    size.y/2);
+            m_vertices[0].position = glm::vec2(-(size.x/2), -(size.y/2));
+            m_vertices[1].position = glm::vec2(  size.x/2,  -(size.y/2));
+            m_vertices[2].position = glm::vec2(-(size.x/2),   size.y/2);
+            m_vertices[3].position = glm::vec2(  size.x/2,    size.y/2);
+        }
         
         m_vbo.bind(m_vertices);
         m_ibo.bind(m_indices);

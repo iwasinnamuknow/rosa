@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "graphics/RenderWindow.hpp"
+#include <graphics/RenderWindow.hpp>
 #include <graphics/Vertex.hpp>
 #include <graphics/VertexBuffer.hpp>
 #include <graphics/IndexBuffer.hpp>

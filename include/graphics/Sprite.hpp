@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "glm/ext/vector_float4.hpp"
+#include <glm/ext/vector_float4.hpp>
 #include <graphics/Texture.hpp>
 #include <graphics/Shader.hpp>
 #include <graphics/Rect.hpp>
@@ -57,10 +57,6 @@ namespace rosa {
             friend class Window;
 
             Texture* m_texture{nullptr};
-
-            
-
-            auto gl_init() -> void;
     };
 
 } // namespace rosa
