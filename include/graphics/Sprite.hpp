@@ -16,7 +16,6 @@
 #pragma once
 
 #include "glm/ext/vector_float4.hpp"
-#include <graphics/Vertex.hpp>
 #include <graphics/Texture.hpp>
 #include <graphics/Shader.hpp>
 #include <graphics/Rect.hpp>
@@ -34,7 +33,7 @@ namespace rosa {
     class Sprite : public Drawable {
 
         public:
-            Sprite() {
+            Sprite() : Drawable() {
                 gl_init();
             }
 
@@ -49,33 +48,8 @@ namespace rosa {
                 return m_vertices[0].colour;
             }
 
-            // auto setPosition(Vector2<float> m_position) -> void {
-            //     glm::translate(transform, m_position);
-            // }
-
-            // auto getBounds() -> Rect<float> {
-
-            //     auto pos = getLocalTransform() * glm::vec4(1.F);
-
-            //     if (m_texture == nullptr) {
-            //         return {m_position[0], m_position[1], 0, 0};
-            //     }
-                
-            //     return {pos[0], pos[1], m_texture->getSize().x * m_scale[0], m_texture->getSize().y * m_scale[1]};
-            // }
-
             auto setTexture(Texture& texture) -> void {
                 m_texture = &texture;
-            }
-
-            auto setSetShader(ShaderType type, Shader& shader) -> void {
-                if (type == ShaderType::FragmentShader) {
-                    m_fragment_shader = &shader;
-                } else if (type == ShaderType::VertexShader) {
-                    m_vertex_shader = &shader;
-                }
-
-                link_shaders();
             }
 
         protected:
@@ -83,29 +57,12 @@ namespace rosa {
 
         private:
             friend class Window;
-            Vertex m_vertices[4];
-            
-            unsigned int m_pid;
-            unsigned int m_vertex_buffer;
-            unsigned int m_vertex_array;
-            unsigned int m_index_buffer;
 
             Texture* m_texture{nullptr};
-            Shader* m_vertex_shader{nullptr};
-            Shader* m_fragment_shader{nullptr};
 
-            glm::mat4 m_mvp{1.F};
+            
 
             auto gl_init() -> void;
-
-            unsigned int m_index[2*3]{
-                0, 1, 2,
-                1, 2, 3
-            };
-
-            int m_mvp_id;
-
-            auto link_shaders() -> void;
     };
 
 } // namespace rosa

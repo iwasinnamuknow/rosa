@@ -14,6 +14,9 @@
  */
 
 #include "graphics/Shader.hpp"
+#include "graphics/Vertex.hpp"
+#include "graphics/VertexBuffer.hpp"
+#include <cstddef>
 #include <debug/Profiler.hpp>
 #include <cstring>
 #include <glm/glm.hpp>
@@ -25,81 +28,18 @@
 
 namespace rosa {
 
-    auto Sprite::draw(glm::mat4 projection, glm::mat4 transform) -> void {
-        m_mvp = projection * transform;
-
-        if (m_texture == nullptr) {
-            return;
-        }
-        
-        auto size = m_texture->getSize();
-
-        m_vertices[0].position = glm::vec2(-(size.x/2), -(size.y/2));
-        m_vertices[1].position = glm::vec2(  size.x/2,  -(size.y/2));
-        m_vertices[2].position = glm::vec2(-(size.x/2),   size.y/2);
-        m_vertices[3].position = glm::vec2(  size.x/2,    size.y/2);
-        
-        glUseProgram(m_pid);
-        glBindVertexArray(m_vertex_array);
-
-        glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(m_vertices), m_vertices, GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), static_cast<void *>(nullptr));
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void *)(offsetof(Vertex, texture_coords.x)));
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void *)(offsetof(Vertex, colour.r)));
-        glEnableVertexAttribArray(2);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_index), m_index, GL_STATIC_DRAW);
-        glUniformMatrix4fv(m_mvp_id, 1, GL_FALSE, &m_mvp[0][0]);
-
-        glBindTexture(GL_TEXTURE_2D, m_texture->getOpenGlId());
-
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
-        glUseProgram(0);
-    }
-
     auto Sprite::gl_init() -> void {
+        m_vertices.resize(4);
 
-        m_pid = glCreateProgram();
-        m_vertex_shader = new Shader(VertexShader);
-        m_fragment_shader = new Shader(FragmentShader);
-        link_shaders();
+        m_vbo.addAttribute({0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0});
+        m_vbo.addAttribute({1, 2, GL_FLOAT, GL_TRUE, sizeof(Vertex), offsetof(Vertex, texture_coords.x)});
+        m_vbo.addAttribute({2, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), offsetof(Vertex, colour.r)});
+        m_vbo.bind(m_vertices);
 
-        glUseProgram(m_pid);
-
-        // buffers
-        glGenVertexArrays(1, &m_vertex_array);
-        glBindVertexArray(m_vertex_array);
-
-        glGenBuffers(1, &m_vertex_buffer);
-        glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(m_vertices), m_vertices, GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), static_cast<void *>(nullptr));
-        glEnableVertexAttribArray(0);
-
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void *)(offsetof(Vertex, texture_coords.x)));
-        glEnableVertexAttribArray(1);
-
-        glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void *)(offsetof(Vertex, colour.r)));
-        glEnableVertexAttribArray(2);
-
-        glGenBuffers(1, &m_index_buffer);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_index), m_index, GL_STATIC_DRAW);
-
-        m_mvp_id = glGetUniformLocation(m_pid, "mvp");
-
-        if (m_texture != nullptr) {
-            glBindTexture(GL_TEXTURE_2D, m_texture->getOpenGlId());
-        }
-
-        glUseProgram(0);
+        m_indices.insert(m_indices.end(), {
+            0, 1, 2,
+            1, 2, 3
+        });
 
         m_vertices[0].texture_coords = glm::vec2{0, 0};
         m_vertices[1].texture_coords = glm::vec2{1, 0};
@@ -107,62 +47,31 @@ namespace rosa {
         m_vertices[3].texture_coords = glm::vec2{1, 1};
     }
 
-    auto Sprite::link_shaders() -> void {
-        auto vshader_id = glCreateShader(VertexShader);
-        auto fshader_id = glCreateShader(FragmentShader);
+    auto Sprite::draw(glm::mat4 projection, glm::mat4 transform) -> void {
+        m_mvp = projection * transform;
 
-        GLint result = GL_FALSE;
-        int info_log_length{0};
-
-        // Compile vertex shader
-        spdlog::debug("Compiling vertex shader");
-        const char* vertex_source_ptr = m_vertex_shader->getSource().c_str();
-        glShaderSource(vshader_id, 1, &vertex_source_ptr , nullptr);
-        glCompileShader(vshader_id);
-
-        // Check shader
-        glGetShaderiv(vshader_id, GL_COMPILE_STATUS, &result);
-        glGetShaderiv(vshader_id, GL_INFO_LOG_LENGTH, &info_log_length);
-        if ( info_log_length > 0 ){
-            std::vector<char> error(info_log_length + 1);
-            glGetShaderInfoLog(vshader_id, info_log_length, nullptr, error.data());
-            spdlog::error("Failed to compile shader: {}", error.data());
+        if (m_texture == nullptr) {
+            return;
         }
         
-        // Compile fragment shader
-        spdlog::debug("Compiling fragment shader");
-        const char* frag_source_ptr = m_fragment_shader->getSource().c_str();
-        glShaderSource(fshader_id, 1, &frag_source_ptr , nullptr);
-        glCompileShader(fshader_id);
+        glUseProgram(m_pid);
 
-        // Check shader
-        glGetShaderiv(fshader_id, GL_COMPILE_STATUS, &result);
-        glGetShaderiv(fshader_id, GL_INFO_LOG_LENGTH, &info_log_length);
-        if ( info_log_length > 0 ){
-            std::vector<char> error(info_log_length + 1);
-            glGetShaderInfoLog(fshader_id, info_log_length, nullptr, error.data());
-            spdlog::error("Failed to compile shader: {}", error.data());
-        }
+        auto size = m_texture->getSize();
 
-        // Link shader to program
-        spdlog::debug("Linking shaders");
-        glAttachShader(m_pid, vshader_id);
-        glAttachShader(m_pid, fshader_id);
-        glLinkProgram(m_pid);
+        m_vertices[0].position = glm::vec2(-(size.x/2), -(size.y/2));
+        m_vertices[1].position = glm::vec2(  size.x/2,  -(size.y/2));
+        m_vertices[2].position = glm::vec2(-(size.x/2),   size.y/2);
+        m_vertices[3].position = glm::vec2(  size.x/2,    size.y/2);
+        
+        m_vbo.bind(m_vertices);
+        m_ibo.bind(m_indices);
+        glUniformMatrix4fv(m_mvp_id, 1, GL_FALSE, &m_mvp[0][0]);
 
-        // Check the program
-        glGetProgramiv(m_pid, GL_LINK_STATUS, &result);
-        glGetProgramiv(m_pid, GL_INFO_LOG_LENGTH, &info_log_length);
-        if ( info_log_length > 0 ){
-            std::vector<char> error(info_log_length + 1);
-            glGetProgramInfoLog(m_pid, info_log_length, NULL, error.data());
-            spdlog::error("Failed to link shaders: {}", error.data());
-        }
+        glBindTexture(GL_TEXTURE_2D, m_texture->getOpenGlId());
 
-        glDetachShader(m_pid, vshader_id);
-        glDetachShader(m_pid, fshader_id);
-        glDeleteShader(vshader_id);
-        glDeleteShader(fshader_id);
+        glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
+
+        glUseProgram(0);
     }
 
 } // namespace rosa
