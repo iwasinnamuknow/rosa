@@ -55,6 +55,7 @@ namespace rosa {
 
         private:
             friend class Window;
+            friend class NativeScriptEntity;
 
             Texture* m_texture{nullptr};
     };

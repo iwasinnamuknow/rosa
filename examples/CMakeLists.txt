@@ -10,6 +10,15 @@ target_compile_features(simple_image PRIVATE cxx_std_20)
 target_include_directories(simple_image PRIVATE ../include/)
 target_link_libraries(simple_image PRIVATE rosa)
 
+if (_WIN32)
+    add_executable(countdown WIN32 countdown.cpp) 
+else (_WIN32)
+    add_executable(countdown countdown.cpp) 
+endif (_WIN32)
+target_compile_features(countdown PRIVATE cxx_std_20)
+target_include_directories(countdown PRIVATE ../include/)
+target_link_libraries(countdown PRIVATE rosa)
+
 
 # Asset packaging
 file(GLOB_RECURSE ASSETS "assets/*")

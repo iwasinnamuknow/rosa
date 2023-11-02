@@ -45,6 +45,9 @@ namespace rosa {
         m_vertices[1].texture_coords = glm::vec2{1, 0};
         m_vertices[2].texture_coords = glm::vec2{0, 1};
         m_vertices[3].texture_coords = glm::vec2{1, 1};
+
+        m_vertices.resize(4);
+        m_indices.resize(6);
     }
 
     auto Sprite::draw(glm::mat4 projection, glm::mat4 transform) -> void {

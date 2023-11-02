@@ -34,6 +34,14 @@ namespace rosa {
             virtual ~Drawable() = default;
             virtual auto draw(glm::mat4 projection, glm::mat4 transform) -> void{}
 
+            auto getVertices() -> std::vector<Vertex>& {
+                return m_vertices;
+            }
+
+            auto getIndices() -> std::vector<unsigned int>& {
+                return m_indices;
+            }
+
         protected:
             friend class RenderWindow;
 
