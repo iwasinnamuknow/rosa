@@ -28,7 +28,7 @@
 
 namespace rosa {
 
-    auto Sprite::gl_init() -> void {
+    Sprite::Sprite() {
         m_vertices.resize(4);
 
         m_vbo.addAttribute({0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0});
@@ -48,13 +48,10 @@ namespace rosa {
     }
 
     auto Sprite::draw(glm::mat4 projection, glm::mat4 transform) -> void {
-        m_mvp = projection * transform;
 
-        if (m_texture == nullptr) {
-            return;
+        if (m_texture != nullptr) {
+            glBindTexture(GL_TEXTURE_2D, m_texture->getOpenGlId());
         }
-        
-        glUseProgram(m_pid);
 
         auto size = m_texture->getSize();
 
@@ -65,13 +62,8 @@ namespace rosa {
         
         m_vbo.bind(m_vertices);
         m_ibo.bind(m_indices);
-        glUniformMatrix4fv(m_mvp_id, 1, GL_FALSE, &m_mvp[0][0]);
-
-        glBindTexture(GL_TEXTURE_2D, m_texture->getOpenGlId());
 
         glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
-
-        glUseProgram(0);
     }
 
 } // namespace rosa

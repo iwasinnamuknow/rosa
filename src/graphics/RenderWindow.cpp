@@ -146,7 +146,11 @@ namespace rosa {
     }
 
     auto RenderWindow::draw(Drawable& drawable, glm::mat4 transform) -> void {
+        drawable.m_mvp = m_projection * transform;
+        glUseProgram(drawable.m_pid);
+        glUniformMatrix4fv(drawable.m_mvp_id, 1, GL_FALSE, &drawable.m_mvp[0][0]);
         drawable.draw(m_projection, transform);
+        glUseProgram(0);
     }
 
     auto RenderWindow::isFullscreen() const -> bool

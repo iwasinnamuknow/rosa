@@ -33,9 +33,7 @@ namespace rosa {
     class Sprite : public Drawable {
 
         public:
-            Sprite() : Drawable() {
-                gl_init();
-            }
+            Sprite();
 
             auto setColour(const Colour& colour) -> void {
                 m_vertices[0].colour = colour;
