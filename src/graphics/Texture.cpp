@@ -87,6 +87,7 @@ namespace rosa {
             break;
         default:
             free(buffer);
+            spdlog::error("Could not determine DDS texture compression for: {}", name);
             return;
         }
 
