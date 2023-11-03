@@ -15,7 +15,9 @@
 
 
 // Bring in everything
+#include "core/Event.hpp"
 #include "core/NativeScriptEntity.hpp"
+#include "graphics/Sprite.hpp"
 #include <bits/chrono.h>
 #include <rosa.hpp>
 #include <chrono>
@@ -28,6 +30,24 @@ using namespace std::literals;
 class CountdownScript : public rosa::NativeScriptEntity {
     public:
         ROSA_CONSTRUCTOR(CountdownScript)
+
+        auto onInput(const rosa::Event& event) -> void {
+            switch(event.type) {
+                case rosa::EventType::EventResize:
+                    auto& sprite = getEntity().getComponent<rosa::SpriteComponent>();
+
+                    glm::vec2 start_pos = sprite.getVertices().front().position;
+                    glm::vec2 end_pos = sprite.getVertices().back().position;
+
+                    // Calculate a screen-centered position for the image
+                    const auto position = glm::vec2(
+                        (static_cast<float>(event.resize.size.x) / 2.F) - (static_cast<float>(end_pos.x - start_pos.x) / 2.F),
+                        (static_cast<float>(event.resize.size.y) / 2.F) - (static_cast<float>(end_pos.y - start_pos.y) / 2.F)
+                    );
+                    getEntity().getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
+                    break;
+            }
+        }
 
         void onCreate() override {
             spdlog::info("Test script initialised");
@@ -267,26 +287,29 @@ class CountdownScene : public rosa::Scene {
             // Grab the window size
             auto window_size = getRenderWindow().getSize();
 
-            // Calculate a screen-centered position for the image
-            const auto position = glm::vec2(
-                (static_cast<float>(window_size.x) / 2.F),
-                (static_cast<float>(window_size.y) / 2.F)
-            );
-
             // Create a blank entity. It's not really blank, every entity has a TransformComponent
             // by default.
             auto& entity = createEntity();
 
+            getRegistry().emplace<rosa::NativeScriptComponent>(entity).bind<CountdownScript>();
+
             // Add a SpriteComponent to it.
-            entity.addComponent<rosa::SpriteComponent>();
+            rosa::Sprite& sprite = entity.addComponent<rosa::SpriteComponent>();
+
+            glm::vec2 start_pos = sprite.getVertices().front().position;
+            glm::vec2 end_pos = sprite.getVertices().back().position;
+
+            // Calculate a screen-centered position for the image
+            const auto position = glm::vec2(
+                (static_cast<float>(window_size.x) / 2.F) - (static_cast<float>(end_pos.x - start_pos.x) / 2.F),
+                (static_cast<float>(window_size.y) / 2.F) - (static_cast<float>(end_pos.y - start_pos.y) / 2.F)
+            );
 
             // Set the sprites texture. This is via uuid, not the object we obtained earlier.
             entity.getComponent<rosa::SpriteComponent>().setTexture(dds_uuid);
 
             // Set the position to screen-center
             entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
-
-            getRegistry().emplace<rosa::NativeScriptComponent>(entity).bind<CountdownScript>();
         }
 };
 

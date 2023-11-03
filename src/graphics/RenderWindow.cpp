@@ -116,6 +116,11 @@ namespace rosa {
     {
         m_updateViewport = true;
         m_projection = glm::ortho(0.F, static_cast<float>(cx), static_cast<float>(cy), 0.F);
+
+        rosa::Event event{};
+        event.type = rosa::EventType::EventResize;
+        event.resize = {glm::vec2(cx, cy)};
+        rosa::EventManager::getInstance().pushEvent(event);
     }
 
     auto RenderWindow::pollEvents() -> bool {
