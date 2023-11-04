@@ -162,7 +162,7 @@ class CountdownScript : public rosa::NativeScriptEntity {
                 45,  46,  47
             });
 
-            m_start_time = std::chrono::steady_clock::now() + 24h;
+            m_start_time = std::chrono::steady_clock::now() + 10s;
 
             // Preset texture co-ords for static items
             verts[8].texture_coords =  glm::vec2(279 / texture_size.x, 128 / texture_size.y);
@@ -185,79 +185,86 @@ class CountdownScript : public rosa::NativeScriptEntity {
         }
 
         void onUpdate(float delta_time) override {
-            //std::cout << "DeltaTime: " << delta_time << std::endl;
-            //spdlog::debug("Deltatime: {}", delta_time);
-            // spdlog::debug("attempting to kill");
-            // die();
+            
+            if (!m_finished) {
 
-            auto& sprite = getEntity().getComponent<rosa::SpriteComponent>();
-            auto& verts = sprite.getVertices();
-            auto& texture = rosa::ResourceManager::instance().getTexture(sprite.getTexture());
-            auto texture_size = texture.getSize();
+                auto& sprite = getEntity().getComponent<rosa::SpriteComponent>();
+                auto& verts = sprite.getVertices();
+                auto& texture = rosa::ResourceManager::instance().getTexture(sprite.getTexture());
+                auto texture_size = texture.getSize();
 
-            m_current_time = std::chrono::steady_clock::now();
-            auto duration = m_start_time - m_current_time;
+                m_current_time = std::chrono::steady_clock::now();
+                auto duration = m_start_time - m_current_time;
 
-            // Hours
-            int hours = std::floor(std::chrono::duration_cast<std::chrono::hours>(duration).count());
-            duration -= (1h * hours);
-            int h_10 = (hours / 10);
-            verts[0].texture_coords = glm::vec2(((h_10 % 6) * 64) / texture_size.x,      ( h_10 > 5 ? 128 : 0) / texture_size.y);
-            verts[1].texture_coords = glm::vec2(((h_10 % 6) * 64 + 64) / texture_size.x, ( h_10 > 5 ? 128 : 0) / texture_size.y);
-            verts[2].texture_coords = glm::vec2(((h_10 % 6) * 64) / texture_size.x,      ((h_10 > 5 ? 128 : 0) + 127) / texture_size.y);
-            verts[3].texture_coords = glm::vec2(((h_10 % 6) * 64 + 64) / texture_size.x, ((h_10 > 5 ? 128 : 0) + 127) / texture_size.y);
-            hours -= (h_10 * 10);
-            verts[4].texture_coords = glm::vec2(((hours % 6) * 64) / texture_size.x,      ( hours > 5 ? 128 : 0) / texture_size.y);
-            verts[5].texture_coords = glm::vec2(((hours % 6) * 64 + 64) / texture_size.x, ( hours > 5 ? 128 : 0) / texture_size.y);
-            verts[6].texture_coords = glm::vec2(((hours % 6) * 64) / texture_size.x,      ((hours > 5 ? 128 : 0) + 127) / texture_size.y);
-            verts[7].texture_coords = glm::vec2(((hours % 6) * 64 + 64) / texture_size.x, ((hours > 5 ? 128 : 0) + 127) / texture_size.y);
+                if (std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count() <= 0) {
+                    m_finished = true;
+                    duration = std::chrono::seconds::zero();
 
-            // Minutes
-            int minutes = std::floor(std::chrono::duration_cast<std::chrono::minutes>(duration).count());
-            duration -= (1min * minutes);
-            int m_10 = (minutes / 10);
-            verts[12].texture_coords = glm::vec2(((m_10 % 6) * 64) / texture_size.x,      ( m_10 > 5 ? 128 : 0) / texture_size.y);
-            verts[13].texture_coords = glm::vec2(((m_10 % 6) * 64 + 64) / texture_size.x, ( m_10 > 5 ? 128 : 0) / texture_size.y);
-            verts[14].texture_coords = glm::vec2(((m_10 % 6) * 64) / texture_size.x,      ((m_10 > 5 ? 128 : 0) + 127) / texture_size.y);
-            verts[15].texture_coords = glm::vec2(((m_10 % 6) * 64 + 64) / texture_size.x, ((m_10 > 5 ? 128 : 0) + 127) / texture_size.y);
-            minutes -= (m_10 * 10);
-            verts[16].texture_coords = glm::vec2(((minutes % 6) * 64) / texture_size.x,      ( minutes > 5 ? 128 : 0) / texture_size.y);
-            verts[17].texture_coords = glm::vec2(((minutes % 6) * 64 + 64) / texture_size.x, ( minutes > 5 ? 128 : 0) / texture_size.y);
-            verts[18].texture_coords = glm::vec2(((minutes % 6) * 64) / texture_size.x,      ((minutes > 5 ? 128 : 0) + 127) / texture_size.y);
-            verts[19].texture_coords = glm::vec2(((minutes % 6) * 64 + 64) / texture_size.x, ((minutes > 5 ? 128 : 0) + 127) / texture_size.y);
+                    auto& player = getEntity().getComponent<rosa::SoundPlayerComponent>();
+                    player.play();
+                }
 
-            // Seconds
-            int seconds = std::floor(std::chrono::duration_cast<std::chrono::seconds>(duration).count());
-            duration -= (1s * seconds);
-            int s_10 = (seconds / 10);
-            verts[24].texture_coords = glm::vec2(((s_10 % 6) * 64) / texture_size.x,      ( s_10 > 5 ? 128 : 0) / texture_size.y);
-            verts[25].texture_coords = glm::vec2(((s_10 % 6) * 64 + 64) / texture_size.x, ( s_10 > 5 ? 128 : 0) / texture_size.y);
-            verts[26].texture_coords = glm::vec2(((s_10 % 6) * 64) / texture_size.x,      ((s_10 > 5 ? 128 : 0) + 127) / texture_size.y);
-            verts[27].texture_coords = glm::vec2(((s_10 % 6) * 64 + 64) / texture_size.x, ((s_10 > 5 ? 128 : 0) + 127) / texture_size.y);
-            seconds -= (s_10 * 10);
-            verts[28].texture_coords = glm::vec2(((seconds % 6) * 64) / texture_size.x,      ( seconds > 5 ? 128 : 0) / texture_size.y);
-            verts[29].texture_coords = glm::vec2(((seconds % 6) * 64 + 64) / texture_size.x, ( seconds > 5 ? 128 : 0) / texture_size.y);
-            verts[30].texture_coords = glm::vec2(((seconds % 6) * 64) / texture_size.x,      ((seconds > 5 ? 128 : 0) + 127) / texture_size.y);
-            verts[31].texture_coords = glm::vec2(((seconds % 6) * 64 + 64) / texture_size.x, ((seconds > 5 ? 128 : 0) + 127) / texture_size.y);
+                // Hours
+                int hours = std::floor(std::chrono::duration_cast<std::chrono::hours>(duration).count());
+                duration -= (1h * hours);
+                int h_10 = (hours / 10);
+                verts[0].texture_coords = glm::vec2(((h_10 % 6) * 64) / texture_size.x,      ( h_10 > 5 ? 128 : 0) / texture_size.y);
+                verts[1].texture_coords = glm::vec2(((h_10 % 6) * 64 + 64) / texture_size.x, ( h_10 > 5 ? 128 : 0) / texture_size.y);
+                verts[2].texture_coords = glm::vec2(((h_10 % 6) * 64) / texture_size.x,      ((h_10 > 5 ? 128 : 0) + 127) / texture_size.y);
+                verts[3].texture_coords = glm::vec2(((h_10 % 6) * 64 + 64) / texture_size.x, ((h_10 > 5 ? 128 : 0) + 127) / texture_size.y);
+                hours -= (h_10 * 10);
+                verts[4].texture_coords = glm::vec2(((hours % 6) * 64) / texture_size.x,      ( hours > 5 ? 128 : 0) / texture_size.y);
+                verts[5].texture_coords = glm::vec2(((hours % 6) * 64 + 64) / texture_size.x, ( hours > 5 ? 128 : 0) / texture_size.y);
+                verts[6].texture_coords = glm::vec2(((hours % 6) * 64) / texture_size.x,      ((hours > 5 ? 128 : 0) + 127) / texture_size.y);
+                verts[7].texture_coords = glm::vec2(((hours % 6) * 64 + 64) / texture_size.x, ((hours > 5 ? 128 : 0) + 127) / texture_size.y);
 
-            // Milliseconds
-            int millis = std::floor(std::chrono::duration_cast<std::chrono::milliseconds>(duration).count());
-            int ms_100 = (millis / 100);
-            verts[36].texture_coords = glm::vec2(((ms_100 % 6) * 64) / texture_size.x,      ( ms_100 > 5 ? 128 : 0) / texture_size.y);
-            verts[37].texture_coords = glm::vec2(((ms_100 % 6) * 64 + 64) / texture_size.x, ( ms_100 > 5 ? 128 : 0) / texture_size.y);
-            verts[38].texture_coords = glm::vec2(((ms_100 % 6) * 64) / texture_size.x,      ((ms_100 > 5 ? 128 : 0) + 127) / texture_size.y);
-            verts[39].texture_coords = glm::vec2(((ms_100 % 6) * 64 + 64) / texture_size.x, ((ms_100 > 5 ? 128 : 0) + 127) / texture_size.y);
-            millis -= (ms_100 * 100);
-            int ms_10 = (millis / 10);
-            verts[40].texture_coords = glm::vec2(((ms_10 % 6) * 64) / texture_size.x,      ( ms_10 > 5 ? 128 : 0) / texture_size.y);
-            verts[41].texture_coords = glm::vec2(((ms_10 % 6) * 64 + 64) / texture_size.x, ( ms_10 > 5 ? 128 : 0) / texture_size.y);
-            verts[42].texture_coords = glm::vec2(((ms_10 % 6) * 64) / texture_size.x,      ((ms_10 > 5 ? 128 : 0) + 127) / texture_size.y);
-            verts[43].texture_coords = glm::vec2(((ms_10 % 6) * 64 + 64) / texture_size.x, ((ms_10 > 5 ? 128 : 0) + 127) / texture_size.y);
-            millis -= (ms_10 * 10);
-            verts[44].texture_coords = glm::vec2(((millis % 6) * 64) / texture_size.x,      ( millis > 5 ? 128 : 0) / texture_size.y);
-            verts[45].texture_coords = glm::vec2(((millis % 6) * 64 + 64) / texture_size.x, ( millis > 5 ? 128 : 0) / texture_size.y);
-            verts[46].texture_coords = glm::vec2(((millis % 6) * 64) / texture_size.x,      ((millis > 5 ? 128 : 0) + 127) / texture_size.y);
-            verts[47].texture_coords = glm::vec2(((millis % 6) * 64 + 64) / texture_size.x, ((millis > 5 ? 128 : 0) + 127) / texture_size.y);
+                // Minutes
+                int minutes = std::floor(std::chrono::duration_cast<std::chrono::minutes>(duration).count());
+                duration -= (1min * minutes);
+                int m_10 = (minutes / 10);
+                verts[12].texture_coords = glm::vec2(((m_10 % 6) * 64) / texture_size.x,      ( m_10 > 5 ? 128 : 0) / texture_size.y);
+                verts[13].texture_coords = glm::vec2(((m_10 % 6) * 64 + 64) / texture_size.x, ( m_10 > 5 ? 128 : 0) / texture_size.y);
+                verts[14].texture_coords = glm::vec2(((m_10 % 6) * 64) / texture_size.x,      ((m_10 > 5 ? 128 : 0) + 127) / texture_size.y);
+                verts[15].texture_coords = glm::vec2(((m_10 % 6) * 64 + 64) / texture_size.x, ((m_10 > 5 ? 128 : 0) + 127) / texture_size.y);
+                minutes -= (m_10 * 10);
+                verts[16].texture_coords = glm::vec2(((minutes % 6) * 64) / texture_size.x,      ( minutes > 5 ? 128 : 0) / texture_size.y);
+                verts[17].texture_coords = glm::vec2(((minutes % 6) * 64 + 64) / texture_size.x, ( minutes > 5 ? 128 : 0) / texture_size.y);
+                verts[18].texture_coords = glm::vec2(((minutes % 6) * 64) / texture_size.x,      ((minutes > 5 ? 128 : 0) + 127) / texture_size.y);
+                verts[19].texture_coords = glm::vec2(((minutes % 6) * 64 + 64) / texture_size.x, ((minutes > 5 ? 128 : 0) + 127) / texture_size.y);
+
+                // Seconds
+                int seconds = std::floor(std::chrono::duration_cast<std::chrono::seconds>(duration).count());
+                duration -= (1s * seconds);
+                int s_10 = (seconds / 10);
+                verts[24].texture_coords = glm::vec2(((s_10 % 6) * 64) / texture_size.x,      ( s_10 > 5 ? 128 : 0) / texture_size.y);
+                verts[25].texture_coords = glm::vec2(((s_10 % 6) * 64 + 64) / texture_size.x, ( s_10 > 5 ? 128 : 0) / texture_size.y);
+                verts[26].texture_coords = glm::vec2(((s_10 % 6) * 64) / texture_size.x,      ((s_10 > 5 ? 128 : 0) + 127) / texture_size.y);
+                verts[27].texture_coords = glm::vec2(((s_10 % 6) * 64 + 64) / texture_size.x, ((s_10 > 5 ? 128 : 0) + 127) / texture_size.y);
+                seconds -= (s_10 * 10);
+                verts[28].texture_coords = glm::vec2(((seconds % 6) * 64) / texture_size.x,      ( seconds > 5 ? 128 : 0) / texture_size.y);
+                verts[29].texture_coords = glm::vec2(((seconds % 6) * 64 + 64) / texture_size.x, ( seconds > 5 ? 128 : 0) / texture_size.y);
+                verts[30].texture_coords = glm::vec2(((seconds % 6) * 64) / texture_size.x,      ((seconds > 5 ? 128 : 0) + 127) / texture_size.y);
+                verts[31].texture_coords = glm::vec2(((seconds % 6) * 64 + 64) / texture_size.x, ((seconds > 5 ? 128 : 0) + 127) / texture_size.y);
+
+                // Milliseconds
+                int millis = std::floor(std::chrono::duration_cast<std::chrono::milliseconds>(duration).count());
+                int ms_100 = (millis / 100);
+                verts[36].texture_coords = glm::vec2(((ms_100 % 6) * 64) / texture_size.x,      ( ms_100 > 5 ? 128 : 0) / texture_size.y);
+                verts[37].texture_coords = glm::vec2(((ms_100 % 6) * 64 + 64) / texture_size.x, ( ms_100 > 5 ? 128 : 0) / texture_size.y);
+                verts[38].texture_coords = glm::vec2(((ms_100 % 6) * 64) / texture_size.x,      ((ms_100 > 5 ? 128 : 0) + 127) / texture_size.y);
+                verts[39].texture_coords = glm::vec2(((ms_100 % 6) * 64 + 64) / texture_size.x, ((ms_100 > 5 ? 128 : 0) + 127) / texture_size.y);
+                millis -= (ms_100 * 100);
+                int ms_10 = (millis / 10);
+                verts[40].texture_coords = glm::vec2(((ms_10 % 6) * 64) / texture_size.x,      ( ms_10 > 5 ? 128 : 0) / texture_size.y);
+                verts[41].texture_coords = glm::vec2(((ms_10 % 6) * 64 + 64) / texture_size.x, ( ms_10 > 5 ? 128 : 0) / texture_size.y);
+                verts[42].texture_coords = glm::vec2(((ms_10 % 6) * 64) / texture_size.x,      ((ms_10 > 5 ? 128 : 0) + 127) / texture_size.y);
+                verts[43].texture_coords = glm::vec2(((ms_10 % 6) * 64 + 64) / texture_size.x, ((ms_10 > 5 ? 128 : 0) + 127) / texture_size.y);
+                millis -= (ms_10 * 10);
+                verts[44].texture_coords = glm::vec2(((millis % 6) * 64) / texture_size.x,      ( millis > 5 ? 128 : 0) / texture_size.y);
+                verts[45].texture_coords = glm::vec2(((millis % 6) * 64 + 64) / texture_size.x, ( millis > 5 ? 128 : 0) / texture_size.y);
+                verts[46].texture_coords = glm::vec2(((millis % 6) * 64) / texture_size.x,      ((millis > 5 ? 128 : 0) + 127) / texture_size.y);
+                verts[47].texture_coords = glm::vec2(((millis % 6) * 64 + 64) / texture_size.x, ((millis > 5 ? 128 : 0) + 127) / texture_size.y);
+            }
         }
 
         void onDestroy() override {
@@ -267,6 +274,8 @@ class CountdownScript : public rosa::NativeScriptEntity {
     private:
         std::chrono::time_point<std::chrono::steady_clock> m_start_time;
         std::chrono::time_point<std::chrono::steady_clock> m_current_time;
+
+        bool m_finished{false};
 };
 
 // Create a class to represent our scene
@@ -316,7 +325,6 @@ class CountdownScene : public rosa::Scene {
             auto& player = entity.addComponent<rosa::SoundPlayerComponent>();
             player.setAudio(alarm_uuid);
             player.setLoop(true);
-            player.play();
         }
 };
 
