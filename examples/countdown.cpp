@@ -160,7 +160,7 @@ class CountdownScript : public rosa::NativeScriptEntity {
                 45,  46,  47
             });
 
-            m_start_time = std::chrono::high_resolution_clock::now() + 24h;
+            m_start_time = std::chrono::steady_clock::now() + 24h;
 
             // Preset texture co-ords for static items
             verts[8].texture_coords =  glm::vec2(279 / texture_size.x, 128 / texture_size.y);
@@ -193,7 +193,7 @@ class CountdownScript : public rosa::NativeScriptEntity {
             auto& texture = rosa::ResourceManager::instance().getTexture(sprite.getTexture());
             auto texture_size = texture.getSize();
 
-            m_current_time = std::chrono::high_resolution_clock::now();
+            m_current_time = std::chrono::steady_clock::now();
             auto duration = m_start_time - m_current_time;
 
             // Hours
@@ -263,8 +263,8 @@ class CountdownScript : public rosa::NativeScriptEntity {
         }
 
     private:
-        std::chrono::time_point<std::chrono::high_resolution_clock> m_start_time;
-        std::chrono::time_point<std::chrono::high_resolution_clock> m_current_time;
+        std::chrono::time_point<std::chrono::steady_clock> m_start_time;
+        std::chrono::time_point<std::chrono::steady_clock> m_current_time;
 };
 
 // Create a class to represent our scene
