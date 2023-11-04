@@ -185,22 +185,22 @@ namespace rosa {
         abort();
     }
 
-    // auto ResourceManager::getMusicTrack(const uuids::uuid uuid) -> sf::Music& {
-    //     ROSA_PROFILE_SCOPE("Assets:getMusicTrack");
+    auto ResourceManager::getMusicTrack(const uuids::uuid uuid) -> AudioFile& {
+        ROSA_PROFILE_SCOPE("Assets:getMusicTrack");
 
-    //     if (auto search = m_resources.find(uuid); search != m_resources.end()) {
-    //         assert(search->second->m_type == resource_sound);
+        if (auto search = m_resources.find(uuid); search != m_resources.end()) {
+            assert(search->second->m_type == resource_music);
 
-    //         if (!search->second->m_loaded) {
-    //             populate_resource(*(search->second));
-    //         }
+            if (!search->second->m_loaded) {
+                populate_resource(*(search->second));
+            }
 
-    //         return search->second->m_music;
-    //     }
+            return search->second->m_audio_file;
+        }
 
-    //     spdlog::error("Asset not registered {}", uuids::to_string(uuid));
-    //     abort();
-    // }
+        spdlog::error("Asset not registered {}", uuids::to_string(uuid));
+        abort();
+    }
 
     auto ResourceManager::getScript(uuids::uuid uuid) -> const std::string& {
         ROSA_PROFILE_SCOPE("Assets:getScript");

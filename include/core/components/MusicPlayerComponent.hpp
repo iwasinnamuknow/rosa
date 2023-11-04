@@ -1,0 +1,82 @@
+/*
+ * This file is part of rosa.
+ *
+ *  rosa is free software: you can redistribute it and/or modify it under the terms of the
+ *  GNU General Public License as published by the Free Software Foundation, either version
+ *  3 of the License, or (at your option) any later version.
+ *
+ *  rosa is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ *  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along with bbai. If not,
+ *  see <https://www.gnu.org/licenses/>.
+ */
+
+#pragma once
+
+#include <core/ResourceManager.hpp>
+#include <audio/AudioManager.hpp>
+#include <soloud/include/soloud_wavstream.h>
+#include <spdlog/spdlog.h>
+#include <stduuid/uuid.h>
+#include <soloud/include/soloud_wav.h>
+
+namespace rosa {
+
+    struct MusicPlayerComponent {
+
+        auto getAudio() const -> uuids::uuid {
+            return m_uuid;
+        }
+
+        auto setAudio(uuids::uuid uuid) -> void {
+            m_uuid = uuid;
+            m_audio_file = &ResourceManager::instance().getMusicTrack(m_uuid);
+            auto result = m_wav_stream.loadFile(m_audio_file);
+            if (result != SoLoud::SO_NO_ERROR) {
+                spdlog::error("Failed to load audio file {}", uuids::to_string(m_uuid));
+            }
+        }
+
+        auto play() -> void { 
+            m_handle = AudioManager::instance().play(m_wav_stream);
+        }
+
+        auto stop() -> void { 
+            AudioManager::instance().stop(m_handle);
+        }
+
+        auto setDefaultVolume(float volume) {
+            m_volume = volume;
+            m_wav_stream.setVolume(m_volume);
+        }
+
+        auto getDefaultVolume() -> float {
+            return m_volume;
+        }
+
+        auto getLength() -> double {
+            return m_wav_stream.getLength();
+        }
+
+        auto setLoop(bool loop) {
+            m_wav_stream.setLooping(loop);
+        }
+
+        auto setVolume(float volume) {
+            AudioManager::instance().setVoiceVolume(m_handle, volume);
+        }
+
+        private:
+            SoLoud::WavStream m_wav_stream;
+            uuids::uuid m_uuid;
+
+            float m_volume{1.0F};
+
+            AudioFile* m_audio_file{nullptr};
+
+            unsigned int m_handle;
+    };
+
+} // namespace rosa
