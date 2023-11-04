@@ -15,10 +15,12 @@
 
 #pragma once
 
+#include <soloud/include/soloud_wavstream.h>
 #include <string>
 #include <stduuid/uuid.h>
 #include <graphics/Texture.hpp>
 #include <graphics/Shader.hpp>
+#include <audio/AudioFile.hpp>
 
 namespace rosa {
 
@@ -57,6 +59,7 @@ namespace rosa {
             Texture m_texture;
             Shader m_shader;
             std::string m_script;
+            AudioFile m_audio_file;
 
             bool m_loaded{false};
 

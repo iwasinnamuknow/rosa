@@ -14,6 +14,7 @@
  * bbai. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "audio/AudioFile.hpp"
 #include <core/Resource.hpp>
 #include <cassert>
 #include <core/ResourceManager.hpp>
@@ -167,22 +168,22 @@ namespace rosa {
     //     abort();
     // }
 
-    // auto ResourceManager::getSound(const uuids::uuid uuid) -> sf::SoundBuffer& {
-    //     ROSA_PROFILE_SCOPE("Assets:getSound");
+    auto ResourceManager::getSound(const uuids::uuid uuid) -> AudioFile& {
+        ROSA_PROFILE_SCOPE("Assets:getSound");
 
-    //     if (auto search = m_resources.find(uuid); search != m_resources.end()) {
-    //         assert(search->second->m_type == resource_sound);
+        if (auto search = m_resources.find(uuid); search != m_resources.end()) {
+            assert(search->second->m_type == resource_sound);
 
-    //         if (!search->second->m_loaded) {
-    //             populate_resource(*(search->second));
-    //         }
+            if (!search->second->m_loaded) {
+                populate_resource(*(search->second));
+            }
 
-    //         return search->second->m_sound_buffer;
-    //     }
+            return search->second->m_audio_file;
+        }
 
-    //     spdlog::error("Asset not registered {}", uuids::to_string(uuid));
-    //     abort();
-    // }
+        spdlog::error("Asset not registered {}", uuids::to_string(uuid));
+        abort();
+    }
 
     // auto ResourceManager::getMusicTrack(const uuids::uuid uuid) -> sf::Music& {
     //     ROSA_PROFILE_SCOPE("Assets:getMusicTrack");
@@ -256,19 +257,10 @@ namespace rosa {
             // case resource_font:
             //     resource.m_font = load_asset<sf::Font>(resource.m_name);
             //     break;
-            // case resource_sound:
-            //     resource.m_sound_buffer = load_asset<sf::SoundBuffer>(resource.m_name);
-            //     break;
-            // case resource_music:
-            //     if (PHYSFS_exists(resource.m_name.c_str()) != 0) {
-            //         [[maybe_unused]] bool stream_success = resource.m_stream.open(resource.m_name.c_str());
-            //         assert(stream_success);
-
-            //         resource.m_music.openFromStream(resource.m_stream);
-            //     } else {
-            //         spdlog::critical("Couldn't load asset: {}", resource.m_name);
-            //     }
-            //     break;
+            case resource_sound:
+            case resource_music:
+                resource.m_audio_file.loadFromPhysFS(resource.m_name);
+                break;
             case resource_script:
                 if (PHYSFS_exists(resource.m_name.c_str()) != 0) {
                     PHYSFS_file* myfile = PHYSFS_openRead(resource.m_name.c_str());
@@ -284,8 +276,6 @@ namespace rosa {
                 }
                 break;
             case resource_font:
-            case resource_music:
-            case resource_sound:
                 break;
         }
 

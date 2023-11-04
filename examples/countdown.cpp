@@ -17,6 +17,7 @@
 // Bring in everything
 #include "core/Event.hpp"
 #include "core/NativeScriptEntity.hpp"
+#include "core/components/SoundPlayerComponent.hpp"
 #include "graphics/Sprite.hpp"
 #include <bits/chrono.h>
 #include <rosa.hpp>
@@ -24,6 +25,7 @@
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
 constexpr uuids::uuid dds_uuid = uuids::uuid::from_string(std::string_view("a276b044-8a70-4729-b0e1-bf143957aeeb")).value();
+constexpr uuids::uuid alarm_uuid = uuids::uuid::from_string(std::string_view("ec1015eb-1d91-4f50-b5ab-4e1696e9def7")).value();
 
 using namespace std::literals;
 
@@ -310,6 +312,10 @@ class CountdownScene : public rosa::Scene {
 
             // Set the position to screen-center
             entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
+
+            auto& player = entity.addComponent<rosa::SoundPlayerComponent>();
+            player.setAudio(alarm_uuid);
+            player.play();
         }
 };
 

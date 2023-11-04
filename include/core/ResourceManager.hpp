@@ -16,6 +16,7 @@
 
 #pragma once
 
+#include "audio/AudioFile.hpp"
 #include <memory>
 #include <optional>
 #include <string>
@@ -37,8 +38,8 @@ namespace rosa {
             auto getTexture(uuids::uuid uuid) -> Texture&;
             auto getShader(uuids::uuid uuid) -> Shader&;
             // auto getFont(uuids::uuid uuid) -> sf::Font&;
-            // auto getSound(uuids::uuid uuid) -> sf::SoundBuffer&;
-            // auto getMusicTrack(uuids::uuid uuid) -> sf::Music&;
+            auto getSound(uuids::uuid uuid) -> AudioFile&;
+            auto getMusicTrack(uuids::uuid uuid) -> AudioFile&;
             auto getScript(uuids::uuid uuid) -> const std::string&;
 
             static auto instance() -> ResourceManager&;

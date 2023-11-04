@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project(rosa)
 
+add_subdirectory(vendor/soloud/contrib)
+
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 if (ROSA_PROFILE)
@@ -63,6 +65,7 @@ target_link_libraries(rosa PRIVATE
   ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/libuuid.a
   X11
   imgui::imgui
+  soloud
 )
 
 add_subdirectory(examples)
