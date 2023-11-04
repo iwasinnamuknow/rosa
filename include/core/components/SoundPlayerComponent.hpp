@@ -46,20 +46,31 @@ namespace rosa {
             AudioManager::instance().stop(m_handle);
         }
 
-        auto setVolume(float volume) {
+        auto setDefaultVolume(float volume) {
             m_volume = volume;
             m_wav.setVolume(m_volume);
         }
 
-        auto getVolume() -> float {
+        auto getDefaultVolume() -> float {
             return m_volume;
+        }
+
+        auto getLength() -> double {
+            return m_wav.getLength();
+        }
+
+        auto setLoop(bool loop) {
+            m_wav.setLooping(loop);
+        }
+
+        auto setVolume(float volume) {
+            AudioManager::instance().setVoiceVolume(m_handle, volume);
         }
 
         private:
             SoLoud::Wav m_wav;
             uuids::uuid m_uuid;
 
-            bool m_playing{false};
             float m_volume{1.0F};
 
             AudioFile* m_audio_file{nullptr};

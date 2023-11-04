@@ -40,4 +40,12 @@ namespace rosa {
         m_engine->stop(handle);
     }
 
+    auto AudioManager::setVoiceVolume(unsigned int handle, float volume) -> void {
+        m_engine->setVolume(handle, volume);
+    }
+
+    auto AudioManager::setGlobalVolumne(float volume) -> void {
+        m_engine->setGlobalVolume(volume);
+    }
+
 } // namespace rosa

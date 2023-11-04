@@ -17,7 +17,6 @@
 
 #include <memory>
 #include <soloud/include/soloud.h>
-#include <soloud/include/soloud_audiosource.h>
 
 namespace rosa {
 
@@ -27,6 +26,9 @@ namespace rosa {
 
             auto play(SoLoud::AudioSource& source) -> unsigned int;
             auto stop(unsigned int handle) -> void;
+
+            auto setVoiceVolume(unsigned int handle, float volume) -> void;
+            auto setGlobalVolumne(float volume) -> void;
         private:
             AudioManager();
             ~AudioManager();
