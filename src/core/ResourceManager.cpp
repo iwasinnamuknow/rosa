@@ -241,6 +241,8 @@ namespace rosa {
         ROSA_PROFILE_SCOPE("Assets:Load");
         
         spdlog::debug("Loading asset {}", resource.m_name);
+        auto result{false};
+
         switch (resource.m_type) {
             case resource_texture:
                 resource.m_texture = Texture();
@@ -259,7 +261,10 @@ namespace rosa {
             //     break;
             case resource_sound:
             case resource_music:
-                resource.m_audio_file.loadFromPhysFS(resource.m_name);
+                result = resource.m_audio_file.loadFromPhysFS(resource.m_name);
+                if (!result) {
+                    spdlog::error("Failed to load sound {}", uuids::to_string(resource.m_uuid));
+                }
                 break;
             case resource_script:
                 if (PHYSFS_exists(resource.m_name.c_str()) != 0) {
@@ -272,7 +277,7 @@ namespace rosa {
 
                     resource.m_script = buffer;
                 } else {
-                    spdlog::critical("Couldn't load asset: {}", resource.m_name);
+                    spdlog::critical("Couldn't load script: {}", uuids::to_string(resource.m_uuid));
                 }
                 break;
             case resource_font:
