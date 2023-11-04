@@ -29,6 +29,8 @@ constexpr uuids::uuid alarm_uuid = uuids::uuid::from_string(std::string_view("ec
 
 using namespace std::literals;
 
+static int countdown_start{1200};
+
 class CountdownScript : public rosa::NativeScriptEntity {
     public:
         ROSA_CONSTRUCTOR(CountdownScript)
@@ -162,7 +164,7 @@ class CountdownScript : public rosa::NativeScriptEntity {
                 45,  46,  47
             });
 
-            m_start_time = std::chrono::steady_clock::now() + 10s;
+            m_start_time = std::chrono::steady_clock::now() + std::chrono::seconds(countdown_start);
 
             // Preset texture co-ords for static items
             verts[8].texture_coords =  glm::vec2(279 / texture_size.x, 128 / texture_size.y);
@@ -328,7 +330,11 @@ class CountdownScene : public rosa::Scene {
         }
 };
 
-auto main() -> int {
+auto main(int argc, char* argv[]) -> int {
+
+    if (argc > 1) {
+        countdown_start = std::stoi(std::string(argv[1]));
+    }
 
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600);
