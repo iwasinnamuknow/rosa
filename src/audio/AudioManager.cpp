@@ -48,4 +48,24 @@ namespace rosa {
         m_engine->setGlobalVolume(volume);
     }
 
+    auto AudioManager::createBus(std::string name) -> void {
+        AudioBus bus;
+        SoLoud::Bus so_bus;
+        bus.handle = m_engine->play(so_bus);
+        m_busses.insert({std::move(name), std::move(bus)});
+    }
+
+    auto AudioManager::removeBus(const std::string& name) -> void {
+        m_engine->stop(m_busses.at(name).handle);
+        m_busses.erase(name);
+    }
+
+    auto AudioManager::playOnBus(SoLoud::AudioSource& source, std::string bus_name) -> unsigned int{
+        return m_busses.at(bus_name).play(source);
+    }
+
+    auto AudioManager::setBusVolume(float volume, const std::string& bus_name) -> void {
+        m_busses.at(bus_name).setVolume(volume);
+    }
+
 } // namespace rosa

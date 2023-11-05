@@ -17,6 +17,10 @@
 
 #include <memory>
 #include <soloud/include/soloud.h>
+#include <soloud/include/soloud_audiosource.h>
+#include <string>
+#include <unordered_map>
+#include <audio/AudioBus.hpp>
 
 namespace rosa {
 
@@ -29,11 +33,19 @@ namespace rosa {
 
             auto setVoiceVolume(unsigned int handle, float volume) -> void;
             auto setGlobalVolumne(float volume) -> void;
+
+            auto createBus(std::string name) -> void;
+            auto removeBus(const std::string& name) -> void;
+
+            auto playOnBus(SoLoud::AudioSource& source, std::string bus_name) -> unsigned int;
+            auto setBusVolume(float volume, const std::string& bus_name) -> void;
         private:
             AudioManager();
             ~AudioManager();
 
             std::unique_ptr<SoLoud::Soloud> m_engine;
+
+            std::unordered_map<std::string, AudioBus> m_busses;
     };
 
 } // namespace rosa
