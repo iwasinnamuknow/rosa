@@ -25,56 +25,25 @@ namespace rosa {
 
     struct SoundPlayerComponent {
 
-        auto getAudio() const -> uuids::uuid {
-            return m_uuid;
-        }
+        auto getAudio() const -> uuids::uuid;
+        auto setAudio(uuids::uuid uuid) -> void;
 
-        auto setAudio(uuids::uuid uuid) -> void {
-            m_uuid = uuid;
-            m_audio_file = &ResourceManager::instance().getSound(m_uuid);
-            auto result = m_wav.loadFile(m_audio_file);
-            if (result != SoLoud::SO_NO_ERROR) {
-                spdlog::error("Failed to load audio file {}", uuids::to_string(m_uuid));
-            }
-        }
+        auto play() -> void;
+        auto stop() -> void;
 
-        auto play() -> void { 
-            m_handle = AudioManager::instance().play(m_wav);
-        }
+        auto setDefaultVolume(float volume) -> void;
 
-        auto stop() -> void { 
-            AudioManager::instance().stop(m_handle);
-        }
+        auto getLength() -> double;
 
-        auto setDefaultVolume(float volume) {
-            m_volume = volume;
-            m_wav.setVolume(m_volume);
-        }
+        auto setLooping(bool loop) -> void;
 
-        auto getDefaultVolume() -> float {
-            return m_volume;
-        }
-
-        auto getLength() -> double {
-            return m_wav.getLength();
-        }
-
-        auto setLoop(bool loop) {
-            m_wav.setLooping(loop);
-        }
-
-        auto setVolume(float volume) {
-            AudioManager::instance().setVoiceVolume(m_handle, volume);
-        }
+        auto setVolume(float volume) -> void;
 
         private:
             SoLoud::Wav m_wav;
             uuids::uuid m_uuid;
 
-            float m_volume{1.0F};
-
             AudioFile* m_audio_file{nullptr};
-
             unsigned int m_handle;
     };
 

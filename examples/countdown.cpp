@@ -326,7 +326,7 @@ class CountdownScene : public rosa::Scene {
 
             auto& player = entity.addComponent<rosa::SoundPlayerComponent>();
             player.setAudio(alarm_uuid);
-            player.setLoop(true);
+            player.setLooping(true);
         }
 };
 

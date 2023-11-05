@@ -301,6 +301,38 @@ namespace rosa {
                     sprite_table.set_function("setColour", &lua_script::LuaSprite::setColour, m_lua_sprite.get());
                 }
 
+                // Sound player component
+                if (m_scene->getRegistry().all_of<SoundPlayerComponent>(m_entity)) {
+                    auto& player = m_scene->getRegistry().get<SoundPlayerComponent>(m_entity);
+                    
+                    // Don't re-create if we already have a LuaSound from a previous call
+                    if (!m_lua_sound) {
+                        m_lua_sound = std::make_unique<lua_script::LuaSound>(player, m_state);
+                    }
+                    auto sprite_table = m_state["sound"].get_or_create<sol::table>();
+                    sprite_table.set_function("getAudio", &lua_script::LuaSound::getAudio, m_lua_sound.get());
+                    sprite_table.set_function("setAudio", &lua_script::LuaSound::setAudio, m_lua_sound.get());
+                    sprite_table.set_function("setVolume", &lua_script::LuaSound::setVolume, m_lua_sound.get());
+                    sprite_table.set_function("play", &lua_script::LuaSound::play, m_lua_sound.get());
+                    sprite_table.set_function("setLooping", &lua_script::LuaSound::setLooping, m_lua_sound.get());
+                }
+
+                // Music player component
+                if (m_scene->getRegistry().all_of<MusicPlayerComponent>(m_entity)) {
+                    auto& player = m_scene->getRegistry().get<MusicPlayerComponent>(m_entity);
+                    
+                    // Don't re-create if we already have a LuaMusic from a previous call
+                    if (!m_lua_music) {
+                        m_lua_music = std::make_unique<lua_script::LuaMusic>(player, m_state);
+                    }
+                    auto sprite_table = m_state["sound"].get_or_create<sol::table>();
+                    sprite_table.set_function("getAudio", &lua_script::LuaMusic::getAudio, m_lua_music.get());
+                    sprite_table.set_function("setAudio", &lua_script::LuaMusic::setAudio, m_lua_music.get());
+                    sprite_table.set_function("setVolume", &lua_script::LuaMusic::setVolume, m_lua_music.get());
+                    sprite_table.set_function("play", &lua_script::LuaMusic::play, m_lua_music.get());
+                    sprite_table.set_function("setLooping", &lua_script::LuaMusic::setLooping, m_lua_music.get());
+                }
+
                 // Call the lua initialiser
                 m_on_create_function();
 

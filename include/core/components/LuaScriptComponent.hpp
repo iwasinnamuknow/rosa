@@ -28,6 +28,8 @@
 #include <core/components/SpriteComponent.hpp>
 #include <core/lua_script/LuaTransform.hpp>
 #include <core/lua_script/LuaSprite.hpp>
+#include <core/lua_script/LuaSound.hpp>
+#include <core/lua_script/LuaMusic.hpp>
 
 namespace rosa {
 
@@ -54,6 +56,8 @@ namespace rosa {
 
             std::unique_ptr<lua_script::LuaTransform> m_lua_transform;
             std::unique_ptr<lua_script::LuaSprite> m_lua_sprite;
+            std::unique_ptr<lua_script::LuaSound> m_lua_sound;
+            std::unique_ptr<lua_script::LuaMusic> m_lua_music;
 
             friend class Scene;
             friend class SceneSerialiser;
