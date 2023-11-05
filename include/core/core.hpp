@@ -19,6 +19,8 @@
 #include <core/components/NativeScriptComponent.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <core/components/TransformComponent.hpp>
+#include <core/components/SoundPlayerComponent.hpp>
+#include <core/components/MusicPlayerComponent.hpp>
 
 #include <core/input/Keyboard.hpp>
 #include <core/input/Mouse.hpp>

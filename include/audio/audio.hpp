@@ -13,9 +13,6 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include <core/core.hpp>
-#include <debug/debug.hpp>
-#include <graphics/graphics.hpp>
-#include <audio/audio.hpp>
+#include <audio/AudioBus.hpp>
+#include <audio/AudioFile.hpp>
+#include <audio/AudioManager.hpp>
