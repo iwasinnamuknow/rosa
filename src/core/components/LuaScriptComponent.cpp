@@ -18,6 +18,7 @@
 #include <core/components/LuaScriptComponent.hpp>
 #include <core/Event.hpp>
 #include <debug/Profiler.hpp>
+#include <glm/geometric.hpp>
 #include <sol/raii.hpp>
 #include <sstream>
 
@@ -208,6 +209,9 @@ namespace rosa {
                 std::stringstream pvalue{};
                 pvalue << vec.x << ", " << vec.y;
                 return pvalue.str();
+            },
+            "distance_to", [](glm::vec2 a, glm::vec2 b) {
+                return  glm::distance(a, b);
             }
         );
 
@@ -220,6 +224,9 @@ namespace rosa {
                 std::stringstream pvalue{};
                 pvalue << vec.x << ", " << vec.y << ", " << vec.z;
                 return pvalue.str();
+            },
+            "distance_to", [](glm::vec3 a, glm::vec3 b) {
+                return  glm::distance(a, b);
             }
         );
 
@@ -233,6 +240,9 @@ namespace rosa {
                 std::stringstream pvalue{};
                 pvalue << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w;
                 return pvalue.str();
+            },
+            "distance_to", [](glm::vec4 a, glm::vec4 b) {
+                return  glm::distance(a, b);
             }
         );
     }
