@@ -260,65 +260,70 @@ namespace rosa {
         }
 
         if (data["scene"]) {
-            auto entities = data["entities"];
-            for (auto entity : entities) {
-                if (entity["uuid"]) {
-                    Entity new_entity = m_scene.create_entity(uuids::uuid::from_string(entity["uuid"].as<std::string>()).value());
+            auto scene = data["scene"];
 
-                    if (entity["components"]) {
-                        for (auto comp : entity["components"]) {
-                            if (comp["type"]) {
-                                auto type = comp["type"].as<std::string>();
-                                if (type == "transform") {
-                                    auto& transform = new_entity.getComponent<TransformComponent>();
-                                    transform.position = comp["position"].as<glm::vec3>();
-                                    transform.scale = comp["scale"].as<glm::vec3>();
-                                    transform.rotation = comp["rotation"].as<float>();
-                                } else if (type == "sprite") {
-                                    auto& sprite = new_entity.addComponent<SpriteComponent>();
-                                    sprite.setTexture(comp["texture"].as<uuids::uuid>());
-                                    sprite.setColour(comp["color"].as<rosa::Colour>());
-                                } else if (type == "lua_script") {
-                                    auto& lsc = new_entity.addComponent<LuaScriptComponent>(&m_scene, new_entity);
-                                    auto script_uuid = comp["script"].as<std::string>();
+            if (scene["entities"]) {
 
-                                    auto uuid = uuids::uuid::from_string(script_uuid);
-                                    if (uuid.has_value()) {
+                auto entities = scene["entities"];
+                for (auto entity: entities) {
+                    if (entity["uuid"]) {
+                        Entity new_entity = m_scene.create_entity(uuids::uuid::from_string(entity["uuid"].as<std::string>()).value());
 
-                                        lsc.setScript(uuid.value());
+                        if (entity["components"]) {
+                            for (auto comp : entity["components"]) {
+                                if (comp["type"]) {
+                                    auto type = comp["type"].as<std::string>();
+                                    if (type == "transform") {
+                                        auto& transform = new_entity.getComponent<TransformComponent>();
+                                        transform.position = comp["position"].as<glm::vec3>();
+                                        transform.scale = comp["scale"].as<glm::vec3>();
+                                        transform.rotation = comp["rotation"].as<float>();
+                                    } else if (type == "sprite") {
+                                        auto& sprite = new_entity.addComponent<SpriteComponent>();
+                                        sprite.setTexture(comp["texture"].as<uuids::uuid>());
+                                        sprite.setColour(comp["color"].as<rosa::Colour>());
+                                    } else if (type == "lua_script") {
+                                        auto& lsc = new_entity.addComponent<LuaScriptComponent>(&m_scene, new_entity);
+                                        auto script_uuid = comp["script"].as<std::string>();
 
-                                        if (comp["data"]) {
-                                            auto script_data = comp["data"];
-                                            auto table_data = lua_node_from_yaml(script_data);
-                                            lsc.set_data("", table_data);
+                                        auto uuid = uuids::uuid::from_string(script_uuid);
+                                        if (uuid.has_value()) {
+
+                                            lsc.setScript(uuid.value());
+
+                                            if (comp["data"]) {
+                                                auto script_data = comp["data"];
+                                                auto table_data = lua_node_from_yaml(script_data);
+                                                lsc.set_data("", table_data);
+                                            }
+                                        }                                   
+                                    } else if (type == "sound") {
+                                        auto& player = new_entity.addComponent<SoundPlayerComponent>();
+                                        auto uuid_str = comp["source"].as<std::string>();
+                                        auto uuid = uuids::uuid::from_string(uuid_str);
+                                        if (uuid.has_value()) {
+                                            player.setAudio(uuid.value());
+                                            player.setPosition(comp["position"].as<double>());
+                                            player.setPause(comp["paused"].as<bool>());
+                                            player.setDefaultVolume(comp["default_volume"].as<float>());
+                                            if (comp["playing"].as<bool>()) {
+                                                player.play();
+                                                player.setVolume(comp["volume"].as<float>());
+                                            }
                                         }
-                                    }                                   
-                                } else if (type == "sound") {
-                                    auto& player = new_entity.addComponent<SoundPlayerComponent>();
-                                    auto uuid_str = comp["source"].as<std::string>();
-                                    auto uuid = uuids::uuid::from_string(uuid_str);
-                                    if (uuid.has_value()) {
-                                        player.setAudio(uuid.value());
-                                        player.setPosition(comp["position"].as<double>());
-                                        player.setPause(comp["paused"].as<bool>());
-                                        player.setDefaultVolume(comp["default_volume"].as<float>());
-                                        if (comp["playing"].as<bool>()) {
-                                            player.play();
-                                            player.setVolume(comp["volume"].as<float>());
-                                        }
-                                    }
-                                } else if (type == "music") {
-                                    auto& player = new_entity.addComponent<MusicPlayerComponent>();
-                                    auto uuid_str = comp["source"].as<std::string>();
-                                    auto uuid = uuids::uuid::from_string(uuid_str);
-                                    if (uuid.has_value()) {
-                                        player.setAudio(uuid.value());
-                                        player.setPosition(comp["position"].as<double>());
-                                        player.setPause(comp["paused"].as<bool>());
-                                        player.setDefaultVolume(comp["default_volume"].as<float>());
-                                        if (comp["playing"].as<bool>()) {
-                                            player.play();
-                                            player.setVolume(comp["volume"].as<float>());
+                                    } else if (type == "music") {
+                                        auto& player = new_entity.addComponent<MusicPlayerComponent>();
+                                        auto uuid_str = comp["source"].as<std::string>();
+                                        auto uuid = uuids::uuid::from_string(uuid_str);
+                                        if (uuid.has_value()) {
+                                            player.setAudio(uuid.value());
+                                            player.setPosition(comp["position"].as<double>());
+                                            player.setPause(comp["paused"].as<bool>());
+                                            player.setDefaultVolume(comp["default_volume"].as<float>());
+                                            if (comp["playing"].as<bool>()) {
+                                                player.play();
+                                                player.setVolume(comp["volume"].as<float>());
+                                            }
                                         }
                                     }
                                 }

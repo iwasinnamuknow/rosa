@@ -13,6 +13,7 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include "core/Scene.hpp"
 #include <graphics/Colour.hpp>
 #include <bits/chrono.h>
 #include <core/GameManager.hpp>
@@ -123,6 +124,13 @@ namespace rosa {
         }
 
         return false;
+    }
+
+    auto GameManager::unpackScene(const std::string& key, const std::string& path) -> bool {
+        auto scene = std::make_unique<Scene>(getRenderWindow());
+        auto serialiser = SceneSerialiser(*scene.get());
+        serialiser.deserialiseFromYaml(path);
+        return addScene(key, std::move(scene));
     }
 
 } // namespace rosa

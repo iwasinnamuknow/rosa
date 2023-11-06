@@ -19,6 +19,24 @@ target_compile_features(countdown PRIVATE cxx_std_20)
 target_include_directories(countdown PRIVATE ../include/)
 target_link_libraries(countdown PRIVATE rosa)
 
+if (_WIN32)
+    add_executable(serialise WIN32 serialise.cpp) 
+else (_WIN32)
+    add_executable(serialise serialise.cpp) 
+endif (_WIN32)
+target_compile_features(serialise PRIVATE cxx_std_20)
+target_include_directories(serialise PRIVATE ../include/)
+target_link_libraries(serialise PRIVATE rosa)
+
+if (_WIN32)
+    add_executable(deserialise WIN32 deserialise.cpp) 
+else (_WIN32)
+    add_executable(deserialise deserialise.cpp) 
+endif (_WIN32)
+target_compile_features(deserialise PRIVATE cxx_std_20)
+target_include_directories(deserialise PRIVATE ../include/)
+target_link_libraries(deserialise PRIVATE rosa)
+
 
 # Asset packaging
 file(GLOB_RECURSE ASSETS "assets/*")

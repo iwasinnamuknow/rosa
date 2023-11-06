@@ -184,7 +184,8 @@ namespace rosa {
         state.new_usertype<rosa::Event>("event",
             "type", &rosa::Event::type,
             "keyboard", &rosa::Event::keyboard,
-            "mouse", &rosa::Event::mouse
+            "mouse", &rosa::Event::mouse,
+            "resize", &rosa::Event::resize
         );
 
         state.new_usertype<rosa::KeyboardEvent>("keyboard",
@@ -197,6 +198,10 @@ namespace rosa {
             "type", &rosa::MouseEvent::type,
             "button", &rosa::MouseEvent::button,
             "position", &rosa::MouseEvent::position
+        );
+
+        state.new_usertype<rosa::ResizeEvent>("resize",
+            "size", &rosa::ResizeEvent::size
         );
     }
 

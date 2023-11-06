@@ -84,6 +84,16 @@ namespace rosa {
             auto addScene(const std::string& key, std::unique_ptr<Scene> scene) -> bool;
 
             /**
+             * @brief Load a previously serialised scene
+             * 
+             * @param key the name of the new scene
+             * @param path yaml file containing scene
+             * @return true the scene was unpacked
+             * @return false the scene couldn't be unpacked or the name already exists
+             */
+            auto unpackScene(const std::string& key, const std::string& path) -> bool;
+
+            /**
              * @brief Get the current scene
              * 
              * @return Scene& reference to the scene

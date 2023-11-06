@@ -42,10 +42,14 @@ function onInput(event)
   if (event.type == EventType.Mouse) then
     if (event.mouse.type == EventMouseType.MouseMoved) then
       --print(event.mouse.position.x .. ", " .. event.mouse.position.y)
-      print(event.mouse.position:to_string())
+      --print(event.mouse.position:to_string())
 
-      print(event.mouse.position == vec2.new(100.0, 100.0))
+      --print(event.mouse.position == vec2.new(100.0, 100.0))
     end
+  elseif (event.type == EventType.Resize) then
+    print(event.resize.size.x)
+    print(event.resize.size.y)
+    transform.setPosition(event.resize.size.x / 2, event.resize.size.y / 2)
   end
 end
 
