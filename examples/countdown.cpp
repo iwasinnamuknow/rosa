@@ -187,8 +187,13 @@ class CountdownScript : public rosa::NativeScriptEntity {
         }
 
         void onUpdate(float delta_time) override {
-            
-            if (!m_finished) {
+            auto& player = getEntity().getComponent<rosa::SoundPlayerComponent>();
+
+            if (m_finished) {
+                
+                //spdlog::debug("{}", player.
+
+            } else {
 
                 auto& sprite = getEntity().getComponent<rosa::SpriteComponent>();
                 auto& verts = sprite.getVertices();
@@ -201,8 +206,6 @@ class CountdownScript : public rosa::NativeScriptEntity {
                 if (std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count() <= 0) {
                     m_finished = true;
                     duration = std::chrono::seconds::zero();
-
-                    auto& player = getEntity().getComponent<rosa::SoundPlayerComponent>();
                     player.play();
                 }
 

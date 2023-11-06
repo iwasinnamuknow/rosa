@@ -32,6 +32,8 @@ namespace rosa {
             auto stop(unsigned int handle) -> void;
 
             auto setVoiceVolume(unsigned int handle, float volume) -> void;
+            auto getVoiceVolume(unsigned int handle) -> float;
+
             auto setGlobalVolumne(float volume) -> void;
 
             auto createBus(std::string name) -> void;
@@ -39,6 +41,14 @@ namespace rosa {
 
             auto playOnBus(SoLoud::AudioSource& source, std::string bus_name) -> unsigned int;
             auto setBusVolume(float volume, const std::string& bus_name) -> void;
+
+            auto getVoicePosition(unsigned int handle) -> double;
+            auto setVoicePosition(unsigned int handle, double position) -> void;
+
+            auto setVoicePause(unsigned int handle, bool pause) -> void;
+            auto getVoicePause(unsigned int handle) -> bool;
+
+            auto checkHandle(unsigned int handle) -> bool;
         private:
             AudioManager();
             ~AudioManager();

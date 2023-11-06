@@ -44,6 +44,10 @@ namespace rosa {
         m_engine->setVolume(handle, volume);
     }
 
+    auto AudioManager::getVoiceVolume(unsigned int handle) -> float {
+        return m_engine->getVolume(handle);
+    }
+
     auto AudioManager::setGlobalVolumne(float volume) -> void {
         m_engine->setGlobalVolume(volume);
     }
@@ -66,6 +70,26 @@ namespace rosa {
 
     auto AudioManager::setBusVolume(float volume, const std::string& bus_name) -> void {
         m_busses.at(bus_name).setVolume(volume);
+    }
+
+    auto AudioManager::getVoicePosition(unsigned int handle) -> double {
+        return m_engine->getStreamPosition(handle);
+    }
+
+    auto AudioManager::setVoicePosition(unsigned int handle, double position) -> void {
+        m_engine->seek(handle, position);
+    }
+
+    auto AudioManager::setVoicePause(unsigned int handle, bool pause) -> void {
+        m_engine->setPause(handle, pause);
+    }
+
+    auto AudioManager::getVoicePause(unsigned int handle) -> bool {
+        return m_engine->getPause(handle);
+    }
+
+    auto AudioManager::checkHandle(unsigned int handle) -> bool {
+        return m_engine->isValidVoiceHandle(handle);
     }
 
 } // namespace rosa

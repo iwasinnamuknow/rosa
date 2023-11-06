@@ -40,12 +40,25 @@ namespace rosa {
 
         auto setVolume(float volume) -> void;
 
+        auto getPosition() -> double;
+        auto setPosition(double position) -> void;
+
+        auto setPause(bool pause) -> void;
+        auto getPause() -> bool;
+
+        auto isPlaying() -> bool;
+
         private:
             SoLoud::WavStream m_wav_stream;
             uuids::uuid m_uuid;
 
+            float m_volume{1.F};
+            float m_default_volume{1.F};
+
             AudioFile* m_audio_file{nullptr};
             unsigned int m_handle;
+
+            friend class SceneSerialiser;
     };
 
 } // namespace rosa

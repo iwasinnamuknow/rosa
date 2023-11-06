@@ -13,6 +13,8 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include "audio/AudioFile.hpp"
+#include "audio/AudioManager.hpp"
 #include <core/components/SoundPlayerComponent.hpp>
 
 namespace rosa {
@@ -39,6 +41,7 @@ namespace rosa {
     }
 
     auto SoundPlayerComponent::setDefaultVolume(float volume) -> void {
+        m_default_volume = volume;
         m_wav.setVolume(volume);
     }
 
@@ -51,10 +54,31 @@ namespace rosa {
     }
 
     auto SoundPlayerComponent::setVolume(float volume) -> void {
+        m_volume = volume;
         AudioManager::instance().setVoiceVolume(m_handle, volume);
     }
 
-    
+    auto SoundPlayerComponent::getPosition() const -> double {
+        return AudioManager::instance().getVoicePosition(m_handle);
+    }
+
+    auto SoundPlayerComponent::setPosition(double position) -> void {
+        AudioManager::instance().setVoicePosition(m_handle, position);
+    }
+
+    auto SoundPlayerComponent::setPause(bool pause) -> void {
+        AudioManager::instance().setVoicePause(m_handle, pause);
+    }
+
+    auto SoundPlayerComponent::getPause() const -> bool {
+        return AudioManager::instance().getVoicePause(m_handle);
+    }
+
+    auto SoundPlayerComponent::isPlaying() const -> bool {
+        return AudioManager::instance().checkHandle(m_handle);
+    }
+
+
 
 
 } // namespace rosa

@@ -130,14 +130,14 @@ namespace rosa {
         YAML::Emitter out;
 
         out << YAML::BeginMap; // Main
-        out << YAML::Key << "version" << YAML::Value << serialiser_version;
-        out << YAML::Key << "scene" << YAML::Value << YAML::BeginMap; // Scene
-        out << YAML::Key << "entities" << YAML::Value << YAML::BeginSeq; // Entities
-        for (auto& [eid, entity] : m_scene.m_entities) {
-            serialise_entity(out, entity);
-        }
-        out << YAML::EndSeq; // Entities
-        out << YAML::EndMap; // Scene
+            out << YAML::Key << "version" << YAML::Value << serialiser_version;
+            out << YAML::Key << "scene" << YAML::Value << YAML::BeginMap; // Scene
+                out << YAML::Key << "entities" << YAML::Value << YAML::BeginSeq; // Entities
+                    for (auto& [eid, entity] : m_scene.m_entities) {
+                        serialise_entity(out, entity);
+                    }
+                out << YAML::EndSeq; // Entities
+            out << YAML::EndMap; // Scene
         out << YAML::EndMap; // Main
 
         std::ofstream fout(filepath);
@@ -165,6 +165,31 @@ namespace rosa {
             out << YAML::Key << "texture" << YAML::Value << uuids::to_string(sprite.m_texture_uuid);
             out << YAML::Key << "color" << YAML::Value << sprite.getColour();
             out << YAML::EndMap; // sprite
+        }
+
+        if (entity.hasComponent<SoundPlayerComponent>()) {
+            auto& player = entity.getComponent<SoundPlayerComponent>();
+            out << YAML::BeginMap; // sound player
+            out << YAML::Key << "type" << YAML::Value << "sound";
+            out << YAML::Key << "source" << YAML::Value << uuids::to_string(player.m_uuid);
+            out << YAML::Key << "position" << YAML::Value << player.getPosition();
+            out << YAML::Key << "volume" << YAML::Value << player.m_volume;
+            out << YAML::Key << "default_volume" << YAML::Value << player.m_default_volume;
+            out << YAML::Key << "paused" << YAML::Value << player.getPause();
+            out << YAML::Key << "playing" << YAML::Value << player.isPlaying();
+            out << YAML::EndMap;
+        }
+
+        if (entity.hasComponent<MusicPlayerComponent>()) {
+            auto& player = entity.getComponent<MusicPlayerComponent>();
+            out << YAML::BeginMap; // sound player
+            out << YAML::Key << "type" << YAML::Value << "music";
+            out << YAML::Key << "source" << YAML::Value << uuids::to_string(player.m_uuid);
+            out << YAML::Key << "position" << YAML::Value << player.getPosition();
+            out << YAML::Key << "volume" << YAML::Value << player.m_volume;
+            out << YAML::Key << "default_volume" << YAML::Value << player.m_default_volume;
+            out << YAML::Key << "paused" << YAML::Value << player.getPause();
+            out << YAML::Key << "playing" << YAML::Value << player.isPlaying();
         }
 
         if (entity.hasComponent<LuaScriptComponent>()) {
@@ -242,7 +267,7 @@ namespace rosa {
 
                     if (entity["components"]) {
                         for (auto comp : entity["components"]) {
-                            if (entity["type"]) {
+                            if (comp["type"]) {
                                 auto type = comp["type"].as<std::string>();
                                 if (type == "transform") {
                                     auto& transform = new_entity.getComponent<TransformComponent>();
@@ -264,13 +289,38 @@ namespace rosa {
 
                                         if (comp["data"]) {
                                             auto script_data = comp["data"];
-                                            auto table_data = lua_t_from_yaml(script_data);
+                                            auto table_data = lua_node_from_yaml(script_data);
                                             lsc.set_data("", table_data);
                                         }
+                                    }                                   
+                                } else if (type == "sound") {
+                                    auto& player = new_entity.addComponent<SoundPlayerComponent>();
+                                    auto uuid_str = comp["source"].as<std::string>();
+                                    auto uuid = uuids::uuid::from_string(uuid_str);
+                                    if (uuid.has_value()) {
+                                        player.setAudio(uuid.value());
+                                        player.setPosition(comp["position"].as<double>());
+                                        player.setPause(comp["paused"].as<bool>());
+                                        player.setDefaultVolume(comp["default_volume"].as<float>());
+                                        if (comp["playing"].as<bool>()) {
+                                            player.play();
+                                            player.setVolume(comp["volume"].as<float>());
+                                        }
                                     }
-                                    //lsc.setScript(comp["script"].as<uuids::uuid>(), );
-                                    //sprite.setColor(comp["color"].as<sf::Color>());
-                                    
+                                } else if (type == "music") {
+                                    auto& player = new_entity.addComponent<MusicPlayerComponent>();
+                                    auto uuid_str = comp["source"].as<std::string>();
+                                    auto uuid = uuids::uuid::from_string(uuid_str);
+                                    if (uuid.has_value()) {
+                                        player.setAudio(uuid.value());
+                                        player.setPosition(comp["position"].as<double>());
+                                        player.setPause(comp["paused"].as<bool>());
+                                        player.setDefaultVolume(comp["default_volume"].as<float>());
+                                        if (comp["playing"].as<bool>()) {
+                                            player.play();
+                                            player.setVolume(comp["volume"].as<float>());
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -279,46 +329,50 @@ namespace rosa {
             }
         }
 
+        // out << YAML::Key << "position" << YAML::Value << player.getPosition();
+        // out << YAML::Key << "volume" << YAML::Value << player.m_volume;
+        // out << YAML::Key << "default_volume" << YAML::Value << player.m_default_volume;
+        // out << YAML::Key << "paused" << YAML::Value << player.getPause();
+        // out << YAML::Key << "playing" << YAML::Value << player.isPlaying();
+
         return true; // TODO this is pointless, we need to check something
     }
 
-    auto SceneSerialiser::lua_t_from_yaml(const YAML::Node& node) -> sol::table {
-        // sol::table table{};
+    auto SceneSerialiser::lua_node_from_yaml(const YAML::Node& node) -> sol::table {
+        sol::table table{};
 
-        // const auto node_type = node.Type();
+        const auto node_type = node.Type();
 
-        // if (node_type == YAML::NodeType::Map) {
-        //     table = deserialise_map(node);
+        if (node_type == YAML::NodeType::Map) {
+            table = deserialise_map(node);
+        } else if (node_type == YAML::NodeType::Sequence) {
+            table = deserialise_sequence(node);
+        }
 
-        // } else if (node_type == YAML::NodeType::Sequence) {
-        //     table = deserialise_sequence(node);
-
-        // } else if (node_type == YAML::NodeType::Scalar) {
-        //     const auto& tag = node.Tag();
-
-        //     if (tag == "int") {
-        //         table[node] = it->second.as<int>();
-
-        //     } else if (it->second.Tag() == "float") {
-        //         table[it->first.as<std::string>()] = it->second.as<float>();
-
-        //     } else if (it->second.Tag() == "bool") {
-        //         table[it->first.as<std::string>()] = it->second.as<bool>();
-
-        //     } else if (it->second.Tag() == "str") {
-        //         table[it->first.as<std::string>()] = it->second.as<std::string>();
-        //     }
-        //     table = deserialise_scalar(node);
-        // }
-
-        // return table;
+        return table;
     }
 
     auto SceneSerialiser::deserialise_map(const YAML::Node& node) -> sol::table {
         sol::table table{};
 
         for (YAML::const_iterator it = node.begin(); it != node.end(); ++it) {
-            table[it->first.as<std::string>()] = lua_t_from_yaml(it->second);
+            if (it->second.Type() == YAML::NodeType::Scalar) {
+                const auto& tag = it->second.Tag();
+
+                if (tag == "int") {
+                    table[it->first.as<std::string>()] = it->second.as<int>();
+                } else if (tag == "float") {
+                    table[it->first.as<std::string>()] = it->second.as<float>();
+
+                } else if (tag == "bool") {
+                    table[it->first.as<std::string>()] = it->second.as<bool>();
+
+                } else if (tag == "str") {
+                    table[it->first.as<std::string>()] = it->second.as<std::string>();
+                }   
+            } else {
+                table[it->first.as<std::string>()] = lua_node_from_yaml(it->second);
+            }
         }
 
         return table;
@@ -326,18 +380,30 @@ namespace rosa {
 
     auto SceneSerialiser::deserialise_sequence(const YAML::Node& node) -> sol::table {
         sol::table table{};
-        int index{0};
+        int index{1};
 
         for (YAML::const_iterator seq_it = node.begin(); seq_it != node.end(); ++seq_it) {
-            table[index++] = lua_t_from_yaml(*seq_it);
+            if (seq_it->Type() == YAML::NodeType::Scalar) {
+                const auto& tag = seq_it->Tag();
+
+                if (tag == "int") {
+                    table[index++] = seq_it->as<int>();
+                } else if (tag == "float") {
+                    table[index++] = seq_it->as<float>();
+
+                } else if (tag == "bool") {
+                    table[index++] = seq_it->as<bool>();
+
+                } else if (tag == "str") {
+                    table[index++] = seq_it->as<std::string>();
+                }   
+            } else {
+                table[index++] = lua_node_from_yaml(*seq_it);
+            }
+            
         }
 
         return table;
-    }
-
-    template<typename T>
-    auto SceneSerialiser::deserialise_scalar(const YAML::Node& node) -> T {
-        
     }
 
 } // namespace rosa
