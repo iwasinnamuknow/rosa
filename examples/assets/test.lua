@@ -20,7 +20,13 @@ persist["red"] = 0
 general = 2
 
 function onCreate()
+  print("Created!")
+  sound.play()
+  music.play()
+end
 
+function onLoad()
+  print("loaded!")
 end
 
 function onUpdate(delta_time)

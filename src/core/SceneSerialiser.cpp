@@ -190,6 +190,7 @@ namespace rosa {
             out << YAML::Key << "default_volume" << YAML::Value << player.m_default_volume;
             out << YAML::Key << "paused" << YAML::Value << player.getPause();
             out << YAML::Key << "playing" << YAML::Value << player.isPlaying();
+            out << YAML::EndMap;
         }
 
         if (entity.hasComponent<LuaScriptComponent>()) {
@@ -289,7 +290,7 @@ namespace rosa {
                                         auto uuid = uuids::uuid::from_string(script_uuid);
                                         if (uuid.has_value()) {
 
-                                            lsc.setScript(uuid.value());
+                                            lsc.setScript(uuid.value(), true);
 
                                             if (comp["data"]) {
                                                 auto script_data = comp["data"];
@@ -303,13 +304,16 @@ namespace rosa {
                                         auto uuid = uuids::uuid::from_string(uuid_str);
                                         if (uuid.has_value()) {
                                             player.setAudio(uuid.value());
-                                            player.setPosition(comp["position"].as<double>());
-                                            player.setPause(comp["paused"].as<bool>());
                                             player.setDefaultVolume(comp["default_volume"].as<float>());
-                                            if (comp["playing"].as<bool>()) {
-                                                player.play();
-                                                player.setVolume(comp["volume"].as<float>());
+                                            player.play();
+                                            player.setPause(true);
+                                            player.setPosition(comp["position"].as<double>());
+                                            auto paused = comp["paused"].as<bool>();
+                                            auto playing = comp["playing"].as<bool>();
+                                            if (paused == false && playing == true) {
+                                                player.setPause(false);
                                             }
+                                            player.setVolume(comp["volume"].as<float>());
                                         }
                                     } else if (type == "music") {
                                         auto& player = new_entity.addComponent<MusicPlayerComponent>();
@@ -317,13 +321,17 @@ namespace rosa {
                                         auto uuid = uuids::uuid::from_string(uuid_str);
                                         if (uuid.has_value()) {
                                             player.setAudio(uuid.value());
-                                            player.setPosition(comp["position"].as<double>());
-                                            player.setPause(comp["paused"].as<bool>());
+                                            auto pos = comp["position"].as<double>();
                                             player.setDefaultVolume(comp["default_volume"].as<float>());
-                                            if (comp["playing"].as<bool>()) {
-                                                player.play();
-                                                player.setVolume(comp["volume"].as<float>());
+                                            player.play();
+                                            player.setPause(true);
+                                            player.setPosition(pos);
+                                            auto paused = comp["paused"].as<bool>();
+                                            auto playing = comp["playing"].as<bool>();
+                                            if (paused == false && playing == true) {
+                                                player.setPause(false);
                                             }
+                                            player.setVolume(comp["volume"].as<float>());
                                         }
                                     }
                                 }

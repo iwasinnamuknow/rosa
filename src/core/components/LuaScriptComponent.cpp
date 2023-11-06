@@ -261,7 +261,7 @@ namespace rosa {
         m_lua_transform = std::make_unique<lua_script::LuaTransform>(transform_component, m_state);
     }
 
-    auto LuaScriptComponent::setScript(uuids::uuid uuid) -> bool {
+    auto LuaScriptComponent::setScript(uuids::uuid uuid, bool deserialised) -> bool {
         ROSA_PROFILE_SCOPE("LuaScriptComponent:setScript");
 
         try {
@@ -273,6 +273,7 @@ namespace rosa {
                 m_on_delete_function = m_state["onDelete"];
                 m_on_update_function = m_state["onUpdate"];
                 m_on_input_function =  m_state["onInput"];
+                m_on_load_function =  m_state["onLoad"];
 
                 m_uuid = uuid;
 
@@ -340,7 +341,7 @@ namespace rosa {
                     if (!m_lua_music) {
                         m_lua_music = std::make_unique<lua_script::LuaMusic>(player, m_state);
                     }
-                    auto sprite_table = m_state["sound"].get_or_create<sol::table>();
+                    auto sprite_table = m_state["music"].get_or_create<sol::table>();
                     sprite_table.set_function("getAudio", &lua_script::LuaMusic::getAudio, m_lua_music.get());
                     sprite_table.set_function("setAudio", &lua_script::LuaMusic::setAudio, m_lua_music.get());
                     sprite_table.set_function("setVolume", &lua_script::LuaMusic::setVolume, m_lua_music.get());
@@ -349,7 +350,11 @@ namespace rosa {
                 }
 
                 // Call the lua initialiser
-                m_on_create_function();
+                if (deserialised) { 
+                    m_on_load_function();
+                } else {
+                    m_on_create_function();
+                }
 
                 return true;
             }

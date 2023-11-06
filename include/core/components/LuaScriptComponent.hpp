@@ -39,11 +39,12 @@ namespace rosa {
     struct LuaScriptComponent {
 
             LuaScriptComponent(Scene* scene, entt::entity entity);
-            auto setScript(uuids::uuid uuid) -> bool;
+            auto setScript(uuids::uuid uuid, bool deserialised = false) -> bool;
 
         private:
             sol::state m_state;
             sol::protected_function m_on_create_function;
+            sol::protected_function m_on_load_function;
             sol::protected_function m_on_delete_function;
             sol::protected_function m_on_update_function;
             sol::protected_function m_on_input_function;
