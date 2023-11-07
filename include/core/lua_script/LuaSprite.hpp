@@ -26,8 +26,12 @@ namespace rosa::lua_script {
         LuaSprite(std::reference_wrapper<SpriteComponent> component, std::reference_wrapper<sol::state> state)
             : m_component(component), m_state(state) {}
 
-        auto getTexture() const -> std::string {
-            return uuids::to_string(m_component.get().getTexture());
+        auto getTextureUUID() const -> std::string {
+            return uuids::to_string(m_component.get().getTextureUUID());
+        }
+
+        auto getTextureSize() const -> glm::vec2 {
+            return m_component.get().getTexture().getSize();
         }
 
         auto setTexture(const std::string& uuid_str) -> bool {
@@ -53,6 +57,14 @@ namespace rosa::lua_script {
                 static_cast<std::uint8_t>(alpha)
                 )
             );
+        }
+
+        auto getVertices() -> std::vector<Vertex>& {
+            return m_component.get().getVertices();
+        }
+
+        auto setVertexCount(int count) -> void {
+            m_component.get().getVertices().resize(count);
         }
 
         private:

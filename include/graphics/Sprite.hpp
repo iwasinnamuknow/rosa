@@ -52,12 +52,11 @@ namespace rosa {
 
         protected:
             auto draw(glm::mat4 projection, glm::mat4 transform) -> void override;
+            Texture* m_texture{nullptr};
 
         private:
             friend class Window;
             friend class NativeScriptEntity;
-
-            Texture* m_texture{nullptr};
     };
 
 } // namespace rosa

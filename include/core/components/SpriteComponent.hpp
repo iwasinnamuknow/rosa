@@ -26,7 +26,11 @@ namespace rosa {
 
     struct SpriteComponent : Sprite {
         
-        auto getTexture() const -> uuids::uuid {
+        auto getTexture() -> Texture& {
+            return *m_texture;
+        }
+
+        auto getTextureUUID() -> uuids::uuid {
             return m_texture_uuid;
         }
 

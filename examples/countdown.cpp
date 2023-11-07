@@ -57,7 +57,7 @@ class CountdownScript : public rosa::NativeScriptEntity {
             spdlog::info("Test script initialised");
             
             auto& sprite = getEntity().getComponent<rosa::SpriteComponent>();
-            auto& texture = rosa::ResourceManager::instance().getTexture(sprite.getTexture());
+            auto& texture = sprite.getTexture();
             auto texture_size = texture.getSize();
             
             auto& verts = sprite.getVertices();
@@ -197,7 +197,7 @@ class CountdownScript : public rosa::NativeScriptEntity {
 
                 auto& sprite = getEntity().getComponent<rosa::SpriteComponent>();
                 auto& verts = sprite.getVertices();
-                auto& texture = rosa::ResourceManager::instance().getTexture(sprite.getTexture());
+                auto& texture = sprite.getTexture();
                 auto texture_size = texture.getSize();
 
                 m_current_time = std::chrono::steady_clock::now();

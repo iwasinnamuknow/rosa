@@ -15,6 +15,7 @@
 
 #include "core/input/Keyboard.hpp"
 #include "core/input/Mouse.hpp"
+#include "graphics/Vertex.hpp"
 #include <core/components/LuaScriptComponent.hpp>
 #include <core/Event.hpp>
 #include <debug/Profiler.hpp>
@@ -250,6 +251,20 @@ namespace rosa {
                 return  glm::distance(a, b);
             }
         );
+
+        state.new_usertype<rosa::Vertex>("vertex",
+            sol::constructors<rosa::Vertex(glm::vec2)>(),
+            sol::constructors<rosa::Vertex(glm::vec2, Colour)>(),
+            sol::constructors<rosa::Vertex(glm::vec2, Colour, glm::vec2)>(),
+            "position", &rosa::Vertex::position,
+            "colour", &rosa::Vertex::colour,
+            "uv", &rosa::Vertex::texture_coords
+        );
+
+        state.new_usertype<rosa::Texture>("texture",
+            sol::constructors<rosa::Texture()>(),
+            "size", &rosa::Texture::getSize
+        );
     }
 
     LuaScriptComponent::LuaScriptComponent(Scene* scene, entt::entity entity) : m_entity(entity), m_scene(scene) {
@@ -311,10 +326,12 @@ namespace rosa {
                         m_lua_sprite = std::make_unique<lua_script::LuaSprite>(sprite_component, m_state);
                     }
                     auto sprite_table = m_state["sprite"].get_or_create<sol::table>();
-                    sprite_table.set_function("getTexture", &lua_script::LuaSprite::getTexture, m_lua_sprite.get());
-                    sprite_table.set_function("setTexture", &lua_script::LuaSprite::getTexture, m_lua_sprite.get());
+                    sprite_table.set_function("getTexture", &lua_script::LuaSprite::getTextureUUID, m_lua_sprite.get());
+                    sprite_table.set_function("setTexture", &lua_script::LuaSprite::setTexture, m_lua_sprite.get());
                     sprite_table.set_function("getColour", &lua_script::LuaSprite::getColour, m_lua_sprite.get());
                     sprite_table.set_function("setColour", &lua_script::LuaSprite::setColour, m_lua_sprite.get());
+                    sprite_table.set_function("getVertices", &lua_script::LuaSprite::getVertices, m_lua_sprite.get());
+                    sprite_table.set_function("setVertexCount", &lua_script::LuaSprite::setVertexCount, m_lua_sprite.get());
                 }
 
                 // Sound player component
