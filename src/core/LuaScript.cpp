@@ -13,26 +13,33 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include <graphics/Shader.hpp>
-#include <physfs.h>
+#include <core/LuaScript.hpp>
 
 namespace rosa {
 
-    auto Shader::loadFromPhysFS() -> bool {
+    auto LuaScript::loadFromPhysFS() -> bool {
 
         const auto& name = getName();
 
-        if (PHYSFS_exists(name.c_str()) == 0) {
-            spdlog::error("Couldn't load asset: {}", name);
+        if (PHYSFS_exists(name.c_str()) != 0) {
+            PHYSFS_file* myfile = PHYSFS_openRead(name.c_str());
+            std::string buffer{};
+            buffer.resize(PHYSFS_fileLength(myfile));
+            std::int64_t length_read = PHYSFS_readBytes(myfile, buffer.data(), static_cast<std::uint64_t>(PHYSFS_fileLength(myfile)));
+            assert(length_read == PHYSFS_fileLength(myfile));
+            PHYSFS_close(myfile);
+
+            m_content = buffer;
+        } else {
+            spdlog::critical("Couldn't load script: {}", uuids::to_string(getUUID()));
             return false;
         }
 
-        PHYSFS_file* myfile = PHYSFS_openRead(name.c_str());
-
-        int length_read = PHYSFS_readBytes(myfile, m_content.data(), PHYSFS_fileLength(myfile));
-        assert(length_read == PHYSFS_fileLength(myfile));
-
         return true;
+    }
+
+    auto LuaScript::getContent() const -> const std::string& {
+        return m_content;
     }
 
 } // namespace rosa

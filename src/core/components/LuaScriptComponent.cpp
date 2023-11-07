@@ -22,6 +22,7 @@
 #include <glm/geometric.hpp>
 #include <sol/raii.hpp>
 #include <sstream>
+#include <core/LuaScript.hpp>
 
 namespace rosa {
 
@@ -260,11 +261,6 @@ namespace rosa {
             "colour", &rosa::Vertex::colour,
             "uv", &rosa::Vertex::texture_coords
         );
-
-        state.new_usertype<rosa::Texture>("texture",
-            sol::constructors<rosa::Texture()>(),
-            "size", &rosa::Texture::getSize
-        );
     }
 
     LuaScriptComponent::LuaScriptComponent(Scene* scene, entt::entity entity) : m_entity(entity), m_scene(scene) {
@@ -280,9 +276,9 @@ namespace rosa {
         ROSA_PROFILE_SCOPE("LuaScriptComponent:setScript");
 
         try {
-            const auto& script = ResourceManager::instance().getScript(uuid);
+            const auto& script = ResourceManager::instance().getAsset<LuaScript>(uuid);
 
-            auto result = m_state.script(script, &sol::script_default_on_error);
+            auto result = m_state.script(script.getContent(), &sol::script_default_on_error);
             if(result.valid()) {
                 m_on_create_function = m_state["onCreate"];
                 m_on_delete_function = m_state["onDelete"];

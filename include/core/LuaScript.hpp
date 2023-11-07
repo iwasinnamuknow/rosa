@@ -15,35 +15,22 @@
 
 #pragma once
 
-#include <core/ResourceManager.hpp>
-#include <stduuid/uuid.h>
-#include <string_view>
-#include <graphics/Sprite.hpp>
+#include <core/Resource.hpp>
+#include <string>
+#include <physfs.h>
 
 namespace rosa {
 
-    class SceneSerialiser;
+    class LuaScript : public ::rosa::Resource {
+        public:
+            LuaScript(std::string name, uuids::uuid uuid) : rosa::Resource(std::move(name), uuid) {}
 
-    struct SpriteComponent : Sprite {
-        
-        auto getTexture() -> Texture& {
-            return *m_texture;
-        }
+            auto loadFromPhysFS() -> bool override;
 
-        auto getTextureUUID() -> uuids::uuid {
-            return m_texture_uuid;
-        }
-
-        auto setTexture(uuids::uuid uuid) -> void {
-            m_texture_uuid = uuid;
-            Sprite::setTexture(ResourceManager::instance().getAsset<Texture>(m_texture_uuid));
-        }
+            auto getContent() const -> const std::string&;
 
         private:
-            uuids::uuid m_texture_uuid;
-            //sf::Color m_color{255, 255, 255, 255};
-
-            friend class SceneSerialiser;
+            std::string m_content;
     };
 
 } // namespace rosa

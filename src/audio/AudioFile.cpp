@@ -18,9 +18,10 @@
 
 namespace rosa {
 
-    auto AudioFile::loadFromPhysFS(const std::string& path) -> bool {
-        if (PHYSFS_exists(path.c_str()) != 0) {
-            m_file_ptr = PHYSFS_openRead(path.c_str());
+    auto AudioFile::loadFromPhysFS() -> bool {
+        const auto& name = getName();
+        if (PHYSFS_exists(name.c_str()) != 0) {
+            m_file_ptr = PHYSFS_openRead(name.c_str());
             return true;
         }
 

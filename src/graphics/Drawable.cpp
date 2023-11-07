@@ -23,12 +23,12 @@ namespace rosa {
         bool defaulted_f_shader{false};
 
         if (m_vertex_shader == nullptr){ 
-            m_vertex_shader = new Shader(VertexShader);
+            m_vertex_shader = new Shader("default", uuids::uuid(), VertexShader);
             defaulted_v_shader = true;
             spdlog::warn("Using default vertex shader");
         }
         if (m_fragment_shader == nullptr) {
-            m_fragment_shader = new Shader(FragmentShader);
+            m_fragment_shader = new Shader("default", uuids::uuid(), FragmentShader);
             defaulted_f_shader = true;
             spdlog::warn("Using default fragment shader");
         }

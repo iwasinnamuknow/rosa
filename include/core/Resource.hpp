@@ -15,12 +15,10 @@
 
 #pragma once
 
+#include <audio/AudioFile.hpp>
 #include <soloud/include/soloud_wavstream.h>
 #include <string>
 #include <stduuid/uuid.h>
-#include <graphics/Texture.hpp>
-#include <graphics/Shader.hpp>
-#include <audio/AudioFile.hpp>
 
 namespace rosa {
 
@@ -38,7 +36,8 @@ namespace rosa {
 
     class Resource {
         public:
-            Resource(std::string name, uuids::uuid uuid, resource_type type) : m_name(std::move(name)), m_uuid(uuid), m_type(type) {}
+            Resource(std::string name, uuids::uuid uuid) : m_name(std::move(name)), m_uuid(uuid) {}
+            virtual ~Resource() = default;
 
             auto getName() -> const std::string& {
                 return m_name;
@@ -48,20 +47,11 @@ namespace rosa {
                 return m_uuid;
             }
 
-            auto getType() -> resource_type {
-                return m_type;
-            }
         private:
             std::string m_name{};
             uuids::uuid m_uuid{};
-            resource_type m_type{};
 
-            Texture m_texture;
-            Shader m_shader;
-            std::string m_script;
-            AudioFile m_audio_file;
-
-            bool m_loaded{false};
+            virtual auto loadFromPhysFS() -> bool = 0;
 
             friend class ResourceManager;
     };

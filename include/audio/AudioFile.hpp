@@ -15,17 +15,19 @@
 
 #pragma once
 
+#include <core/Resource.hpp>
 #include <soloud/include/soloud_file.h>
 #include <physfs.h>
 
 namespace rosa {
 
-    class AudioFile : public ::SoLoud::File {
+    class AudioFile : public ::SoLoud::File, public rosa::Resource {
 
         public:
-            AudioFile() = default;
-            auto loadFromPhysFS(const std::string& path) -> bool;
-            ~AudioFile();
+            AudioFile(std::string name, uuids::uuid uuid) : rosa::Resource(std::move(name), uuid) {}
+            ~AudioFile() override;
+
+            auto loadFromPhysFS() -> bool override;
 
             auto eof() -> int override;
             auto read(unsigned char* dest, unsigned int bytes) -> unsigned int override;
@@ -34,7 +36,7 @@ namespace rosa {
             auto pos() -> unsigned int override;
 
         private:
-            PHYSFS_File* m_file_ptr;
+            PHYSFS_File* m_file_ptr{nullptr};
     };
 
 } // namespace rosa

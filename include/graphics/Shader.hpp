@@ -20,7 +20,7 @@
 #include <spdlog/spdlog.h>
 #include <string_view>
 #include <stduuid/uuid.h>
-#include <spdlog/logger.h>
+#include <core/Resource.hpp>
 
 namespace rosa {
 
@@ -65,9 +65,9 @@ void main()
 }
 )");
 
-    class Shader {
+    class Shader : public ::rosa::Resource {
         public:
-            explicit Shader(ShaderType type = VertexShader) : m_type(type) {
+            explicit Shader(const std::string& name, uuids::uuid uuid, ShaderType type = VertexShader) : Resource(name, uuid), m_type(type) {
                 if (m_type == VertexShader) {
                     m_content = default_vertex_shader;
                 } else if (m_type == FragmentShader) {
@@ -79,7 +79,7 @@ void main()
                 return m_type;
             }
 
-            auto loadFromPhysFS(const std::string& name) -> void;
+            auto loadFromPhysFS() -> bool override;
 
             auto getSource() const -> const std::string& {
                 return m_content;

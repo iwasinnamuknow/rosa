@@ -26,11 +26,13 @@
 #include <spdlog/spdlog.h>
 
 namespace rosa {
-    auto Texture::loadFromPhysFS(const std::string& name) -> void {
+    auto Texture::loadFromPhysFS() -> bool {
+
+        const auto& name = getName();
 
         if (PHYSFS_exists(name.c_str()) == 0) {
             spdlog::error("Couldn't load asset: {}", name);
-            return;
+            return false;
         }
 
         PHYSFS_file* myfile = PHYSFS_openRead(name.c_str());
@@ -43,7 +45,7 @@ namespace rosa {
         PHYSFS_readBytes(myfile, filecode, 4);
         if (strncmp(filecode, "DDS ", 4) != 0) {
             spdlog::error("DDS file didn't contain a DDS header: {}", name);
-            return;
+            return false;
         }
 
         // get the surface desc
@@ -88,7 +90,7 @@ namespace rosa {
         default:
             free(buffer);
             spdlog::error("Could not determine DDS texture compression for: {}", name);
-            return;
+            return false;
         }
 
         // Create one OpenGL texture
@@ -113,6 +115,7 @@ namespace rosa {
         }
 
         free(buffer); 
+        return true;
     }
 
 } // namespace rosa

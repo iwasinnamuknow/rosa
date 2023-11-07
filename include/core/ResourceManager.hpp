@@ -35,29 +35,33 @@ namespace rosa {
             ResourceManager(ResourceManager const &&) = delete;
             auto operator=(ResourceManager const &&) -> ResourceManager & = delete;
             
-            auto getTexture(uuids::uuid uuid) -> Texture&;
-            auto getShader(uuids::uuid uuid) -> Shader&;
-            // auto getFont(uuids::uuid uuid) -> sf::Font&;
-            auto getSound(uuids::uuid uuid) -> AudioFile&;
-            auto getMusicTrack(uuids::uuid uuid) -> AudioFile&;
-            auto getScript(uuids::uuid uuid) -> const std::string&;
+            // auto getTexture(uuids::uuid uuid) -> Texture&;
+            // auto getShader(uuids::uuid uuid) -> Shader&;
+            // // auto getFont(uuids::uuid uuid) -> sf::Font&;
+            // auto getSound(uuids::uuid uuid) -> AudioFile&;
+            // auto getMusicTrack(uuids::uuid uuid) -> AudioFile&;
+            // auto getScript(uuids::uuid uuid) -> const std::string&;
+
+            template<typename T>
+            auto getAsset(uuids::uuid uuid) -> T& {
+                if (m_resources.contains(uuid)) {
+                    T& resource = *(dynamic_cast<T*>(m_resources.at(uuid).get()));
+                    return resource;
+                }
+            }
 
             static auto instance() -> ResourceManager&;
         private:
             ResourceManager();
             ~ResourceManager() = default;
 
-            // std::unordered_map<std::string, sf::Texture> m_textures;
-            // std::unordered_map<std::string, sf::Font> m_fonts;
-            // std::unordered_map<std::string, sf::SoundBuffer> m_sounds;
-            // std::unordered_map<std::string, sf::Music> m_music_tracks;
-
             std::unordered_map<uuids::uuid, std::unique_ptr<Resource>> m_resources;
+            // std::unordered_map<uuids::uuid, std::string> m_scripts;
+            // std::unordered_map<uuids::uuid, AudioFile> m_sounds;
+            // std::unordered_map<uuids::uuid, AudioFile> m_music_tracks;
+            // std::unordered_map<uuids::uuid, Shader> m_shaders;
 
-            // template<typename T>
-            // auto load_asset(const std::string& path) -> T;
-
-            static auto populate_resource(Resource& resource) -> bool;
+            //static auto populate_resource(Resource& resource) -> bool;
     };
 
 } // namespace rosa

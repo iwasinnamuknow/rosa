@@ -32,7 +32,7 @@ class MyScene : public rosa::Scene {
         auto onLoad() -> void override {
 
             // Get our texture via uuid so we can get some details
-            auto texture = rosa::ResourceManager::instance().getTexture(dds_uuid);
+            auto texture = rosa::ResourceManager::instance().getAsset<rosa::Texture>(dds_uuid);
 
             // Like the size
             auto texture_size = texture.getSize();
