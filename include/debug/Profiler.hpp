@@ -29,7 +29,7 @@
 #include <spdlog/spdlog.h>
 #include <iostream>
 #include <fstream>
-#include <format>
+#include <fmt/format.h>
 
 namespace rosa::debug {
 

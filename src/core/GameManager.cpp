@@ -15,7 +15,6 @@
 
 #include "core/Scene.hpp"
 #include <graphics/Colour.hpp>
-#include <bits/chrono.h>
 #include <core/GameManager.hpp>
 #include <cstddef>
 #include <memory>

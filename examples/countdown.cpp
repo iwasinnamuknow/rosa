@@ -19,7 +19,6 @@
 #include "core/NativeScriptEntity.hpp"
 #include "core/components/SoundPlayerComponent.hpp"
 #include "graphics/Sprite.hpp"
-#include <bits/chrono.h>
 #include <rosa.hpp>
 #include <chrono>
 

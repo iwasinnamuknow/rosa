@@ -52,21 +52,38 @@ target_include_directories(rosa SYSTEM PUBLIC
     ${vcpkg_INCLUDE_DIR}
     ${LUA_INCLUDE_DIR}
 )
-target_link_libraries(rosa PRIVATE
-  ${PHYSFS_LIBRARY}
-  spdlog::spdlog_header_only
-  fmt::fmt-header-only
-  yaml-cpp
-  stduuid
-  lua
-  sol2
-  ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/libglad.a
-  ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/libglfw3.a
-  ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/libuuid.a
-  X11
-  imgui::imgui
-  soloud
-)
+
+if(WIN32)
+  target_link_libraries(rosa PRIVATE
+    ${PHYSFS_LIBRARY}
+    spdlog::spdlog_header_only
+    fmt::fmt-header-only
+    yaml-cpp
+    stduuid
+    lua
+    sol2
+    ${_VCPKG_INSTALLED_DIR}/x64-windows-static-md/lib/glad.lib
+    ${_VCPKG_INSTALLED_DIR}/x64-windows-static-md/lib/glfw3.lib
+    imgui::imgui
+    soloud
+  )
+else(WIN32)
+  target_link_libraries(rosa PRIVATE
+    ${PHYSFS_LIBRARY}
+    spdlog::spdlog_header_only
+    fmt::fmt-header-only
+    yaml-cpp
+    stduuid
+    lua
+    sol2
+    ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/libglad.a
+    ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/libglfw3.a
+    ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/libuuid.a
+    X11
+    imgui::imgui
+    soloud
+  )
+endif(WIN32)
 
 add_subdirectory(examples)
 add_subdirectory(docs)
