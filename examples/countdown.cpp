@@ -128,6 +128,17 @@ class CountdownScript : public rosa::NativeScriptEntity {
                 counter++;
             }
 
+            glm::vec2 start_pos = {0, 0};
+            glm::vec2 end_pos = {total_width, 128};
+            auto size = getScene().getRenderWindow().getSize();
+
+            // Calculate a screen-centered position for the image
+            const auto position = glm::vec2(
+                (static_cast<float>(size.x) / 2.F) - (static_cast<float>(end_pos.x - start_pos.x) / 2.F),
+                (static_cast<float>(size.y) / 2.F) - (static_cast<float>(end_pos.y - start_pos.y) / 2.F)
+            );
+            parent_entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
+
             m_start_time = std::chrono::steady_clock::now() + std::chrono::seconds(countdown_start);
         }
 
