@@ -224,6 +224,7 @@ namespace rosa {
         //auto size = getRenderWindow().getViewport();
         //auto projection = glm::ortho(0.F, static_cast<float>(size.x), static_cast<float>(size.y), 0.F);
         //auto combined = mvp * transform;
+        BatchRenderer::getInstance().clearStats();
         BatchRenderer::getInstance().updateMvp(getRenderWindow().getProjection());
 
         {
@@ -302,7 +303,6 @@ namespace rosa {
 
         auto stats = BatchRenderer::getInstance().getStats();
         ImGui::Text("%d draw calls for %d vertices using %d texture slots", stats.draws, stats.verts, stats.textures);
-        BatchRenderer::getInstance().clearStats();
 
         ImGui::End();
 
