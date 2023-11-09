@@ -15,16 +15,11 @@
 
 #pragma once
 
-#include <glm/ext/vector_float4.hpp>
 #include <graphics/Texture.hpp>
-#include <graphics/Shader.hpp>
-#include <graphics/Rect.hpp>
 #include <graphics/Drawable.hpp>
+#include <graphics/Quad.hpp>
+#include <graphics/Rect.hpp>
 #include <cstddef>
-#include <sstream>
-#include <fstream>
-#include <vector>
-#include <glm/gtc/matrix_transform.hpp>
 
 class Window;
 
@@ -35,28 +30,25 @@ namespace rosa {
         public:
             Sprite();
 
-            auto setColour(const Colour& colour) -> void {
-                m_vertices[0].colour = colour;
-                m_vertices[1].colour = colour;
-                m_vertices[2].colour = colour;
-                m_vertices[3].colour = colour;
-            }
+            auto setColour(const Colour& colour) -> void;
+            auto getColour() const -> const Colour&;
 
-            auto getColour() const -> const Colour& {
-                return m_vertices[0].colour;
-            }
+            auto setTextureRect(glm::vec2 position, glm::vec2 size) -> void;
+            auto setTextureRect(Rect rect) -> void;
+            auto getSize() -> glm::vec2;
 
-            auto setTexture(Texture& texture) -> void {
-                m_texture = &texture;
-            }
+            auto setTexture(Texture& texture) -> void;
 
         protected:
-            auto draw(glm::mat4 projection, glm::mat4 transform) -> void override;
+            auto draw(glm::mat4 transform) -> void override;
             Texture* m_texture{nullptr};
 
         private:
             friend class Window;
             friend class NativeScriptEntity;
+            friend class Scene;
+
+            Quad m_quad;
     };
 
 } // namespace rosa

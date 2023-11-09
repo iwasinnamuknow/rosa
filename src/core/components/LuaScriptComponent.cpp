@@ -326,8 +326,6 @@ namespace rosa {
                     sprite_table.set_function("setTexture", &lua_script::LuaSprite::setTexture, m_lua_sprite.get());
                     sprite_table.set_function("getColour", &lua_script::LuaSprite::getColour, m_lua_sprite.get());
                     sprite_table.set_function("setColour", &lua_script::LuaSprite::setColour, m_lua_sprite.get());
-                    sprite_table.set_function("getVertices", &lua_script::LuaSprite::getVertices, m_lua_sprite.get());
-                    sprite_table.set_function("setVertexCount", &lua_script::LuaSprite::setVertexCount, m_lua_sprite.get());
                 }
 
                 // Sound player component

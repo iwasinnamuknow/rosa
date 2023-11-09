@@ -18,11 +18,10 @@
 #include <graphics/Colour.hpp>
 #include <graphics/Drawable.hpp>
 #include <graphics/gl.hpp>
-#include <graphics/IndexBuffer.hpp>
-#include <graphics/Rect.hpp>
+#include <graphics/BatchRenderer.hpp>
+#include <graphics/Quad.hpp>
 #include <graphics/RenderWindow.hpp>
 #include <graphics/Shader.hpp>
 #include <graphics/Sprite.hpp>
 #include <graphics/Texture.hpp>
 #include <graphics/Vertex.hpp>
-#include <graphics/VertexBuffer.hpp>

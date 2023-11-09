@@ -59,14 +59,6 @@ namespace rosa::lua_script {
             );
         }
 
-        auto getVertices() -> std::vector<Vertex>& {
-            return m_component.get().getVertices();
-        }
-
-        auto setVertexCount(int count) -> void {
-            m_component.get().getVertices().resize(count);
-        }
-
         private:
             std::reference_wrapper<SpriteComponent> m_component;
             std::reference_wrapper<sol::state> m_state;

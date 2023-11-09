@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <graphics/Colour.hpp>
 #include <glm/glm.hpp>
 
@@ -32,6 +33,7 @@ namespace rosa {
         glm::vec2 position{0, 0};
         glm::vec2 texture_coords{0, 0};
         Colour colour{255, 255, 255, 255};
+        float texture_slot{0.F};
     };
 
 } // namespace rosa
