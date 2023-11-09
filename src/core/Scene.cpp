@@ -238,7 +238,7 @@ namespace rosa {
 
         ImGui::Begin("Profiler", open, static_cast<ImGuiWindowFlags>(
             static_cast<unsigned int>(ImGuiWindowFlags_NoCollapse) | static_cast<unsigned int>(ImGuiWindowFlags_NoSavedSettings) | 
-            static_cast<unsigned int>(ImGuiWindowFlags_NoMove) | static_cast<unsigned int>(ImGuiWindowFlags_NoResize)
+            static_cast<unsigned int>(ImGuiWindowFlags_NoMove)// | static_cast<unsigned int>(ImGuiWindowFlags_NoResize)
         ));
 
         double fps = 1.0 / m_last_frame_time;
