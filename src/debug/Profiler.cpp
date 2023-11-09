@@ -18,15 +18,15 @@
 namespace rosa::debug {
 
     Profiler::~Profiler() {
-        auto filename = std::format("profile-{}.csv", m_session_name);
-        std::ofstream fout(filename);
-        endSession();
+        // auto filename = fmt::format("profile-{}.csv", m_session_name);
+        // std::ofstream fout(filename);
+        // endSession();
 
-        fout << "Function,Calls,Last Time,Min Time,Avg Time,Max Time\n";
+        // fout << "Function,Calls,Last Time,Min Time,Avg Time,Max Time\n";
 
-        for (const auto& [key, result] : m_results) {
-            fout << std::format("{},{},{},{},{},{}", key, result.calls, result.last_time, result.min_time, result.avg_time, result.max_time) << "\n";
-        }
+        // for (const auto& [key, result] : m_results) {
+        //     fout << fmt::format("{},{},{},{},{},{}", key, result.calls, result.last_time, result.min_time, result.avg_time, result.max_time) << "\n";
+        // }
     }
 
     auto Profiler::beginSession(std::string name) -> void {

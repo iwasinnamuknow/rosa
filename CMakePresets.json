@@ -54,23 +54,26 @@
         {
             "name": "base-windows",
             "hidden": true,
-            "cacheVariables": {
-              "CMAKE_CXX_FLAGS": "/sdl /guard:cf /utf-8 /diagnostics:caret /w14165 /w44242 /w44254 /w44263 /w34265 /w34287 /w44296 /w44365 /w44388 /w44464 /w14545 /w14546 /w14547 /w14549 /w14555 /w34619 /w34640 /w24826 /w14905 /w14906 /w14928 /w45038 /W4 /permissive- /volatile:iso /Zc:inline /Zc:preprocessor /Zc:enumTypes /Zc:lambda /Zc:__cplusplus /Zc:externConstexpr /Zc:throwingNew /EHsc",
-              "CMAKE_EXE_LINKER_FLAGS": "/machine:x64 /guard:cf",
-              "VCPKG_TARGET_TRIPLET": "x64-windows-static-md"
-            },
+          "cacheVariables": {
+            "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vendor/vcpkg/scripts/buildsystems/vcpkg.cmake",
+            "CMAKE_CXX_FLAGS": "/bigobj /sdl /guard:cf /utf-8 /diagnostics:caret /w14165 /w44242 /w44254 /w44263 /w34265 /w34287 /w44296 /w44365 /w44388 /w44464 /w14545 /w14546 /w14547 /w14549 /w14555 /w34619 /w34640 /w24826 /w14905 /w14906 /w14928 /w45038 /W4 /permissive- /volatile:iso /Zc:inline /Zc:preprocessor /Zc:enumTypes /Zc:lambda /Zc:__cplusplus /Zc:externConstexpr /Zc:throwingNew /EHsc",
+            "CMAKE_EXE_LINKER_FLAGS": "/ENTRY:mainCRTStartup /SUBSYSTEM:WINDOWS /machine:x64 /guard:cf",
+            "VCPKG_TARGET_TRIPLET": "x64-windows-static-md",
+            "SOLOUD_BACKEND_SDL2": false,
+            "SOLOUD_BACKEND_WINMM": true
+          },
             "generator": "Visual Studio 17 2022",
             "architecture": "x64"
         },
         {
-            "name": "window-debug",
+            "name": "windows-debug",
             "hidden": false,
             "binaryDir": "${sourceDir}/build/win/debug",
             "inherits": [ "base-windows" ],
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "vcpkg_INCLUDE_DIR": "${sourceDir}/build/win/debug/vcpkg_installed/x64-windows/include",
-                "vcpkg_LIB_DIR": "${sourceDir}/build/win/debug/vcpkg_installed/x64-windows/lib"
+                "vcpkg_INCLUDE_DIR": "${sourceDir}/build/win/debug/vcpkg_installed/x64-windows-static-md/include",
+                "vcpkg_LIB_DIR": "${sourceDir}/build/win/debug/vcpkg_installed/x64-windows-static-md/lib"
             }
         },
         {

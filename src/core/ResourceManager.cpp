@@ -30,6 +30,7 @@
 #include <string>
 #include <utility>
 #include <filesystem>
+#include <fmt/format.h>
 
 #if (_WIN32)
 #include <stdlib.h>
@@ -53,7 +54,7 @@ auto get_exe_dir() -> std::string {
     #if (_WIN32)
         char *exePath;
         if (_get_pgmptr(&exePath) != 0) {
-            exePath = "";
+            return {};
         }
     #elif (__linux__)
         char exePath[PATH_MAX];
@@ -75,8 +76,7 @@ namespace rosa {
         ROSA_PROFILE_SCOPE("Assets:ParseAssetList");
 
         PHYSFS_init(nullptr);
-        int mount_success = PHYSFS_mount(
-            std::format("{}{}base.pak", get_exe_dir(), std::filesystem::path::preferred_separator).data(), "", 1);
+        int mount_success = PHYSFS_mount(get_exe_dir().append("/base.pak").data(), "", 0);
         if (mount_success == 0) {
             throw Exception("Failed to locate base.pak");
         }

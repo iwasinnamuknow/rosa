@@ -19,7 +19,7 @@
 #include <rosa.hpp>
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
-constexpr std::string yaml_path = "serialise.yaml";
+const char* yaml_path{ "serialise.yaml" };
 
 auto main() -> int {
 

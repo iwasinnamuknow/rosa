@@ -22,7 +22,6 @@
 #include "core/components/SpriteComponent.hpp"
 #include "core/components/TransformComponent.hpp"
 #include "graphics/Sprite.hpp"
-#include <bits/chrono.h>
 #include <rosa.hpp>
 #include <chrono>
 #include <graphics/Rect.hpp>
