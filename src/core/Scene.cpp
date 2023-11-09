@@ -30,6 +30,8 @@
 #include <stack>
 #include <core/Entity.hpp>
 
+#include <graphics/BatchRenderer.hpp>
+
 namespace rosa {
 
     Scene::Scene(RenderWindow& render_window) : m_render_window(render_window) { }
@@ -218,18 +220,28 @@ namespace rosa {
     }
 
     auto Scene::render() -> void {
-        ROSA_PROFILE_SCOPE("Render:Sprites");
 
-        auto view = m_registry.view<SpriteComponent>();
+        //auto size = getRenderWindow().getViewport();
+        //auto projection = glm::ortho(0.F, static_cast<float>(size.x), static_cast<float>(size.y), 0.F);
+        //auto combined = mvp * transform;
+        BatchRenderer::getInstance().updateMvp(getRenderWindow().getProjection());
 
-        // For every entity with a SpriteComponent, draw it.
-        for (const auto& entid : view)
         {
-            auto sprite_comp = m_registry.get<SpriteComponent>(entid);
-            auto transform = m_registry.get<TransformComponent>(entid);
-            //auto sprite_comp = m_registry.get<SpriteComponent>(entid);
-            m_render_window.draw(sprite_comp, transform.getGlobalTransform());
-        };
+            ROSA_PROFILE_SCOPE("Render:Sprites");
+
+            auto view = m_registry.view<SpriteComponent>();
+
+            // For every entity with a SpriteComponent, draw it.
+            for (const auto& entid : view)
+            {
+                auto& sprite_comp = m_registry.get<SpriteComponent>(entid);
+                auto& transform = m_registry.get<TransformComponent>(entid);
+                //auto sprite_comp = m_registry.get<SpriteComponent>(entid);
+                sprite_comp.draw(transform.getGlobalTransform());
+            };
+        }
+
+        BatchRenderer::getInstance().flush();
     }
 
     auto Scene::show_profile_stats(bool* open) const -> void {
@@ -287,6 +299,11 @@ namespace rosa {
         }
 
         ImGui::EndTable();
+
+        auto stats = BatchRenderer::getInstance().getStats();
+        ImGui::Text("%d draw calls for %d vertices using %d texture slots", stats.draws, stats.verts, stats.textures);
+        BatchRenderer::getInstance().clearStats();
+
         ImGui::End();
 
         rosa::debug::Profiler::instance().clearLastFrame();

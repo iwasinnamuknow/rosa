@@ -48,7 +48,7 @@ namespace rosa {
         public:
             void init( int width, int height, std::string title = "OpenGL");
             static void callback_resize(GLFWwindow* window, int cx, int cy);
-            auto draw(Drawable& drawable, glm::mat4 transform) -> void;
+            //auto draw(Drawable& drawable, glm::mat4 transform) -> void;
             auto isFullscreen() const -> bool;
             auto setFullScreen(bool fullscreen) -> void;
             auto clearColour(Colour colour) -> void;
@@ -65,6 +65,10 @@ namespace rosa {
             auto close() -> void {
                 glfwSetWindowShouldClose(m_wnd, 1);
             }
+
+            auto getViewportSize() const -> glm::vec2;
+
+            auto getProjection() const -> glm::mat4;
 
             // TODO EVENTS
             auto pollEvents() -> bool;

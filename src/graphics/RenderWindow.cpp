@@ -150,12 +150,16 @@ namespace rosa {
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    auto RenderWindow::draw(Drawable& drawable, glm::mat4 transform) -> void {
-        drawable.m_mvp = m_projection * transform;
-        glUseProgram(drawable.m_pid);
-        glUniformMatrix4fv(drawable.m_mvp_id, 1, GL_FALSE, &drawable.m_mvp[0][0]);
-        drawable.draw(m_projection, transform);
-        glUseProgram(0);
+    // auto RenderWindow::draw(Drawable& drawable, glm::mat4 transform) -> void {
+    //     drawable.m_mvp = m_projection * transform;
+    //     glUseProgram(drawable.m_pid);
+    //     glUniformMatrix4fv(drawable.m_mvp_id, 1, GL_FALSE, &drawable.m_mvp[0][0]);
+    //     drawable.draw(m_projection, transform);
+    //     glUseProgram(0);
+    // }
+
+    auto RenderWindow::getViewportSize() const -> glm::vec2 {
+        return {m_vpSize[0], m_vpSize[1]};
     }
 
     auto RenderWindow::isFullscreen() const -> bool
@@ -188,6 +192,10 @@ namespace rosa {
         }
 
         m_updateViewport = true;
+    }
+
+    auto RenderWindow::getProjection() const -> glm::mat4 {
+        return m_projection;
     }
 
 } // namespace rosa
