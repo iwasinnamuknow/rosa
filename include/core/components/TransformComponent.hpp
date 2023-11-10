@@ -40,12 +40,12 @@ namespace rosa {
             return glm::vec2(position[0], position[1]);
         }
 
-        auto setScale(float x, float y) -> void {
-            scale = glm::vec3(x, y, 1.F);
+        auto setScale(glm::vec2 new_scale) -> void {
+            scale = glm::vec3(new_scale, 1.F);
         }
 
         auto getScale() const -> const glm::vec2 {
-            return glm::vec2(scale[0], scale[1]);
+            return {scale.x, scale.y};
         }
 
         auto setRotation(float rot) -> void {

@@ -162,7 +162,7 @@ namespace rosa {
             auto& sprite = entity.getComponent<SpriteComponent>();
             out << YAML::BeginMap; // sprite
             out << YAML::Key << "type" << YAML::Value << "sprite";
-            out << YAML::Key << "texture" << YAML::Value << uuids::to_string(sprite.m_texture_uuid);
+            out << YAML::Key << "texture" << YAML::Value << uuids::to_string(sprite.getTextureUUID());
             out << YAML::Key << "color" << YAML::Value << sprite.getColour();
             out << YAML::EndMap; // sprite
         }
@@ -281,7 +281,7 @@ namespace rosa {
                                         transform.rotation = comp["rotation"].as<float>();
                                     } else if (type == "sprite") {
                                         auto& sprite = new_entity.addComponent<SpriteComponent>();
-                                        sprite.setTexture(comp["texture"].as<uuids::uuid>());
+                                        sprite.setTexture(comp["texture"].as<std::string>());
                                         sprite.setColour(comp["color"].as<rosa::Colour>());
                                     } else if (type == "lua_script") {
                                         auto& lsc = new_entity.addComponent<LuaScriptComponent>(&m_scene, new_entity);

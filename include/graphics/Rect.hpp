@@ -20,6 +20,9 @@
 namespace rosa {
 
     struct Rect {
+        Rect() = default;
+        Rect(glm::vec2 new_pos, glm::vec2 new_size) : position(new_pos), size(new_size) {}
+
         glm::vec2 position;
         glm::vec2 size;
     };

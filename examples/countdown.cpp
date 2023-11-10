@@ -28,11 +28,11 @@
 #include <unordered_map>
 #include <fmt/format.h>
 
-// Define the uuid for the image asset we'll use. See assets/assets.lst
-constexpr uuids::uuid dds_uuid = uuids::uuid::from_string(std::string_view("a276b044-8a70-4729-b0e1-bf143957aeeb")).value();
-constexpr uuids::uuid alarm_uuid = uuids::uuid::from_string(std::string_view("ec1015eb-1d91-4f50-b5ab-4e1696e9def7")).value();
-
 using namespace std::literals;
+
+// Define the uuid for the image asset we'll use. See assets/assets.lst
+constexpr char* dds_uuid("a276b044-8a70-4729-b0e1-bf143957aeeb");
+constexpr uuids::uuid alarm_uuid = uuids::uuid::from_string(std::string_view("ec1015eb-1d91-4f50-b5ab-4e1696e9def7")).value();
 
 static int countdown_start{1200};
 constexpr int char_height{128};
@@ -63,8 +63,6 @@ auto chronoBurst(std::chrono::duration<Rep, std::ratio<num, denom>> d)
 
     return std::make_tuple(hrs, mins, secs, ms);
 }
-
-static int total_width{0};
 
 class CountdownScript : public rosa::NativeScriptEntity {
     public:
@@ -188,6 +186,7 @@ class CountdownScript : public rosa::NativeScriptEntity {
 
         bool m_finished{false};
         std::unordered_map<entt::entity, int> m_character_order;
+        int total_width{0};
 };
 
 // Create a class to represent our scene
@@ -235,7 +234,11 @@ class CountdownScene : public rosa::Scene {
 auto main(int argc, char* argv[]) -> int {
 
     if (argc > 1) {
-        countdown_start = std::stoi(std::string(argv[1]));
+        try {
+            countdown_start = std::stoi(std::string(argv[1]));
+        } catch (std::exception e) {
+            std::cout << "Error parsing time from argument, " << e.what() << "\n";
+        }
     }
 
     // Grab the GameManager

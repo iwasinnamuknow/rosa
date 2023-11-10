@@ -18,7 +18,7 @@
 #include <rosa.hpp>
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
-constexpr uuids::uuid dds_uuid = uuids::uuid::from_string(std::string_view("135535e9-6f75-44ba-8d31-236bb9c7f21b")).value();
+constexpr char* dds_uuid = "135535e9-6f75-44ba-8d31-236bb9c7f21b";
 
 // Create a class to represent our scene
 class MyScene : public rosa::Scene {
@@ -32,7 +32,7 @@ class MyScene : public rosa::Scene {
         auto onLoad() -> void override {
 
             // Get our texture via uuid so we can get some details
-            auto texture = rosa::ResourceManager::instance().getAsset<rosa::Texture>(dds_uuid);
+            auto texture = rosa::ResourceManager::instance().getAsset<rosa::Texture>(uuids::uuid::from_string(dds_uuid).value());
 
             // Like the size
             auto texture_size = texture.getSize();

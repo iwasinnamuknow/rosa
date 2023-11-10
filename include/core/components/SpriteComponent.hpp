@@ -25,24 +25,21 @@ namespace rosa {
     class SceneSerialiser;
 
     struct SpriteComponent : Sprite {
-        
-        auto getTexture() -> Texture& {
-            return *m_texture;
-        }
 
         auto getTextureUUID() -> uuids::uuid {
-            return m_texture_uuid;
+            return getTexture().getUUID();
         }
 
-        auto setTexture(uuids::uuid uuid) -> void {
-            m_texture_uuid = uuid;
-            Sprite::setTexture(ResourceManager::instance().getAsset<Texture>(m_texture_uuid));
+        auto setTexture(const std::string& uuid_str) -> void {
+            auto uuid = uuids::uuid::from_string(uuid_str);
+            if (uuid.has_value()) {
+                Sprite::setTexture(uuid.value());
+            } else {
+                spdlog::error("Couldn't parse UUID in call to setTexture");
+            }
         }
 
         private:
-            uuids::uuid m_texture_uuid;
-            //sf::Color m_color{255, 255, 255, 255};
-
             friend class SceneSerialiser;
     };
 

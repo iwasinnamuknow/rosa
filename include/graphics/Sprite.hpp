@@ -35,9 +35,12 @@ namespace rosa {
 
             auto setTextureRect(glm::vec2 position, glm::vec2 size) -> void;
             auto setTextureRect(Rect rect) -> void;
+            auto getTextureRect() -> Rect;
+
             auto getSize() -> glm::vec2;
 
-            auto setTexture(Texture& texture) -> void;
+            auto getTexture() -> Texture&;
+            auto setTexture(uuids::uuid uuid) -> void;
 
         protected:
             auto draw(glm::mat4 transform) -> void override;

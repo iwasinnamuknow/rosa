@@ -21,7 +21,7 @@
 #include <rosa.hpp>
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
-constexpr uuids::uuid dds_uuid = uuids::uuid::from_string(std::string_view("135535e9-6f75-44ba-8d31-236bb9c7f21b")).value();
+constexpr char* dds_uuid = "135535e9-6f75-44ba-8d31-236bb9c7f21b";
 constexpr uuids::uuid bell_uuid = uuids::uuid::from_string(std::string_view("dc7d91a9-7ec5-4a5f-b165-373033e5ea56")).value();
 constexpr uuids::uuid music_uuid = uuids::uuid::from_string(std::string_view("aaa6b473-f7a9-4a9e-8035-664643178ac4")).value();
 
@@ -37,7 +37,7 @@ class SerialiseScene : public rosa::Scene {
         auto onLoad() -> void override {
 
             // Get our texture via uuid so we can get some details
-            auto texture = rosa::ResourceManager::instance().getAsset<rosa::Texture>(dds_uuid);
+            auto texture = rosa::ResourceManager::instance().getAsset<rosa::Texture>(uuids::uuid::from_string(dds_uuid).value());
 
             // Like the size
             auto texture_size = texture.getSize();

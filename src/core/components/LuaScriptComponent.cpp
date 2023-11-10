@@ -13,16 +13,13 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include "core/input/Keyboard.hpp"
-#include "core/input/Mouse.hpp"
-#include "graphics/Vertex.hpp"
 #include <core/components/LuaScriptComponent.hpp>
+
+#include <graphics/Vertex.hpp>
 #include <core/Event.hpp>
-#include <debug/Profiler.hpp>
-#include <glm/geometric.hpp>
-#include <sol/raii.hpp>
-#include <sstream>
 #include <core/LuaScript.hpp>
+
+#include <sstream>
 
 namespace rosa {
 
@@ -208,7 +205,7 @@ namespace rosa {
     }
 
     auto init_types(sol::state& state) -> void {
-        state.new_usertype<glm::vec2>("vec2",
+        state.new_usertype<glm::vec2>("Vec2",
             sol::constructors<glm::vec2(float, float)>(),
             "x", &glm::vec2::x,
             "y", &glm::vec2::y,
@@ -222,7 +219,7 @@ namespace rosa {
             }
         );
 
-        state.new_usertype<glm::vec3>("vec3",
+        state.new_usertype<glm::vec3>("Vec3",
             sol::constructors<glm::vec3(float, float, float)>(),
             "x", &glm::vec3::x,
             "y", &glm::vec3::y,
@@ -237,7 +234,7 @@ namespace rosa {
             }
         );
 
-        state.new_usertype<glm::vec4>("vec4",
+        state.new_usertype<glm::vec4>("Vec4",
             sol::constructors<glm::vec4(float, float, float, float)>(),
             "x", &glm::vec4::x,
             "y", &glm::vec4::y,
@@ -253,13 +250,61 @@ namespace rosa {
             }
         );
 
-        state.new_usertype<rosa::Vertex>("vertex",
+        state.new_usertype<rosa::Colour>("Colour",
+            sol::constructors<rosa::Colour()>(),
+            sol::constructors<rosa::Colour(uint8_t, uint8_t, uint8_t)>(),
+            sol::constructors<rosa::Colour(uint8_t, uint8_t, uint8_t, uint8_t)>(),
+            "r", &rosa::Colour::r,
+            "g", &rosa::Colour::g,
+            "b", &rosa::Colour::b,
+            "a", &rosa::Colour::a,
+            "to_string", [](rosa::Colour colour) {
+                std::stringstream pvalue{};
+                pvalue << colour.r << ", " << colour.g << ", " << colour.b << ", " << colour.a;
+                return pvalue.str();
+            }
+        );
+
+        state.new_usertype<rosa::Vertex>("Vertex",
             sol::constructors<rosa::Vertex(glm::vec2)>(),
             sol::constructors<rosa::Vertex(glm::vec2, Colour)>(),
             sol::constructors<rosa::Vertex(glm::vec2, Colour, glm::vec2)>(),
             "position", &rosa::Vertex::position,
-            "colour", &rosa::Vertex::colour,
-            "uv", &rosa::Vertex::texture_coords
+            "colour",   &rosa::Vertex::colour,
+            "uv",       &rosa::Vertex::texture_coords
+        );
+
+        state.new_usertype<rosa::Rect>("Rect",
+            sol::constructors<rosa::Rect(glm::vec2, glm::vec2)>(),
+            "position", &rosa::Rect::position,
+            "size",     &rosa::Rect::size
+        );
+
+        state.new_usertype<rosa::Entity>("Entity",
+            "getTransform", &rosa::Entity::getComponent<TransformComponent>,
+            "getSprite",    &rosa::Entity::getComponent<SpriteComponent>
+        );
+
+        state.new_usertype<rosa::TransformComponent>("Transform",
+            "setPosition", &rosa::TransformComponent::setPosition,
+            "getPosition", &rosa::TransformComponent::getPosition,
+            "setRotation", &rosa::TransformComponent::setRotation,
+            "getRotation", &rosa::TransformComponent::getRotation,
+            "getScale",    &rosa::TransformComponent::getScale,
+            "setScale",    &rosa::TransformComponent::setScale
+        );
+
+        state.new_usertype<rosa::SpriteComponent>("Sprite",
+            "getTextureSize",   &rosa::SpriteComponent::getSize,
+            "setTexture",       &rosa::SpriteComponent::setTexture,
+            "getColour",        &rosa::SpriteComponent::getColour,
+            "setColour",        &rosa::SpriteComponent::setColour,
+            "getSize",          &rosa::SpriteComponent::getSize,
+            "setTextureRect",   sol::overload(
+                static_cast<void (rosa::SpriteComponent::*) (glm::vec2, glm::vec2 )>(&rosa::SpriteComponent::setTextureRect),
+                static_cast<void (rosa::SpriteComponent::*) (rosa::Rect           )>(&rosa::SpriteComponent::setTextureRect)
+            ),
+            "getTextureRect",   &rosa::SpriteComponent::getTextureRect
         );
     }
 
@@ -267,9 +312,6 @@ namespace rosa {
         ROSA_PROFILE_SCOPE("LuaScriptComponent:Initialise");
 
         m_state.open_libraries(sol::lib::base);
-
-        auto& transform_component = m_scene->getRegistry().get<TransformComponent>(m_entity);
-        m_lua_transform = std::make_unique<lua_script::LuaTransform>(transform_component, m_state);
     }
 
     auto LuaScriptComponent::setScript(uuids::uuid uuid, bool deserialised) -> bool {
@@ -277,8 +319,10 @@ namespace rosa {
 
         try {
             const auto& script = ResourceManager::instance().getAsset<LuaScript>(uuid);
+            auto& entity = m_scene->getEntity(m_entity);
 
             auto result = m_state.script(script.getContent(), &sol::script_default_on_error);
+
             if(result.valid()) {
                 m_on_create_function = m_state["onCreate"];
                 m_on_delete_function = m_state["onDelete"];
@@ -307,57 +351,21 @@ namespace rosa {
                 });
 
                 // Transform component
-                auto transform_table = m_state["transform"].get_or_create<sol::table>();
-                transform_table.set_function("getPosition", &lua_script::LuaTransform::getPosition, m_lua_transform.get());
-                transform_table.set_function("setPosition", &lua_script::LuaTransform::setPosition, m_lua_transform.get());
-                transform_table.set_function("getRotation", &lua_script::LuaTransform::getRotation, m_lua_transform.get());
-                transform_table.set_function("setRotation", &lua_script::LuaTransform::setRotation, m_lua_transform.get());
+                m_state["transform"] = &entity.getComponent<TransformComponent>();
 
                 // Sprite component
-                if (m_scene->getRegistry().all_of<SpriteComponent>(m_entity)) {
-                    auto& sprite_component = m_scene->getRegistry().get<SpriteComponent>(m_entity);
-                    
-                    // Don't re-create if we already have a LuaSprite from a previous call
-                    if (!m_lua_sprite) {
-                        m_lua_sprite = std::make_unique<lua_script::LuaSprite>(sprite_component, m_state);
-                    }
-                    auto sprite_table = m_state["sprite"].get_or_create<sol::table>();
-                    sprite_table.set_function("getTexture", &lua_script::LuaSprite::getTextureUUID, m_lua_sprite.get());
-                    sprite_table.set_function("setTexture", &lua_script::LuaSprite::setTexture, m_lua_sprite.get());
-                    sprite_table.set_function("getColour", &lua_script::LuaSprite::getColour, m_lua_sprite.get());
-                    sprite_table.set_function("setColour", &lua_script::LuaSprite::setColour, m_lua_sprite.get());
+                if (entity.hasComponent<SpriteComponent>()) {
+                    m_state["sprite"] = &entity.getComponent<SpriteComponent>();
                 }
 
                 // Sound player component
-                if (m_scene->getRegistry().all_of<SoundPlayerComponent>(m_entity)) {
-                    auto& player = m_scene->getRegistry().get<SoundPlayerComponent>(m_entity);
-                    
-                    // Don't re-create if we already have a LuaSound from a previous call
-                    if (!m_lua_sound) {
-                        m_lua_sound = std::make_unique<lua_script::LuaSound>(player, m_state);
-                    }
-                    auto sprite_table = m_state["sound"].get_or_create<sol::table>();
-                    sprite_table.set_function("getAudio", &lua_script::LuaSound::getAudio, m_lua_sound.get());
-                    sprite_table.set_function("setAudio", &lua_script::LuaSound::setAudio, m_lua_sound.get());
-                    sprite_table.set_function("setVolume", &lua_script::LuaSound::setVolume, m_lua_sound.get());
-                    sprite_table.set_function("play", &lua_script::LuaSound::play, m_lua_sound.get());
-                    sprite_table.set_function("setLooping", &lua_script::LuaSound::setLooping, m_lua_sound.get());
+                if (entity.hasComponent<SoundPlayerComponent>()) {
+                    m_state["sound"] = &entity.getComponent<SoundPlayerComponent>();
                 }
 
                 // Music player component
-                if (m_scene->getRegistry().all_of<MusicPlayerComponent>(m_entity)) {
-                    auto& player = m_scene->getRegistry().get<MusicPlayerComponent>(m_entity);
-                    
-                    // Don't re-create if we already have a LuaMusic from a previous call
-                    if (!m_lua_music) {
-                        m_lua_music = std::make_unique<lua_script::LuaMusic>(player, m_state);
-                    }
-                    auto sprite_table = m_state["music"].get_or_create<sol::table>();
-                    sprite_table.set_function("getAudio", &lua_script::LuaMusic::getAudio, m_lua_music.get());
-                    sprite_table.set_function("setAudio", &lua_script::LuaMusic::setAudio, m_lua_music.get());
-                    sprite_table.set_function("setVolume", &lua_script::LuaMusic::setVolume, m_lua_music.get());
-                    sprite_table.set_function("play", &lua_script::LuaMusic::play, m_lua_music.get());
-                    sprite_table.set_function("setLooping", &lua_script::LuaMusic::setLooping, m_lua_music.get());
+                if (entity.hasComponent<MusicPlayerComponent>()) {
+                    m_state["music"] = &entity.getComponent<MusicPlayerComponent>();
                 }
 
                 // Call the lua initialiser
