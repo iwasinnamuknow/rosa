@@ -17,7 +17,7 @@
 
 #include "core/components/TransformComponent.hpp"
 #include <entt/entt.hpp>
-#include <stduuid/uuid.h>
+#include <core/Uuid.hpp>
 #include <functional>
 #include <core/Scene.hpp>
 
@@ -26,16 +26,10 @@ namespace rosa {
     class Entity {
         public:
             Entity(entt::entity ent_id, Scene& scene) : m_id(ent_id), m_scene(scene) {
-                std::random_device rd;
-                auto seed_data = std::array<int, std::mt19937::state_size> {};
-                std::generate(std::begin(seed_data), std::end(seed_data), std::ref(rd));
-                std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
-                std::mt19937 generator(seq);
-                uuids::uuid_random_generator gen{generator};
-                m_uuid = gen();
+                m_uuid = Uuid::generate();
             }
 
-            Entity(uuids::uuid uuid, entt::entity ent_id, Scene& scene) : m_id(ent_id), m_uuid(uuid), m_scene(scene) {}
+            Entity(Uuid uuid, entt::entity ent_id, Scene& scene) : m_id(ent_id), m_uuid(uuid), m_scene(scene) {}
 
             Entity(Entity&&) = default;
             Entity(const Entity&) = default;
@@ -111,7 +105,7 @@ namespace rosa {
              * @return std::string UUID
              */
             auto getUUID() const -> std::string {
-                return uuids::to_string(m_uuid);
+                return static_cast<std::string>(m_uuid);
             }
 
             /**
@@ -170,7 +164,7 @@ namespace rosa {
             entt::entity m_id = entt::null;
             bool m_enabled{true};
             bool m_for_deletion{false};
-            uuids::uuid m_uuid;
+            Uuid m_uuid;
 
             std::vector<entt::entity> m_children{};
             entt::entity m_parent{entt::null};

@@ -45,7 +45,7 @@ namespace rosa {
         return m_entities.at(entity.getId());
     }
 
-    auto Scene::create_entity(uuids::uuid uuid) -> Entity& {
+    auto Scene::create_entity(Uuid uuid) -> Entity& {
         ROSA_PROFILE_SCOPE("Entity:Create_UUID");
 
         Entity entity{uuid, m_registry.create(), *this};

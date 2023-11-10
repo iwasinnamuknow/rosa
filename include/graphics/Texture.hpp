@@ -19,6 +19,7 @@
 #include <string>
 #include <physfs.h>
 #include <core/Resource.hpp>
+#include <core/Uuid.hpp>
 
 #define FOURCC_DXT1 0x31545844 // Equivalent to "DXT1" in ASCII
 #define FOURCC_DXT3 0x33545844 // Equivalent to "DXT3" in ASCII
@@ -36,7 +37,7 @@ namespace rosa {
     class Texture : public Resource {
 
         public:
-            Texture(std::string name, uuids::uuid uuid) : rosa::Resource(std::move(name), uuid) {}
+            Texture(std::string name, Uuid uuid) : rosa::Resource(std::move(name), uuid) {}
 
             auto getOpenGlId() const -> unsigned int {
                 return m_texture_id;

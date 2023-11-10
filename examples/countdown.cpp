@@ -31,8 +31,8 @@
 using namespace std::literals;
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
-constexpr char* dds_uuid("a276b044-8a70-4729-b0e1-bf143957aeeb");
-constexpr uuids::uuid alarm_uuid = uuids::uuid::from_string(std::string_view("ec1015eb-1d91-4f50-b5ab-4e1696e9def7")).value();
+static const auto dds_uuid = rosa::Uuid("409b5f8440600a2e922704056ac17ffb");
+static const auto alarm_uuid = rosa::Uuid("471851408a1b9d463606402ed23bcf83");
 
 static int countdown_start{1200};
 constexpr int char_height{128};

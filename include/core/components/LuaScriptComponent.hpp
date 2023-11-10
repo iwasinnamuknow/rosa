@@ -21,7 +21,7 @@
 #include <memory>
 #include <functional>
 #include <sol/sol.hpp>
-#include <stduuid/uuid.h>
+#include <core/Uuid.hpp>
 #include <spdlog/spdlog.h>
 #include <core/Scene.hpp>
 #include <core/components/TransformComponent.hpp>
@@ -39,7 +39,7 @@ namespace rosa {
     struct LuaScriptComponent {
 
             LuaScriptComponent(Scene* scene, entt::entity entity);
-            auto setScript(uuids::uuid uuid, bool deserialised = false) -> bool;
+            auto setScript(Uuid uuid, bool deserialised = false) -> bool;
 
         private:
             sol::state m_state;
@@ -48,7 +48,7 @@ namespace rosa {
             sol::protected_function m_on_delete_function;
             sol::protected_function m_on_update_function;
             sol::protected_function m_on_input_function;
-            uuids::uuid m_uuid;
+            Uuid m_uuid;
 
             auto set_data(const std::string& key, sol::table& table) -> void;
 

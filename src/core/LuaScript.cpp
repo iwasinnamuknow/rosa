@@ -31,7 +31,7 @@ namespace rosa {
 
             m_content = buffer;
         } else {
-            spdlog::critical("Couldn't load script: {}", uuids::to_string(getUUID()));
+            spdlog::critical("Couldn't load script: {}", static_cast<std::string>(getUUID()));
             return false;
         }
 

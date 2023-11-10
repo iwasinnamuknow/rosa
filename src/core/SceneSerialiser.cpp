@@ -25,6 +25,7 @@
 #include <core/components/LuaScriptComponent.hpp>
 #include <graphics/Colour.hpp>
 #include <cmath>
+#include <core/Uuid.hpp>
 
 namespace YAML {
 
@@ -95,9 +96,9 @@ namespace YAML {
     };
 
     template<>
-    struct convert<uuids::uuid> {
-        static auto decode(const Node& node, uuids::uuid& rhs) -> bool {
-            rhs = uuids::uuid::from_string(node.as<std::string>()).value();
+    struct convert<rosa::Uuid> {
+        static auto decode(const Node& node, rosa::Uuid& rhs) -> bool {
+            rhs = node.as<std::string>();
             return true;
         }
     };
@@ -162,7 +163,7 @@ namespace rosa {
             auto& sprite = entity.getComponent<SpriteComponent>();
             out << YAML::BeginMap; // sprite
             out << YAML::Key << "type" << YAML::Value << "sprite";
-            out << YAML::Key << "texture" << YAML::Value << uuids::to_string(sprite.getTextureUUID());
+            out << YAML::Key << "texture" << YAML::Value << static_cast<std::string>(sprite.getTextureUUID());
             out << YAML::Key << "color" << YAML::Value << sprite.getColour();
             out << YAML::EndMap; // sprite
         }
@@ -171,7 +172,7 @@ namespace rosa {
             auto& player = entity.getComponent<SoundPlayerComponent>();
             out << YAML::BeginMap; // sound player
             out << YAML::Key << "type" << YAML::Value << "sound";
-            out << YAML::Key << "source" << YAML::Value << uuids::to_string(player.m_uuid);
+            out << YAML::Key << "source" << YAML::Value << static_cast<std::string>(player.m_uuid);
             out << YAML::Key << "position" << YAML::Value << player.getPosition();
             out << YAML::Key << "volume" << YAML::Value << player.m_volume;
             out << YAML::Key << "default_volume" << YAML::Value << player.m_default_volume;
@@ -184,7 +185,7 @@ namespace rosa {
             auto& player = entity.getComponent<MusicPlayerComponent>();
             out << YAML::BeginMap; // sound player
             out << YAML::Key << "type" << YAML::Value << "music";
-            out << YAML::Key << "source" << YAML::Value << uuids::to_string(player.m_uuid);
+            out << YAML::Key << "source" << YAML::Value << static_cast<std::string>(player.m_uuid);
             out << YAML::Key << "position" << YAML::Value << player.getPosition();
             out << YAML::Key << "volume" << YAML::Value << player.m_volume;
             out << YAML::Key << "default_volume" << YAML::Value << player.m_default_volume;
@@ -197,7 +198,7 @@ namespace rosa {
             auto& lsc = entity.getComponent<LuaScriptComponent>();
             out << YAML::BeginMap; // lua script
             out << YAML::Key << "type" << YAML::Value << "lua_script";
-            out << YAML::Key << "script" << YAML::Value << uuids::to_string(lsc.m_uuid);
+            out << YAML::Key << "script" << YAML::Value << static_cast<std::string>(lsc.m_uuid);
 
             // TODO There has to be a neater way of capturing data that doesn't require all data to
             //      be kept inside a single lua table
@@ -268,7 +269,7 @@ namespace rosa {
                 auto entities = scene["entities"];
                 for (auto entity: entities) {
                     if (entity["uuid"]) {
-                        Entity new_entity = m_scene.create_entity(uuids::uuid::from_string(entity["uuid"].as<std::string>()).value());
+                        Entity new_entity = m_scene.create_entity(Uuid(entity["uuid"].as<std::string>()));
 
                         if (entity["components"]) {
                             for (auto comp : entity["components"]) {
@@ -287,52 +288,45 @@ namespace rosa {
                                         auto& lsc = new_entity.addComponent<LuaScriptComponent>(&m_scene, new_entity);
                                         auto script_uuid = comp["script"].as<std::string>();
 
-                                        auto uuid = uuids::uuid::from_string(script_uuid);
-                                        if (uuid.has_value()) {
+                                        auto uuid = Uuid(script_uuid);
 
-                                            lsc.setScript(uuid.value(), true);
+                                        lsc.setScript(uuid, true);
 
-                                            if (comp["data"]) {
-                                                auto script_data = comp["data"];
-                                                auto table_data = lua_node_from_yaml(script_data);
-                                                lsc.set_data("", table_data);
-                                            }
-                                        }                                   
+                                        if (comp["data"]) {
+                                            auto script_data = comp["data"];
+                                            auto table_data = lua_node_from_yaml(script_data);
+                                            lsc.set_data("", table_data);
+                                        }
+
                                     } else if (type == "sound") {
                                         auto& player = new_entity.addComponent<SoundPlayerComponent>();
-                                        auto uuid_str = comp["source"].as<std::string>();
-                                        auto uuid = uuids::uuid::from_string(uuid_str);
-                                        if (uuid.has_value()) {
-                                            player.setAudio(uuid.value());
-                                            player.setDefaultVolume(comp["default_volume"].as<float>());
-                                            player.play();
-                                            player.setPause(true);
-                                            player.setPosition(comp["position"].as<double>());
-                                            auto paused = comp["paused"].as<bool>();
-                                            auto playing = comp["playing"].as<bool>();
-                                            if (paused == false && playing == true) {
-                                                player.setPause(false);
-                                            }
-                                            player.setVolume(comp["volume"].as<float>());
+                                        auto uuid = Uuid(comp["source"].as<std::string>());
+                                        player.setAudio(uuid);
+                                        player.setDefaultVolume(comp["default_volume"].as<float>());
+                                        player.play();
+                                        player.setPause(true);
+                                        player.setPosition(comp["position"].as<double>());
+                                        auto paused = comp["paused"].as<bool>();
+                                        auto playing = comp["playing"].as<bool>();
+                                        if (paused == false && playing == true) {
+                                            player.setPause(false);
                                         }
+                                        player.setVolume(comp["volume"].as<float>());
                                     } else if (type == "music") {
                                         auto& player = new_entity.addComponent<MusicPlayerComponent>();
-                                        auto uuid_str = comp["source"].as<std::string>();
-                                        auto uuid = uuids::uuid::from_string(uuid_str);
-                                        if (uuid.has_value()) {
-                                            player.setAudio(uuid.value());
-                                            auto pos = comp["position"].as<double>();
-                                            player.setDefaultVolume(comp["default_volume"].as<float>());
-                                            player.play();
-                                            player.setPause(true);
-                                            player.setPosition(pos);
-                                            auto paused = comp["paused"].as<bool>();
-                                            auto playing = comp["playing"].as<bool>();
-                                            if (paused == false && playing == true) {
-                                                player.setPause(false);
-                                            }
-                                            player.setVolume(comp["volume"].as<float>());
+                                        auto uuid = Uuid(comp["source"].as<std::string>());
+                                        player.setAudio(uuid);
+                                        auto pos = comp["position"].as<double>();
+                                        player.setDefaultVolume(comp["default_volume"].as<float>());
+                                        player.play();
+                                        player.setPause(true);
+                                        player.setPosition(pos);
+                                        auto paused = comp["paused"].as<bool>();
+                                        auto playing = comp["playing"].as<bool>();
+                                        if (paused == false && playing == true) {
+                                            player.setPause(false);
                                         }
+                                        player.setVolume(comp["volume"].as<float>());
                                     }
                                 }
                             }

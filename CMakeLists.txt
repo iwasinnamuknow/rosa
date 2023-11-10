@@ -87,3 +87,4 @@ endif(WIN32)
 
 add_subdirectory(examples)
 add_subdirectory(docs)
+add_subdirectory(tests)

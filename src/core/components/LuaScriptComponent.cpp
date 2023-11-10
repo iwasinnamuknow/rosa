@@ -18,6 +18,7 @@
 #include <graphics/Vertex.hpp>
 #include <core/Event.hpp>
 #include <core/LuaScript.hpp>
+#include <core/Uuid.hpp>
 
 #include <sstream>
 
@@ -314,7 +315,7 @@ namespace rosa {
         m_state.open_libraries(sol::lib::base);
     }
 
-    auto LuaScriptComponent::setScript(uuids::uuid uuid, bool deserialised) -> bool {
+    auto LuaScriptComponent::setScript(Uuid uuid, bool deserialised) -> bool {
         ROSA_PROFILE_SCOPE("LuaScriptComponent:setScript");
 
         try {

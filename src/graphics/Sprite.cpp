@@ -42,7 +42,7 @@ namespace rosa {
         m_quad.colour = colour;
     }
 
-    auto Sprite::setTexture(uuids::uuid uuid) -> void {
+    auto Sprite::setTexture(Uuid uuid) -> void {
         m_texture = &ResourceManager::instance().getAsset<Texture>(uuid);
         m_quad.texture_id = m_texture->getOpenGlId();
         m_quad.texture_rect_size = m_texture->getSize();

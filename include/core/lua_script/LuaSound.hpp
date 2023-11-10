@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include <core/Uuid.hpp>
 #include <core/components/SoundPlayerComponent.hpp>
 #include <cstdint>
 #include <sol/sol.hpp>
@@ -26,18 +27,12 @@ namespace rosa::lua_script {
         LuaSound(std::reference_wrapper<SoundPlayerComponent> component, std::reference_wrapper<sol::state> state)
             : m_component(component), m_state(state) {}
 
-        auto getAudio() -> std::string {
-            return uuids::to_string(m_component.get().getAudio());
+        auto getAudio() -> Uuid {
+            return m_component.get().getAudio();
         }
 
-        auto setAudio(const std::string& uuid_str) -> bool {
-            auto uuid = uuids::uuid::from_string(uuid_str);
-            if (uuid.has_value()) {
-                m_component.get().setAudio(uuid.value());
-                return true;
-            }
-
-            return false;            
+        auto setAudio(Uuid uuid) -> void {
+            m_component.get().setAudio(uuid);
         }
 
         auto setVolume(float volume) -> void {

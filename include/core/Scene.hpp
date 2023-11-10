@@ -23,6 +23,7 @@
 //#include <core/Entity.hpp>
 #include <debug/Profiler.hpp>
 #include <core/Event.hpp>
+#include <core/Uuid.hpp>
 
 namespace rosa {
 
@@ -134,7 +135,7 @@ namespace rosa {
             RenderWindow& m_render_window;
             std::unordered_map<entt::entity, Entity> m_entities{};
 
-            auto create_entity(uuids::uuid uuid) -> Entity&;
+            auto create_entity(Uuid uuid) -> Entity&;
 
             virtual auto onLoad() -> void {}
             virtual auto onUnload() ->  void {}

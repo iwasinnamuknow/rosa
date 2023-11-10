@@ -15,10 +15,11 @@
 
 #pragma once
 
+#include <core/Uuid.hpp>
 #include <core/ResourceManager.hpp>
-#include <stduuid/uuid.h>
-#include <string_view>
 #include <graphics/Sprite.hpp>
+
+#include <string_view>
 
 namespace rosa {
 
@@ -26,17 +27,12 @@ namespace rosa {
 
     struct SpriteComponent : Sprite {
 
-        auto getTextureUUID() -> uuids::uuid {
+        auto getTextureUUID() -> Uuid {
             return getTexture().getUUID();
         }
 
-        auto setTexture(const std::string& uuid_str) -> void {
-            auto uuid = uuids::uuid::from_string(uuid_str);
-            if (uuid.has_value()) {
-                Sprite::setTexture(uuid.value());
-            } else {
-                spdlog::error("Couldn't parse UUID in call to setTexture");
-            }
+        auto setTexture(Uuid uuid) -> void {
+            Sprite::setTexture(uuid);
         }
 
         private:

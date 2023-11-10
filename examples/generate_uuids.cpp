@@ -13,25 +13,23 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
 #include <core/Uuid.hpp>
-#include <core/Resource.hpp>
+
+#include <iostream>
 #include <string>
-#include <physfs.h>
 
-namespace rosa {
+auto main(int argc, char* argv[]) -> int {
 
-    class LuaScript : public ::rosa::Resource {
-        public:
-            LuaScript(std::string name, Uuid uuid) : rosa::Resource(std::move(name), uuid) {}
+    int num_uuids{10};
 
-            auto loadFromPhysFS() -> bool override;
+    if (argc > 1) {
+        num_uuids = std::stoi(argv[1]);
+    }
 
-            auto getContent() const -> const std::string&;
+    for (int i = 0; i < num_uuids; i++) {
+        auto uuid = rosa::Uuid::generate();
+        std::cout << static_cast<std::string>(uuid) << "\n";
+    }
 
-        private:
-            std::string m_content;
-    };
-
-} // namespace rosa
+    return 0;
+}

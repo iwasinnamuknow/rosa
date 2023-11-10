@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include <core/Uuid.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <cstdint>
 #include <sol/sol.hpp>
@@ -26,22 +27,16 @@ namespace rosa::lua_script {
         LuaSprite(std::reference_wrapper<SpriteComponent> component, std::reference_wrapper<sol::state> state)
             : m_component(component), m_state(state) {}
 
-        auto getTextureUUID() const -> std::string {
-            return uuids::to_string(m_component.get().getTextureUUID());
+        auto getTextureUUID() const -> Uuid {
+            return m_component.get().getTextureUUID();
         }
 
         auto getTextureSize() const -> glm::vec2 {
             return m_component.get().getTexture().getSize();
         }
 
-        auto setTexture(const std::string& uuid_str) -> bool {
-            auto uuid = uuids::uuid::from_string(uuid_str);
-            if (uuid.has_value()) {
-                m_component.get().setTexture(uuid.value());
-                return true; // TODO we need to get a success value from component.setTexture and pass it through here
-            }
-
-            return false;            
+        auto setTexture(Uuid uuid) -> void {
+            m_component.get().setTexture(uuid);      
         }
 
         auto getColour() const -> sol::table {

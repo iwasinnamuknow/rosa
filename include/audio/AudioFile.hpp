@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include <core/Uuid.hpp>
 #include <core/Resource.hpp>
 #include <soloud/include/soloud_file.h>
 #include <physfs.h>
@@ -24,7 +25,7 @@ namespace rosa {
     class AudioFile : public ::SoLoud::File, public rosa::Resource {
 
         public:
-            AudioFile(std::string name, uuids::uuid uuid) : rosa::Resource(std::move(name), uuid) {}
+            AudioFile(std::string name, Uuid uuid) : Resource(std::move(name), uuid) {}
             ~AudioFile() override;
 
             auto loadFromPhysFS() -> bool override;

@@ -16,15 +16,17 @@
 
 #pragma once
 
-#include "audio/AudioFile.hpp"
+#include <core/Resource.hpp>
+#include <debug/Profiler.hpp>
+#include <graphics/Texture.hpp>
+#include <audio/AudioFile.hpp>
+#include <core/Uuid.hpp>
+
 #include <memory>
 #include <optional>
 #include <string>
 #include <unordered_map>
-#include <graphics/Texture.hpp>
 #include <physfs.h>
-#include <core/Resource.hpp>
-#include <debug/Profiler.hpp>
 
 namespace rosa {
 
@@ -34,16 +36,9 @@ namespace rosa {
             auto operator=(ResourceManager const &) -> ResourceManager & = delete;
             ResourceManager(ResourceManager const &&) = delete;
             auto operator=(ResourceManager const &&) -> ResourceManager & = delete;
-            
-            // auto getTexture(uuids::uuid uuid) -> Texture&;
-            // auto getShader(uuids::uuid uuid) -> Shader&;
-            // // auto getFont(uuids::uuid uuid) -> sf::Font&;
-            // auto getSound(uuids::uuid uuid) -> AudioFile&;
-            // auto getMusicTrack(uuids::uuid uuid) -> AudioFile&;
-            // auto getScript(uuids::uuid uuid) -> const std::string&;
 
             template<typename T>
-            auto getAsset(uuids::uuid uuid) -> T& {
+            auto getAsset(Uuid uuid) -> T& {
                 if (m_resources.contains(uuid)) {
                     T& resource = *(dynamic_cast<T*>(m_resources.at(uuid).get()));
                     return resource;
@@ -55,13 +50,7 @@ namespace rosa {
             ResourceManager();
             ~ResourceManager() = default;
 
-            std::unordered_map<uuids::uuid, std::unique_ptr<Resource>> m_resources;
-            // std::unordered_map<uuids::uuid, std::string> m_scripts;
-            // std::unordered_map<uuids::uuid, AudioFile> m_sounds;
-            // std::unordered_map<uuids::uuid, AudioFile> m_music_tracks;
-            // std::unordered_map<uuids::uuid, Shader> m_shaders;
-
-            //static auto populate_resource(Resource& resource) -> bool;
+            std::unordered_map<Uuid, std::unique_ptr<Resource>> m_resources;
     };
 
 } // namespace rosa
