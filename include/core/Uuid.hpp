@@ -46,6 +46,8 @@ namespace rosa {
 
             auto getLower() -> u_int64_t;
             auto getUpper() -> u_int64_t;
+
+            auto toString() -> std::string;
             
         private:
             u_int64_t m_top{0};

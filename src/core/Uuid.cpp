@@ -62,4 +62,8 @@ namespace rosa {
         return m_top;
     }
 
+    auto Uuid::toString() -> std::string {
+        return static_cast<std::string>(*this);
+    }
+
 } // namespace rosa
