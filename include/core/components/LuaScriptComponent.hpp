@@ -14,8 +14,8 @@
  */
 
 #pragma once
-#include <sol/forward.hpp>
-#define SOL_PRINT_ERRORS 0
+
+#define SOL_PRINT_ERRORS 1
 #define SOL_ALL_SAFETIES_ON 1
 
 #include <memory>
@@ -36,6 +36,11 @@ namespace rosa {
 
             LuaScriptComponent(Scene* scene, entt::entity entity);
             auto setScript(Uuid uuid, bool deserialised = false) -> bool;
+            auto setData(const std::string& key, sol::table& table) -> void;
+
+            auto setValue(const std::string& key, int value) -> void;
+            auto setValue(const std::string& key, float value) -> void;
+            auto setValue(const std::string& key, std::string value) -> void;
 
         private:
             sol::state m_state;
@@ -45,8 +50,6 @@ namespace rosa {
             sol::protected_function m_on_update_function;
             sol::protected_function m_on_input_function;
             Uuid m_uuid;
-
-            auto set_data(const std::string& key, sol::table& table) -> void;
 
             entt::entity m_entity;
             Scene* m_scene;

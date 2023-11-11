@@ -295,7 +295,7 @@ namespace rosa {
                                         if (comp["data"]) {
                                             auto script_data = comp["data"];
                                             auto table_data = lua_node_from_yaml(script_data);
-                                            lsc.set_data("", table_data);
+                                            lsc.setData("", table_data);
                                         }
 
                                     } else if (type == "sound") {

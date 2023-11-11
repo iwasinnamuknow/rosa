@@ -16,7 +16,7 @@
 #pragma once
 
 #include <chrono>
-#include <sol/sol.hpp>
+#include <string>
 
 namespace rosa {
 
@@ -28,7 +28,8 @@ namespace rosa {
                 ~CountdownTimer() = default;
 
                 auto getSeconds() -> int;
-                auto getFormatted() -> sol::table;
+                auto getFormatted() -> std::string;
+                auto getFinished() -> bool;
 
             private:
                 std::chrono::time_point<std::chrono::steady_clock> m_start_time;

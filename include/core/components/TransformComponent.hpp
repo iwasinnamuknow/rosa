@@ -36,6 +36,10 @@ namespace rosa {
             position = glm::vec3(x, y, 1.F);
         }
 
+        auto setPosition(glm::vec2 pos) -> void {
+            position = glm::vec3(pos, 1.F);
+        }
+
         auto getPosition() const -> const glm::vec2 {
             return glm::vec2(position[0], position[1]);
         }

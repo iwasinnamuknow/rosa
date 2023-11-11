@@ -14,21 +14,16 @@
  */
 
 #include <core/lua_script/CountdownTimer.hpp>
+#include <fmt/format.h>
 
 template <class Rep, std::intmax_t num, std::intmax_t denom>
-static auto chronoBurst(std::chrono::duration<Rep, std::ratio<num, denom>> d) -> sol::table {
+static auto chronoBurst(std::chrono::duration<Rep, std::ratio<num, denom>> d) -> std::string {
     const auto hrs = duration_cast<std::chrono::hours>(d);
     const auto mins = duration_cast<std::chrono::minutes>(d - hrs);
     const auto secs = duration_cast<std::chrono::seconds>(d - hrs - mins);
     const auto ms = duration_cast<std::chrono::milliseconds>(d - hrs - mins - secs);
 
-    sol::table table;
-    table["hours"] = hrs;
-    table["minutes"] = mins;
-    table["seconds"] = secs;
-    table["milliseconds"] = ms;
-
-    return table;
+    return fmt::format("{:02d}:{:02d}:{:02d}.{:03d}", hrs.count(), mins.count(), secs.count(), ms.count());
 }
 
 namespace rosa {
@@ -47,11 +42,18 @@ namespace rosa {
             return std::chrono::duration_cast<std::chrono::seconds>(duration).count();
         }
 
-        auto CountdownTimer::getFormatted() -> sol::table {
+        auto CountdownTimer::getFormatted() -> std::string {
             m_current_time = std::chrono::steady_clock::now();
             auto duration = m_start_time - m_current_time;
 
             return chronoBurst(duration);
+        }
+
+        auto CountdownTimer::getFinished() -> bool {
+            m_current_time = std::chrono::steady_clock::now();
+            auto duration = m_start_time - m_current_time;
+            
+            return std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count() <= 0;
         }
 
     }

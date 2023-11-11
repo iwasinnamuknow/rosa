@@ -132,7 +132,7 @@ namespace rosa {
              * @return true relationship was created
              * @return false relationship was not created (empty parent_id?)
              */
-            auto setParent(entt::entity parent_id) -> bool;
+            auto setParent(Uuid parent_id) -> bool;
 
             /**
              * @brief Remove this Entity as the child of another
@@ -147,7 +147,7 @@ namespace rosa {
              * 
              * @return entt::entity identifier
              */
-            auto getParent() -> entt::entity {
+            auto getParent() -> Uuid {
                 return m_parent;
             }
 
@@ -156,7 +156,7 @@ namespace rosa {
              * 
              * @return const std::vector<entt::entity>& A vector of child references
              */
-            auto getChildren() const -> const std::vector<entt::entity>& {
+            auto getChildren() const -> const std::vector<Uuid>& {
                 return m_children;
             }
 
@@ -166,8 +166,8 @@ namespace rosa {
             bool m_for_deletion{false};
             Uuid m_uuid;
 
-            std::vector<entt::entity> m_children{};
-            entt::entity m_parent{entt::null};
+            std::vector<Uuid> m_children{};
+            Uuid m_parent = Uuid();
 
             Scene& m_scene;
             

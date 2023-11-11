@@ -293,7 +293,10 @@ namespace rosa {
         );
 
         state.new_usertype<rosa::TransformComponent>("Transform",
-            "setPosition", &rosa::TransformComponent::setPosition,
+            "setPosition",      sol::overload(
+                static_cast<void (rosa::TransformComponent::*) (glm::vec2    )>(&rosa::TransformComponent::setPosition),
+                static_cast<void (rosa::TransformComponent::*) (float, float )>(&rosa::TransformComponent::setPosition)
+            ),
             "getPosition", &rosa::TransformComponent::getPosition,
             "setRotation", &rosa::TransformComponent::setRotation,
             "getRotation", &rosa::TransformComponent::getRotation,
@@ -314,6 +317,36 @@ namespace rosa {
             "getTextureRect",   &rosa::SpriteComponent::getTextureRect
         );
 
+        state.new_usertype<rosa::SoundPlayerComponent>("SoundPlayer",
+            "getAudio",         &rosa::SoundPlayerComponent::getAudio,
+            "setAudio",         &rosa::SoundPlayerComponent::setAudio,
+            "play",             &rosa::SoundPlayerComponent::play,
+            "stop",             &rosa::SoundPlayerComponent::stop,
+            "setDefaultVolume", &rosa::SoundPlayerComponent::setDefaultVolume,
+            "getLength",        &rosa::SoundPlayerComponent::getLength,
+            "setLooping",       &rosa::SoundPlayerComponent::setLooping,
+            "getPosition",      &rosa::SoundPlayerComponent::getPosition,
+            "setPosition",      &rosa::SoundPlayerComponent::setPosition,
+            "setPause",         &rosa::SoundPlayerComponent::setPause,
+            "getPause",         &rosa::SoundPlayerComponent::getPause,
+            "isPlaying",        &rosa::SoundPlayerComponent::isPlaying
+        );
+
+        state.new_usertype<rosa::MusicPlayerComponent>("MusicPlayer",
+            "getAudio",         &rosa::MusicPlayerComponent::getAudio,
+            "setAudio",         &rosa::MusicPlayerComponent::setAudio,
+            "play",             &rosa::MusicPlayerComponent::play,
+            "stop",             &rosa::MusicPlayerComponent::stop,
+            "setDefaultVolume", &rosa::MusicPlayerComponent::setDefaultVolume,
+            "getLength",        &rosa::MusicPlayerComponent::getLength,
+            "setLooping",       &rosa::MusicPlayerComponent::setLooping,
+            "getPosition",      &rosa::MusicPlayerComponent::getPosition,
+            "setPosition",      &rosa::MusicPlayerComponent::setPosition,
+            "setPause",         &rosa::MusicPlayerComponent::setPause,
+            "getPause",         &rosa::MusicPlayerComponent::getPause,
+            "isPlaying",        &rosa::MusicPlayerComponent::isPlaying
+        );
+
         state.new_usertype<rosa::Uuid>("Uuid",
             sol::constructors<rosa::Uuid(std::string)>(),
             "to_string",        &rosa::Uuid::toString
@@ -322,14 +355,24 @@ namespace rosa {
         state.new_usertype<rosa::lua_script::CountdownTimer>("Countdown",
             sol::constructors<rosa::lua_script::CountdownTimer(int)>(),
             "getSeconds",     &rosa::lua_script::CountdownTimer::getSeconds,
-            "getFormatted",   &rosa::lua_script::CountdownTimer::getFormatted
+            "getFormatted",   &rosa::lua_script::CountdownTimer::getFormatted,
+            "getFinished",    &rosa::lua_script::CountdownTimer::getFinished
+        );
+
+        state.new_usertype<rosa::Scene>("Scene",
+            "getEntity",        &rosa::Scene::getEntity,
+            "getRenderWindow",  &rosa::Scene::getRenderWindow
+        );
+
+        state.new_usertype<rosa::RenderWindow>("RenderWindow",
+            "getViewportSize",  &rosa::RenderWindow::getViewportSize
         );
     }
 
     LuaScriptComponent::LuaScriptComponent(Scene* scene, entt::entity entity) : m_entity(entity), m_scene(scene) {
         ROSA_PROFILE_SCOPE("LuaScriptComponent:Initialise");
 
-        m_state.open_libraries(sol::lib::base);
+        m_state.open_libraries(sol::lib::base, sol::lib::string);
     }
 
     auto LuaScriptComponent::setScript(Uuid uuid, bool deserialised) -> bool {
@@ -337,7 +380,11 @@ namespace rosa {
 
         try {
             const auto& script = ResourceManager::instance().getAsset<LuaScript>(uuid);
-            auto& entity = m_scene->getEntity(m_entity);
+
+            auto& entity = m_scene->getEntity(m_scene->m_entity_to_uuid.at(m_entity));
+
+            init_events(m_state);
+            init_types(m_state);
 
             auto result = m_state.script(script.getContent(), &sol::script_default_on_error);
 
@@ -350,8 +397,7 @@ namespace rosa {
 
                 m_uuid = uuid;
 
-                init_events(m_state);
-                init_types(m_state);
+                m_state["scene"] = m_scene;
                 
                 // logger
                 auto log_table = m_state["log"].get_or_create<sol::table>();
@@ -369,22 +415,7 @@ namespace rosa {
                 });
 
                 // Transform component
-                m_state["transform"] = &entity.getComponent<TransformComponent>();
-
-                // Sprite component
-                if (entity.hasComponent<SpriteComponent>()) {
-                    m_state["sprite"] = &entity.getComponent<SpriteComponent>();
-                }
-
-                // Sound player component
-                if (entity.hasComponent<SoundPlayerComponent>()) {
-                    m_state["sound"] = &entity.getComponent<SoundPlayerComponent>();
-                }
-
-                // Music player component
-                if (entity.hasComponent<MusicPlayerComponent>()) {
-                    m_state["music"] = &entity.getComponent<MusicPlayerComponent>();
-                }
+                m_state["entity"] = &entity;
 
                 // Call the lua initialiser
                 if (deserialised) { 
@@ -403,8 +434,20 @@ namespace rosa {
         return false;
     }
 
-    auto LuaScriptComponent::set_data(const std::string& key, sol::table& table) -> void {
+    auto LuaScriptComponent::setData(const std::string& key, sol::table& table) -> void {
         m_state.set(key, table);
+    }
+
+    auto LuaScriptComponent::setValue(const std::string& key, int value) -> void {
+        m_state.set(key, value);
+    }
+
+    auto LuaScriptComponent::setValue(const std::string& key, float value) -> void {
+        m_state.set(key, value);
+    }
+    
+    auto LuaScriptComponent::setValue(const std::string& key, std::string value) -> void {
+        m_state.set(key, value);
     }
 
 } // namespace rosa

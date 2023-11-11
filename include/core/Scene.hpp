@@ -113,7 +113,7 @@ namespace rosa {
              * @return true if the entity was removed
              * @return false if the entity didn't exist
              */
-            auto removeEntity(Entity& entity) -> bool;
+            auto removeEntity(Uuid uuid) -> bool;
 
             /**
              * @brief Get a specific entity
@@ -121,8 +121,8 @@ namespace rosa {
              * @param entt_id entt ID of the entity
              * @return Entity& reference to the entity
              */
-            auto getEntity(entt::entity entt_id) -> Entity& {
-                return m_entities.at(entt_id);
+            auto getEntity(Uuid uuid) -> Entity& {
+                return m_entities.at(m_uuid_to_entity.at(uuid));
             }
 
 
@@ -130,6 +130,8 @@ namespace rosa {
             entt::registry m_registry{};
             RenderWindow& m_render_window;
             std::unordered_map<entt::entity, Entity> m_entities{};
+            std::unordered_map<Uuid, entt::entity> m_uuid_to_entity{};
+            std::unordered_map<entt::entity, Uuid> m_entity_to_uuid{};
 
             auto create_entity(Uuid uuid) -> Entity&;
 
