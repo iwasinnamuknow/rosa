@@ -33,10 +33,6 @@ namespace rosa {
 
     class Entity;
 
-    namespace lua_script {
-        struct LuaTransform;
-    } // namespace lua_script
-
     /**
      * @brief Contains a registry of Entity and methods for handling them.
      * 
@@ -144,7 +140,6 @@ namespace rosa {
             friend class Entity;
             friend class SceneSerialiser;
             friend struct LuaScriptComponent;
-            friend struct lua_script::LuaTransform;
             friend class GameManager;
 
             auto show_profile_stats(bool* open) const -> void;
