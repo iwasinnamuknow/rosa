@@ -15,6 +15,22 @@
 
 #include <core/lua_script/CountdownTimer.hpp>
 
+template <class Rep, std::intmax_t num, std::intmax_t denom>
+static auto chronoBurst(std::chrono::duration<Rep, std::ratio<num, denom>> d) -> sol::table {
+    const auto hrs = duration_cast<std::chrono::hours>(d);
+    const auto mins = duration_cast<std::chrono::minutes>(d - hrs);
+    const auto secs = duration_cast<std::chrono::seconds>(d - hrs - mins);
+    const auto ms = duration_cast<std::chrono::milliseconds>(d - hrs - mins - secs);
+
+    sol::table table;
+    table["hours"] = hrs;
+    table["minutes"] = mins;
+    table["seconds"] = secs;
+    table["milliseconds"] = ms;
+
+    return table;
+}
+
 namespace rosa {
 
     namespace lua_script {
