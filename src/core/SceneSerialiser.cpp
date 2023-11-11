@@ -148,7 +148,7 @@ namespace rosa {
     auto SceneSerialiser::serialise_entity(YAML::Emitter& out, Entity& entity) -> void {
         out << YAML::BeginMap; // Entity
         //out << YAML::Key << "entt_id" << YAML::Value << static_cast<int>(entity.getId());
-        out << YAML::Key << "uuid" << YAML::Value << entity.getUUID();
+        out << YAML::Key << "uuid" << YAML::Value << static_cast<std::string>(entity.getUUID());
         out << YAML::Key << "components" << YAML::Value << YAML::BeginSeq; //components
 
         auto& transform = entity.getComponent<TransformComponent>();

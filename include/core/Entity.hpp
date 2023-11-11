@@ -102,10 +102,10 @@ namespace rosa {
             /**
              * @brief Get the UUID identifier of the Entity
              * 
-             * @return std::string UUID
+             * @return Uuid
              */
-            auto getUUID() const -> std::string {
-                return static_cast<std::string>(m_uuid);
+            auto getUUID() const -> Uuid {
+                return m_uuid;
             }
 
             /**
