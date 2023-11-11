@@ -19,6 +19,7 @@
 #include <core/Event.hpp>
 #include <core/LuaScript.hpp>
 #include <core/Uuid.hpp>
+#include <core/lua_script/CountdownTimer.hpp>
 
 #include <sstream>
 
@@ -316,6 +317,12 @@ namespace rosa {
         state.new_usertype<rosa::Uuid>("Uuid",
             sol::constructors<rosa::Uuid(std::string)>(),
             "to_string",        &rosa::Uuid::toString
+        );
+
+        state.new_usertype<rosa::lua_script::CountdownTimer>("Countdown",
+            sol::constructors<rosa::lua_script::CountdownTimer(int)>(),
+            "getSeconds",     &rosa::lua_script::CountdownTimer::getSeconds,
+            "getFormatted",   &rosa::lua_script::CountdownTimer::getFormatted
         );
     }
 
