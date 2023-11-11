@@ -33,7 +33,6 @@ namespace rosa {
             private:
                 std::chrono::time_point<std::chrono::steady_clock> m_start_time;
                 std::chrono::time_point<std::chrono::steady_clock> m_current_time;
-                bool m_finished{false};
         };
 
     } // namespace lua_script
