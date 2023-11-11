@@ -282,8 +282,13 @@ namespace rosa {
         );
 
         state.new_usertype<rosa::Entity>("Entity",
-            "getTransform", &rosa::Entity::getComponent<TransformComponent>,
-            "getSprite",    &rosa::Entity::getComponent<SpriteComponent>
+            "getTransform",     &rosa::Entity::getComponent<TransformComponent>,
+            "getSprite",        &rosa::Entity::getComponent<SpriteComponent>,
+            "getSoundPlayer",   &rosa::Entity::getComponent<SoundPlayerComponent>,
+            "getMusicPlayer",   &rosa::Entity::getComponent<MusicPlayerComponent>,
+            "getUuid",          &rosa::Entity::getUUID,
+            "getParent",        &rosa::Entity::getParent,
+            "getChildren",      &rosa::Entity::getChildren
         );
 
         state.new_usertype<rosa::TransformComponent>("Transform",
@@ -306,6 +311,11 @@ namespace rosa {
                 static_cast<void (rosa::SpriteComponent::*) (rosa::Rect           )>(&rosa::SpriteComponent::setTextureRect)
             ),
             "getTextureRect",   &rosa::SpriteComponent::getTextureRect
+        );
+
+        state.new_usertype<rosa::Uuid>("Uuid",
+            sol::constructors<rosa::Uuid(std::string)>(),
+            "to_string",        &rosa::Uuid::toString
         );
     }
 
