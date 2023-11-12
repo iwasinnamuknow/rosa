@@ -14,12 +14,15 @@
  */
 
 #include <core/components/LuaScriptComponent.hpp>
+#include <core/components/MusicPlayerComponent.hpp>
+#include <core/components/SoundPlayerComponent.hpp>
 
 #include <graphics/Vertex.hpp>
 #include <core/Event.hpp>
 #include <core/LuaScript.hpp>
 #include <core/Uuid.hpp>
 #include <core/lua_script/CountdownTimer.hpp>
+#include <core/Entity.hpp>
 
 #include <sstream>
 

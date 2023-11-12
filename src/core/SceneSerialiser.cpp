@@ -23,6 +23,8 @@
 #include <core/components/TransformComponent.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <core/components/LuaScriptComponent.hpp>
+#include <core/components/SoundPlayerComponent.hpp>
+#include <core/components/MusicPlayerComponent.hpp>
 #include <graphics/Colour.hpp>
 #include <cmath>
 #include <core/Uuid.hpp>

@@ -15,10 +15,12 @@
 
 
 // Bring in everything
-#include "core/Scene.hpp"
-#include "core/components/MusicPlayerComponent.hpp"
-#include "core/components/SoundPlayerComponent.hpp"
-#include <rosa.hpp>
+#include <core/GameManager.hpp>
+#include <core/components/MusicPlayerComponent.hpp>
+#include <core/components/SoundPlayerComponent.hpp>
+#include <core/components/SpriteComponent.hpp>
+#include <core/components/LuaScriptComponent.hpp>
+#include <core/SceneSerialiser.hpp>
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
 static const auto dds_uuid = rosa::Uuid("f7055f226bfa1a3b4dbdb366dd18866d");

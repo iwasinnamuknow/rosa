@@ -23,6 +23,7 @@
 #include <ratio>
 #include <core/EventManager.hpp>
 #include <spdlog/spdlog.h>
+#include <core/SceneSerialiser.hpp>
 
 namespace rosa {
 

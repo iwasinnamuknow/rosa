@@ -38,7 +38,7 @@ find_package(imgui CONFIG REQUIRED)
 
 target_precompile_headers(rosa 
   PUBLIC
-    include/rosa.hpp
+    include/rosa_pch.hpp
 )
 
 target_compile_features(rosa PRIVATE cxx_std_20)

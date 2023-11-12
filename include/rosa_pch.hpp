@@ -13,6 +13,8 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include <audio/AudioBus.hpp>
-#include <audio/AudioFile.hpp>
-#include <audio/AudioManager.hpp>
+#pragma once
+
+#include <core/Entity.hpp>
+#include <core/Scene.hpp>
+#include <core/Uuid.hpp>

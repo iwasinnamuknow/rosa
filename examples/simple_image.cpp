@@ -15,7 +15,8 @@
 
 
 // Bring in everything
-#include <rosa.hpp>
+#include <core/GameManager.hpp>
+#include <core/components/SpriteComponent.hpp>
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
 static const auto dds_uuid = rosa::Uuid("f7055f226bfa1a3b4dbdb366dd18866d");

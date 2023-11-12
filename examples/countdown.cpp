@@ -15,7 +15,9 @@
 
 
 // Bring in everything
-#include <rosa.hpp>
+#include <core/GameManager.hpp>
+#include <core/components/LuaScriptComponent.hpp>
+#include <core/components/SoundPlayerComponent.hpp>
 
 using namespace std::literals;
 
