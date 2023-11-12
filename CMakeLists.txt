@@ -38,7 +38,7 @@ find_package(imgui CONFIG REQUIRED)
 
 target_precompile_headers(rosa 
   PUBLIC
-    include/rosa.hpp
+    include/rosa_pch.hpp
 )
 
 target_compile_features(rosa PRIVATE cxx_std_20)
@@ -87,3 +87,4 @@ endif(WIN32)
 
 add_subdirectory(examples)
 add_subdirectory(docs)
+add_subdirectory(tests)

@@ -17,7 +17,7 @@
 
 #include "core/components/TransformComponent.hpp"
 #include <entt/entt.hpp>
-#include <stduuid/uuid.h>
+#include <core/Uuid.hpp>
 #include <functional>
 #include <core/Scene.hpp>
 
@@ -26,16 +26,10 @@ namespace rosa {
     class Entity {
         public:
             Entity(entt::entity ent_id, Scene& scene) : m_id(ent_id), m_scene(scene) {
-                std::random_device rd;
-                auto seed_data = std::array<int, std::mt19937::state_size> {};
-                std::generate(std::begin(seed_data), std::end(seed_data), std::ref(rd));
-                std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
-                std::mt19937 generator(seq);
-                uuids::uuid_random_generator gen{generator};
-                m_uuid = gen();
+                m_uuid = Uuid::generate();
             }
 
-            Entity(uuids::uuid uuid, entt::entity ent_id, Scene& scene) : m_id(ent_id), m_uuid(uuid), m_scene(scene) {}
+            Entity(Uuid uuid, entt::entity ent_id, Scene& scene) : m_id(ent_id), m_uuid(uuid), m_scene(scene) {}
 
             Entity(Entity&&) = default;
             Entity(const Entity&) = default;
@@ -108,10 +102,10 @@ namespace rosa {
             /**
              * @brief Get the UUID identifier of the Entity
              * 
-             * @return std::string UUID
+             * @return Uuid
              */
-            auto getUUID() const -> std::string {
-                return uuids::to_string(m_uuid);
+            auto getUUID() const -> Uuid {
+                return m_uuid;
             }
 
             /**
@@ -138,7 +132,7 @@ namespace rosa {
              * @return true relationship was created
              * @return false relationship was not created (empty parent_id?)
              */
-            auto setParent(entt::entity parent_id) -> bool;
+            auto setParent(Uuid parent_id) -> bool;
 
             /**
              * @brief Remove this Entity as the child of another
@@ -153,7 +147,7 @@ namespace rosa {
              * 
              * @return entt::entity identifier
              */
-            auto getParent() -> entt::entity {
+            auto getParent() -> Uuid {
                 return m_parent;
             }
 
@@ -162,7 +156,7 @@ namespace rosa {
              * 
              * @return const std::vector<entt::entity>& A vector of child references
              */
-            auto getChildren() const -> const std::vector<entt::entity>& {
+            auto getChildren() const -> const std::vector<Uuid>& {
                 return m_children;
             }
 
@@ -170,10 +164,10 @@ namespace rosa {
             entt::entity m_id = entt::null;
             bool m_enabled{true};
             bool m_for_deletion{false};
-            uuids::uuid m_uuid;
+            Uuid m_uuid;
 
-            std::vector<entt::entity> m_children{};
-            entt::entity m_parent{entt::null};
+            std::vector<Uuid> m_children{};
+            Uuid m_parent = Uuid();
 
             Scene& m_scene;
             

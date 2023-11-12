@@ -19,7 +19,7 @@
 #include <GLFW/glfw3.h>
 #include <spdlog/spdlog.h>
 #include <string_view>
-#include <stduuid/uuid.h>
+#include <core/Uuid.hpp>
 #include <core/Resource.hpp>
 
 namespace rosa {
@@ -72,7 +72,7 @@ void main()
 
     class Shader : public ::rosa::Resource {
         public:
-            explicit Shader(const std::string& name, uuids::uuid uuid, ShaderType type = VertexShader) : Resource(name, uuid), m_type(type) {
+            explicit Shader(const std::string& name, Uuid uuid, ShaderType type = VertexShader) : Resource(name, uuid), m_type(type) {
                 if (m_type == VertexShader) {
                     m_content = default_vertex_shader;
                 } else if (m_type == FragmentShader) {

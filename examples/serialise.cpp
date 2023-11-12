@@ -15,15 +15,18 @@
 
 
 // Bring in everything
-#include "core/Scene.hpp"
-#include "core/components/MusicPlayerComponent.hpp"
-#include "core/components/SoundPlayerComponent.hpp"
-#include <rosa.hpp>
+#include <core/GameManager.hpp>
+#include <core/components/MusicPlayerComponent.hpp>
+#include <core/components/SoundPlayerComponent.hpp>
+#include <core/components/SpriteComponent.hpp>
+#include <core/components/LuaScriptComponent.hpp>
+#include <core/SceneSerialiser.hpp>
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
-constexpr uuids::uuid dds_uuid = uuids::uuid::from_string(std::string_view("135535e9-6f75-44ba-8d31-236bb9c7f21b")).value();
-constexpr uuids::uuid bell_uuid = uuids::uuid::from_string(std::string_view("dc7d91a9-7ec5-4a5f-b165-373033e5ea56")).value();
-constexpr uuids::uuid music_uuid = uuids::uuid::from_string(std::string_view("aaa6b473-f7a9-4a9e-8035-664643178ac4")).value();
+static const auto dds_uuid = rosa::Uuid("f7055f226bfa1a3b4dbdb366dd18866d");
+static const auto bell_uuid = rosa::Uuid("60f200640c132e9435cd404c011c00a2");
+static const auto music_uuid = rosa::Uuid("a3c890ea0f97d3ed32de55ba88c8dc63");
+static const auto script_uuid = rosa::Uuid("9046e8fecb017adf1029c79e71961173");
 
 // Create a class to represent our scene
 class SerialiseScene : public rosa::Scene {
@@ -72,7 +75,7 @@ class SerialiseScene : public rosa::Scene {
             auto& mplayer = entity.addComponent<rosa::MusicPlayerComponent>();
             mplayer.setAudio(music_uuid);
 
-            lsc.setScript(uuids::uuid::from_string("5f20e19c-3749-465b-98ff-d36ead0405ad").value());
+            lsc.setScript(script_uuid);
         }
 
         ~SerialiseScene() override {
