@@ -74,7 +74,6 @@ namespace rosa {
         PHYSFS_close(myfile);
 
         // Process DDS
-        unsigned int components  = (fourCC == FOURCC_DXT1) ? 3 : 4;
         unsigned int format;
         switch(fourCC)
         {

@@ -20,7 +20,6 @@ namespace rosa {
 
     Uuid::Uuid(const std::string& str_uuid) {
 
-        auto length = str_uuid.length();
         if (str_uuid.length() != 32) {
             throw Exception(fmt::format("Invalid UUID: {}", str_uuid));
         }
