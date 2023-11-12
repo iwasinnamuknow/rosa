@@ -13,6 +13,29 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include <audio/AudioBus.hpp>
-#include <audio/AudioFile.hpp>
-#include <audio/AudioManager.hpp>
+#pragma once
+
+#include <chrono>
+#include <string>
+
+namespace rosa {
+
+    namespace lua_script {
+
+        class CountdownTimer {
+            public:
+                CountdownTimer(int seconds);
+                ~CountdownTimer() = default;
+
+                auto getSeconds() -> int;
+                auto getFormatted() -> std::string;
+                auto getFinished() -> bool;
+
+            private:
+                std::chrono::time_point<std::chrono::steady_clock> m_start_time;
+                std::chrono::time_point<std::chrono::steady_clock> m_current_time;
+        };
+
+    } // namespace lua_script
+
+} // namespace rosa

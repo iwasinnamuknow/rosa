@@ -13,15 +13,23 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <core/Uuid.hpp>
 
-#include <graphics/Colour.hpp>
-#include <graphics/Drawable.hpp>
-#include <graphics/gl.hpp>
-#include <graphics/BatchRenderer.hpp>
-#include <graphics/Quad.hpp>
-#include <graphics/RenderWindow.hpp>
-#include <graphics/Shader.hpp>
-#include <graphics/Sprite.hpp>
-#include <graphics/Texture.hpp>
-#include <graphics/Vertex.hpp>
+#include <iostream>
+#include <string>
+
+auto main(int argc, char* argv[]) -> int {
+
+    int num_uuids{10};
+
+    if (argc > 1) {
+        num_uuids = std::stoi(argv[1]);
+    }
+
+    for (int i = 0; i < num_uuids; i++) {
+        auto uuid = rosa::Uuid::generate();
+        std::cout << static_cast<std::string>(uuid) << "\n";
+    }
+
+    return 0;
+}

@@ -19,16 +19,16 @@
 
 namespace rosa {
 
-    auto SoundPlayerComponent::getAudio() const -> uuids::uuid {
+    auto SoundPlayerComponent::getAudio() const -> Uuid {
         return m_uuid;
     }
 
-    auto SoundPlayerComponent::setAudio(uuids::uuid uuid) -> void {
+    auto SoundPlayerComponent::setAudio(Uuid uuid) -> void {
         m_uuid = uuid;
         m_audio_file = &ResourceManager::instance().getAsset<AudioFile>(m_uuid);
         auto result = m_wav.loadFile(m_audio_file);
         if (result != SoLoud::SO_NO_ERROR) {
-            spdlog::error("Failed to load audio file {}", uuids::to_string(m_uuid));
+            spdlog::error("Failed to load audio file {}", static_cast<std::string>(m_uuid));
         }
     }
 

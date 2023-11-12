@@ -15,34 +15,27 @@
 
 #pragma once
 
+#include <core/Uuid.hpp>
 #include <core/ResourceManager.hpp>
-#include <stduuid/uuid.h>
-#include <string_view>
 #include <graphics/Sprite.hpp>
+
+#include <string_view>
 
 namespace rosa {
 
     class SceneSerialiser;
 
     struct SpriteComponent : Sprite {
-        
-        auto getTexture() -> Texture& {
-            return *m_texture;
+
+        auto getTextureUUID() -> Uuid {
+            return getTexture().getUUID();
         }
 
-        auto getTextureUUID() -> uuids::uuid {
-            return m_texture_uuid;
-        }
-
-        auto setTexture(uuids::uuid uuid) -> void {
-            m_texture_uuid = uuid;
-            Sprite::setTexture(ResourceManager::instance().getAsset<Texture>(m_texture_uuid));
+        auto setTexture(Uuid uuid) -> void {
+            Sprite::setTexture(uuid);
         }
 
         private:
-            uuids::uuid m_texture_uuid;
-            //sf::Color m_color{255, 255, 255, 255};
-
             friend class SceneSerialiser;
     };
 

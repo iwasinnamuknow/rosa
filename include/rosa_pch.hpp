@@ -15,23 +15,6 @@
 
 #pragma once
 
-#include <core/components/LuaScriptComponent.hpp>
-#include <core/components/NativeScriptComponent.hpp>
-#include <core/components/SpriteComponent.hpp>
-#include <core/components/TransformComponent.hpp>
-#include <core/components/SoundPlayerComponent.hpp>
-#include <core/components/MusicPlayerComponent.hpp>
-
-#include <core/input/Keyboard.hpp>
-#include <core/input/Mouse.hpp>
-
 #include <core/Entity.hpp>
-#include <core/Event.hpp>
-#include <core/EventManager.hpp>
-#include <core/Exception.hpp>
-#include <core/GameManager.hpp>
-#include <core/NativeScriptEntity.hpp>
-#include <core/Resource.hpp>
-#include <core/ResourceManager.hpp>
 #include <core/Scene.hpp>
-#include <core/SceneSerialiser.hpp>
+#include <core/Uuid.hpp>

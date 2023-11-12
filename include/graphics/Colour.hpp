@@ -22,11 +22,12 @@ namespace rosa {
     struct Colour {
 
         Colour() = default;
-        Colour(std::uint8_t red, std::uint8_t green, std::uint8_t blue, std::uint8_t alpha = 255) : r(red), g(green), b(blue), a(alpha) {}
+        Colour(std::uint8_t red, std::uint8_t green, std::uint8_t blue) : r(red), g(green), b(blue) {}
+        Colour(std::uint8_t red, std::uint8_t green, std::uint8_t blue, std::uint8_t alpha) : r(red), g(green), b(blue), a(alpha) {}
 
-        std::uint8_t r{};
-        std::uint8_t g{};
-        std::uint8_t b{};
+        std::uint8_t r{255};
+        std::uint8_t g{255};
+        std::uint8_t b{255};
         std::uint8_t a{255};
 
     };

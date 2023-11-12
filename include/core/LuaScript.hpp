@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include <core/Uuid.hpp>
 #include <core/Resource.hpp>
 #include <string>
 #include <physfs.h>
@@ -23,7 +24,7 @@ namespace rosa {
 
     class LuaScript : public ::rosa::Resource {
         public:
-            LuaScript(std::string name, uuids::uuid uuid) : rosa::Resource(std::move(name), uuid) {}
+            LuaScript(std::string name, Uuid uuid) : rosa::Resource(std::move(name), uuid) {}
 
             auto loadFromPhysFS() -> bool override;
 

@@ -20,6 +20,7 @@
 #include <core/Resource.hpp>
 #include <cassert>
 #include <core/ResourceManager.hpp>
+#include <core/Uuid.hpp>
 #include <cstdint>
 #include <exception>
 #include <memory>
@@ -94,13 +95,7 @@ namespace rosa {
 
             for (const auto& line : lines) {
                 std::vector line_data = split_lines(line, ':');
-                auto uuid_g = uuids::uuid::from_string(line_data.at(2));
-                if (!uuid_g.has_value()) {
-                    spdlog::error("Bad UUID in assets.lst: {}", line_data.at(2));
-                    continue;
-                }
-
-                auto uuid = uuid_g.value();
+                auto uuid = Uuid(line_data.at(2));
                 auto type = static_cast<resource_type>(std::stoi(line_data.at(0)));
 
                 if (type == resource_type::resource_texture) {

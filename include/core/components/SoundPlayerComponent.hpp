@@ -15,18 +15,19 @@
 
 #pragma once
 
+#include <core/Uuid.hpp>
 #include <core/ResourceManager.hpp>
 #include <audio/AudioManager.hpp>
+
 #include <spdlog/spdlog.h>
-#include <stduuid/uuid.h>
 #include <soloud/include/soloud_wav.h>
 
 namespace rosa {
 
     struct SoundPlayerComponent {
 
-        auto getAudio() const -> uuids::uuid;
-        auto setAudio(uuids::uuid uuid) -> void;
+        auto getAudio() const -> Uuid;
+        auto setAudio(Uuid uuid) -> void;
 
         auto play() -> void;
         auto stop() -> void;
@@ -49,7 +50,7 @@ namespace rosa {
 
         private:
             SoLoud::Wav m_wav;
-            uuids::uuid m_uuid;
+            Uuid m_uuid;
 
             float m_volume{1.F};
             float m_default_volume{1.F};

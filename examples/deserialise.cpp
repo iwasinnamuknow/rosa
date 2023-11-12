@@ -15,8 +15,7 @@
 
 
 // Bring in everything
-#include "core/Scene.hpp"
-#include <rosa.hpp>
+#include "core/GameManager.hpp"
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
 const char* yaml_path{ "serialise.yaml" };

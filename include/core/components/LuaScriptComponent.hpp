@@ -14,22 +14,18 @@
  */
 
 #pragma once
-#include <sol/forward.hpp>
-#define SOL_PRINT_ERRORS 0
+
+#define SOL_PRINT_ERRORS 1
 #define SOL_ALL_SAFETIES_ON 1
 
 #include <memory>
 #include <functional>
 #include <sol/sol.hpp>
-#include <stduuid/uuid.h>
+#include <core/Uuid.hpp>
 #include <spdlog/spdlog.h>
 #include <core/Scene.hpp>
 #include <core/components/TransformComponent.hpp>
 #include <core/components/SpriteComponent.hpp>
-#include <core/lua_script/LuaTransform.hpp>
-#include <core/lua_script/LuaSprite.hpp>
-#include <core/lua_script/LuaSound.hpp>
-#include <core/lua_script/LuaMusic.hpp>
 
 namespace rosa {
 
@@ -39,7 +35,12 @@ namespace rosa {
     struct LuaScriptComponent {
 
             LuaScriptComponent(Scene* scene, entt::entity entity);
-            auto setScript(uuids::uuid uuid, bool deserialised = false) -> bool;
+            auto setScript(Uuid uuid, bool deserialised = false) -> bool;
+            auto setData(const std::string& key, sol::table& table) -> void;
+
+            auto setValue(const std::string& key, int value) -> void;
+            auto setValue(const std::string& key, float value) -> void;
+            auto setValue(const std::string& key, std::string value) -> void;
 
         private:
             sol::state m_state;
@@ -48,17 +49,10 @@ namespace rosa {
             sol::protected_function m_on_delete_function;
             sol::protected_function m_on_update_function;
             sol::protected_function m_on_input_function;
-            uuids::uuid m_uuid;
-
-            auto set_data(const std::string& key, sol::table& table) -> void;
+            Uuid m_uuid;
 
             entt::entity m_entity;
             Scene* m_scene;
-
-            std::unique_ptr<lua_script::LuaTransform> m_lua_transform;
-            std::unique_ptr<lua_script::LuaSprite> m_lua_sprite;
-            std::unique_ptr<lua_script::LuaSound> m_lua_sound;
-            std::unique_ptr<lua_script::LuaMusic> m_lua_music;
 
             friend class Scene;
             friend class SceneSerialiser;

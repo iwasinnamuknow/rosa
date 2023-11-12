@@ -19,6 +19,7 @@
 #include <graphics/Drawable.hpp>
 #include <graphics/Quad.hpp>
 #include <graphics/Rect.hpp>
+#include <core/Uuid.hpp>
 #include <cstddef>
 
 class Window;
@@ -35,9 +36,12 @@ namespace rosa {
 
             auto setTextureRect(glm::vec2 position, glm::vec2 size) -> void;
             auto setTextureRect(Rect rect) -> void;
+            auto getTextureRect() -> Rect;
+
             auto getSize() -> glm::vec2;
 
-            auto setTexture(Texture& texture) -> void;
+            auto getTexture() -> Texture&;
+            auto setTexture(Uuid uuid) -> void;
 
         protected:
             auto draw(glm::mat4 transform) -> void override;

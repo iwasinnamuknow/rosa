@@ -42,22 +42,29 @@ namespace rosa {
         Entity entity{m_registry.create(), *this};
         entity.addComponent<TransformComponent>();
         m_entities.insert({entity.getId(), entity});
+        m_uuid_to_entity.insert({entity.getUUID(), entity.getId()});
+        m_entity_to_uuid.insert({entity.getId(), entity.getUUID()});
         return m_entities.at(entity.getId());
     }
 
-    auto Scene::create_entity(uuids::uuid uuid) -> Entity& {
+    auto Scene::create_entity(Uuid uuid) -> Entity& {
         ROSA_PROFILE_SCOPE("Entity:Create_UUID");
 
         Entity entity{uuid, m_registry.create(), *this};
         entity.addComponent<TransformComponent>();
         m_entities.insert({entity.getId(), entity});
+        m_uuid_to_entity.insert({entity.getUUID(), entity.getId()});
+        m_entity_to_uuid.insert({entity.getId(), entity.getUUID()});
         return m_entities.at(entity.getId());
     }
     
-    auto Scene::removeEntity(Entity& entity) -> bool {
+    auto Scene::removeEntity(Uuid uuid) -> bool {
         ROSA_PROFILE_SCOPE("Entity:Remove");
 
-        if (m_entities.contains(entity.m_id)) {
+        auto ent_id = m_uuid_to_entity.at(uuid);
+
+        if (m_entities.contains(ent_id)) {
+            auto entity = m_entities.at(ent_id);
             entity.m_for_deletion = true;
             return true;
         }
@@ -176,8 +183,8 @@ namespace rosa {
                     
                     stack.push(entity);
 
-                    while (entity->m_parent != entt::null) {
-                        entity = &m_entities.at(entity->m_parent);
+                    while (entity->m_parent != Uuid()) {
+                        entity = &m_entities.at(m_uuid_to_entity.at(entity->m_parent));
                         stack.push(entity);
                     }
 
@@ -212,6 +219,8 @@ namespace rosa {
                         //lua_close(lsc.m_state);
                     }
                     m_entities.erase(entity);
+                    m_uuid_to_entity.erase(actual->getUUID());
+                    m_entity_to_uuid.erase(entity);
                     m_registry.destroy(entity);
                 }
             }
