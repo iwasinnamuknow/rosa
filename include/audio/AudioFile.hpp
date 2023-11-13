@@ -25,7 +25,7 @@ namespace rosa {
     class AudioFile : public ::SoLoud::File, public rosa::Resource {
 
         public:
-            AudioFile(std::string name, Uuid uuid) : Resource(std::move(name), uuid) {}
+            AudioFile(std::string name, Uuid uuid, std::string pack) : Resource(std::move(name), uuid, std::move(pack)) {}
             ~AudioFile() override;
 
             auto loadFromPhysFS() -> bool override;
@@ -35,6 +35,7 @@ namespace rosa {
             auto length() -> unsigned int override;
             auto seek(int offset) -> void override;
             auto pos() -> unsigned int override;
+            auto closeHandles() -> void override;
 
         private:
             PHYSFS_File* m_file_ptr{nullptr};

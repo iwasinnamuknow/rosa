@@ -24,7 +24,7 @@ namespace rosa {
 
     class LuaScript : public ::rosa::Resource {
         public:
-            LuaScript(std::string name, Uuid uuid) : rosa::Resource(std::move(name), uuid) {}
+            LuaScript(std::string name, Uuid uuid, std::string pack) : rosa::Resource(std::move(name), uuid, std::move(pack)) {}
 
             auto loadFromPhysFS() -> bool override;
 

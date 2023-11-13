@@ -25,6 +25,8 @@ auto main() -> int {
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600);
 
+    rosa::ResourceManager::instance().registerAssetPack("base.pak", "");
+
     // Create a scene from yaml
     game_mgr.unpackScene("deserialise", yaml_path);
 

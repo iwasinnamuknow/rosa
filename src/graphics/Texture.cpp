@@ -31,8 +31,7 @@ namespace rosa {
         const auto& name = getName();
 
         if (PHYSFS_exists(name.c_str()) == 0) {
-            spdlog::error("Couldn't load asset: {}", name);
-            return false;
+            throw ResourceNotFoundException(fmt::format("Couldn't locate resource {}", name));
         }
 
         PHYSFS_file* myfile = PHYSFS_openRead(name.c_str());
@@ -40,12 +39,18 @@ namespace rosa {
         //int length_read = PHYSFS_readBytes (myfile, buffer, PHYSFS_fileLength(myfile));
         //assert(length_read == PHYSFS_fileLength(myfile));
 
+        auto length = PHYSFS_fileLength(myfile);
+        if (length < 128) {
+            PHYSFS_close(myfile);
+            throw MalformedDDSException("Too small to be a DDS");
+        }
+
         // Check for DDS header
         char filecode[4];
         PHYSFS_readBytes(myfile, filecode, 4);
         if (strncmp(filecode, "DDS ", 4) != 0) {
-            spdlog::error("DDS file didn't contain a DDS header: {}", name);
-            return false;
+            PHYSFS_close(myfile);
+            throw MalformedDDSException("Missing DDS header");
         }
 
         // get the surface desc
@@ -88,29 +93,31 @@ namespace rosa {
             break;
         default:
             free(buffer);
-            spdlog::error("Could not determine DDS texture compression for: {}", name);
+            throw MalformedDDSException("Could not determine DDS texture compression");
             return false;
         }
 
-        // Create one OpenGL texture
-        glGenTextures(1, &m_texture_id);
+        if (glfwGetCurrentContext() != nullptr) {
+            // Create one OpenGL texture
+            glGenTextures(1, &m_texture_id);
 
-        // "Bind" the newly created texture : all future texture functions will modify this texture
-        glBindTexture(GL_TEXTURE_2D, m_texture_id);
+            // "Bind" the newly created texture : all future texture functions will modify this texture
+            glBindTexture(GL_TEXTURE_2D, m_texture_id);
 
-        unsigned int blockSize = (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 8 : 16;
-        unsigned int offset = 0;
+            unsigned int blockSize = (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 8 : 16;
+            unsigned int offset = 0;
 
-        /* load the mipmaps */
-        for (unsigned int level = 0; level < mipMapCount && (width || height); ++level)
-        {
-            unsigned int size = ((width+3)/4)*((height+3)/4)*blockSize;
-            glCompressedTexImage2D(GL_TEXTURE_2D, level, format, width, height, 
-                0, size, buffer + offset);
+            /* load the mipmaps */
+            for (unsigned int level = 0; level < mipMapCount && (width || height); ++level)
+            {
+                unsigned int size = ((width+3)/4)*((height+3)/4)*blockSize;
+                glCompressedTexImage2D(GL_TEXTURE_2D, level, format, width, height, 
+                    0, size, buffer + offset);
 
-            offset += size;
-            width  /= 2;
-            height /= 2;
+                offset += size;
+                width  /= 2;
+                height /= 2;
+            }
         }
 
         free(buffer); 

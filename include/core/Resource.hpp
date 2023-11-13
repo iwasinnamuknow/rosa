@@ -34,7 +34,7 @@ namespace rosa {
 
     class Resource {
         public:
-            Resource(std::string name, Uuid uuid) : m_name(std::move(name)), m_uuid(uuid) {}
+            Resource(std::string name, Uuid uuid, std::string pack) : m_name(std::move(name)), m_uuid(uuid), m_pack(std::move(pack)) {}
             virtual ~Resource() = default;
 
             auto getName() -> const std::string& {
@@ -45,11 +45,18 @@ namespace rosa {
                 return m_uuid;
             }
 
+            auto getPack() -> const std::string& {
+                return m_pack;
+            }
+
         private:
             std::string m_name{};
             Uuid m_uuid{};
 
             virtual auto loadFromPhysFS() -> bool = 0;
+            virtual auto closeHandles() -> void {}
+
+            std::string m_pack{};
 
             friend class ResourceManager;
     };

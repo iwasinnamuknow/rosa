@@ -34,10 +34,16 @@
 #endif
 
 namespace rosa {
+
+    class MalformedDDSException : public Exception {
+        public:
+            explicit MalformedDDSException(const std::string& msg) : Exception(msg) {}
+    };
+
     class Texture : public Resource {
 
         public:
-            Texture(std::string name, Uuid uuid) : rosa::Resource(std::move(name), uuid) {}
+            Texture(std::string name, Uuid uuid, std::string pack) : rosa::Resource(std::move(name), uuid, std::move(pack)) {}
 
             auto getOpenGlId() const -> unsigned int {
                 return m_texture_id;

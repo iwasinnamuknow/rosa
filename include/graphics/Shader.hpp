@@ -72,7 +72,7 @@ void main()
 
     class Shader : public ::rosa::Resource {
         public:
-            explicit Shader(const std::string& name, Uuid uuid, ShaderType type = VertexShader) : Resource(name, uuid), m_type(type) {
+            explicit Shader(const std::string& name, Uuid uuid, std::string pack, ShaderType type = VertexShader) : Resource(std::move(name), uuid, std::move(pack)), m_type(type) {
                 if (m_type == VertexShader) {
                     m_content = default_vertex_shader;
                 } else if (m_type == FragmentShader) {
