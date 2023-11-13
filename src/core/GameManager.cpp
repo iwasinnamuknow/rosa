@@ -27,7 +27,7 @@
 
 namespace rosa {
 
-    GameManager::GameManager(int window_width, int window_height) {
+    GameManager::GameManager(int window_width, int window_height, const std::string& window_title) {
         ROSA_PROFILE_SESSION_BEGIN("test");
 
         #if (DEBUG)
@@ -38,7 +38,7 @@ namespace rosa {
 
         try {
             spdlog::info("Setting up OpenGL context");
-            m_render_window.init(window_width, window_height, "SFML Window");
+            m_render_window.init(window_width, window_height, window_title);
 
             spdlog::info("Initialising resource management");
             [[maybe_unused]]auto& res = ResourceManager::instance();

@@ -63,7 +63,7 @@ auto main(int argc, char* argv[]) -> int {
     }
 
     // Grab the GameManager
-    auto game_mgr = rosa::GameManager(800, 600);
+    auto game_mgr = rosa::GameManager(800, 600, "Coundown Timer");
 
     rosa::ResourceManager::instance().registerAssetPack("base.pak", "");
 
