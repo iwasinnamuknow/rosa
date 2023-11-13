@@ -65,6 +65,8 @@ auto main(int argc, char* argv[]) -> int {
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600);
 
+    rosa::ResourceManager::instance().registerAssetPack("base.pak", "");
+
     // Instantiate our scene from the class above and register it
     game_mgr.addScene("countdown", std::make_unique<CountdownScene>(game_mgr.getRenderWindow()));
 

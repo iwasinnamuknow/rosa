@@ -52,5 +52,8 @@ namespace rosa {
         return PHYSFS_tell(m_file_ptr);
     }
     
+    auto AudioFile::closeHandles() -> void {
+        PHYSFS_close(m_file_ptr);
+    }
 
 } // namespace rosa

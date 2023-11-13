@@ -89,6 +89,8 @@ auto main() -> int {
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600);
 
+    rosa::ResourceManager::instance().registerAssetPack("base.pak", "");
+
     // Instantiate our scene from the class above and register it
     game_mgr.addScene("serialise", std::make_unique<SerialiseScene>(game_mgr.getRenderWindow()));
 

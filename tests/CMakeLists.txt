@@ -25,3 +25,10 @@ else()
 endif (CMAKE_BUILD_TYPE MATCHES Debug)                                                               
                                                                                                      
 target_link_libraries(rosa_tests PRIVATE snitch::snitch rosa)
+
+file(GLOB PACKS "*.pak")
+
+add_custom_target(copy_packs ALL
+  COMMAND cp ${PACKS} ${CMAKE_CURRENT_BINARY_DIR}/
+)
+ADD_DEPENDENCIES(copy_packs rosa_tests)

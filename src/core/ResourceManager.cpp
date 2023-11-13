@@ -72,19 +72,21 @@ auto get_exe_dir() -> std::string {
 }
 
 namespace rosa {
+    
+    auto ResourceManager::registerAssetPack(const std::string& path, const std::string& mount_point) -> void {
+        ROSA_PROFILE_SCOPE("Assets:MountAssetPack");
 
-    ResourceManager::ResourceManager() {
-        ROSA_PROFILE_SCOPE("Assets:ParseAssetList");
+        auto exe_dir = get_exe_dir().append("/").append(path);
 
         PHYSFS_init(nullptr);
-        int mount_success = PHYSFS_mount(get_exe_dir().append("/base.pak").data(), "", 0);
+        int mount_success = PHYSFS_mount(exe_dir.c_str(), mount_point.c_str(), 0);
         if (mount_success == 0) {
-            throw Exception("Failed to locate base.pak");
+            throw MissingPackException(fmt::format("Failed to mount {}", path));
         }
 
         // Attempt to read assets.lst
         if (PHYSFS_exists("assets.lst") != 0) {
-            PHYSFS_file* myfile = PHYSFS_openRead("assets.lst");
+            PHYSFS_file* myfile = PHYSFS_openRead(fmt::format("{}/assets.lst", mount_point).c_str());
             std::string buffer{};
             buffer.resize(PHYSFS_fileLength(myfile));
             std::int64_t length_read = PHYSFS_readBytes(myfile, buffer.data(), static_cast<std::uint64_t>(PHYSFS_fileLength(myfile)));
@@ -99,27 +101,27 @@ namespace rosa {
                 auto type = static_cast<resource_type>(std::stoi(line_data.at(0)));
 
                 if (type == resource_type::resource_texture) {
-                    auto new_resource = std::make_unique<Texture>( line_data.at(1), uuid);
+                    auto new_resource = std::make_unique<Texture>( line_data.at(1), uuid, path);
                     new_resource->loadFromPhysFS();
                     m_resources[uuid] = std::move(new_resource);
                 
                 } else if (type == resource_type::resource_vertex_shader) {
-                    auto new_resource = std::make_unique<Shader>( line_data.at(1), uuid, ShaderType::VertexShader);
+                    auto new_resource = std::make_unique<Shader>( line_data.at(1), uuid, path, ShaderType::VertexShader);
                     new_resource->loadFromPhysFS();
                     m_resources[uuid] = std::move(new_resource);
 
                 } else if (type == resource_type::resource_fragment_shader) {
-                    auto new_resource = std::make_unique<Shader>( line_data.at(1), uuid, ShaderType::FragmentShader);
+                    auto new_resource = std::make_unique<Shader>( line_data.at(1), uuid, path, ShaderType::FragmentShader);
                     new_resource->loadFromPhysFS();
                     m_resources[uuid] = std::move(new_resource);
 
                 } else if (type == resource_type::resource_script) {
-                    auto new_resource = std::make_unique<LuaScript>( line_data.at(1), uuid);
+                    auto new_resource = std::make_unique<LuaScript>( line_data.at(1), uuid, path);
                     new_resource->loadFromPhysFS();
                     m_resources[uuid] = std::move(new_resource);
 
                 } else if (type == resource_type::resource_sound || type == resource_type::resource_music) {
-                    auto new_resource = std::make_unique<AudioFile>( line_data.at(1), uuid);
+                    auto new_resource = std::make_unique<AudioFile>( line_data.at(1), uuid, path);
                     new_resource->loadFromPhysFS();
                     m_resources[uuid] = std::move(new_resource);
                 }     
@@ -127,7 +129,37 @@ namespace rosa {
 
         } else {
             // doesn't exists..
-            throw Exception("Couldn't find asset manifest inside base.pak");
+            PHYSFS_unmount(exe_dir.c_str());
+            throw MissingManifestException(fmt::format("Couldn't find asset manifest inside {}", path));
+        }
+    }
+
+    auto ResourceManager::unregisterAssetPack(const std::string& path) -> void {
+
+        ROSA_PROFILE_SCOPE("Assets:UnmountAssetPack");
+
+        auto real_path = get_exe_dir().append("/").append(path);
+
+        for (auto it = m_resources.cbegin(); it != m_resources.cend();) {
+            if (it->second.get()->getPack() == path) {
+                it->second.get()->closeHandles();
+                m_resources.erase(it++);
+            } else {
+                ++it;
+            }
+        }
+
+        if (PHYSFS_unmount(real_path.c_str()) == 0) {
+            auto error = PHYSFS_getLastErrorCode();
+
+            switch (error) {
+                case PHYSFS_ERR_FILES_STILL_OPEN:
+                    throw UnmountFailedException("Files are still open");
+                    break;
+                case PHYSFS_ERR_NOT_MOUNTED:
+                    throw UnmountFailedException("Pack not mounted");
+                    break;
+            }
         }
     }
 
