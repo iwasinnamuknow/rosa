@@ -87,7 +87,17 @@ namespace rosa {
         glfwMakeContextCurrent( m_wnd );
         //glfwSwapInterval(0); // Vsync disable
 
-        [[maybe_unused]] int version = gladLoadGL(glfwGetProcAddress);
+        gladLoadGL(glfwGetProcAddress);
+
+        GLint version_major{};
+        GLint version_minor{};
+        glGetIntegerv(GL_MAJOR_VERSION, &version_major);
+        glGetIntegerv(GL_MINOR_VERSION, &version_minor);
+
+        auto vendor = std::string(reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+        auto renderer = std::string(reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+
+        spdlog::info("Context created with OpenGL {}.{} using {} ({})", version_major, version_minor, renderer, vendor);
 
         glfwSetKeyCallback(m_wnd, key_callback);
         glfwSetCursorPosCallback(m_wnd, cursor_pos_callback);
