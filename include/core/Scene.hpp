@@ -21,7 +21,6 @@
 #include <spdlog/spdlog.h>
 #include <unordered_map>
 //#include <core/Entity.hpp>
-#include <debug/Profiler.hpp>
 #include <core/Event.hpp>
 #include <core/Uuid.hpp>
 
@@ -143,9 +142,6 @@ namespace rosa {
             friend class SceneSerialiser;
             friend struct LuaScriptComponent;
             friend class GameManager;
-
-            auto show_profile_stats(bool* open) const -> void;
-            bool m_show_profile_stats{true};
 
             double m_last_frame_time{};
     };

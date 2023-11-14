@@ -67,6 +67,16 @@
         "glfw-binding",
         "opengl3-binding"
       ]
+    },
+    {
+      "name": "tracy",
+      "version>=": "0.9.1#1",
+      "features": [
+        "cli-tools",
+        "crash-handler",
+        "gui-tools",
+        "on-demand"
+      ]
     }
   ],
   "default-features": [],

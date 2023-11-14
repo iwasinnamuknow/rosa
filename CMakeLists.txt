@@ -7,7 +7,7 @@ add_subdirectory(vendor/soloud/contrib)
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 if (ROSA_PROFILE)
-  add_definitions(-DROSA_PROFILE)
+  add_definitions(-DTRACY_ENABLE)
 endif(ROSA_PROFILE)
 
 #set(Boost_USE_STATIC_LIBS        ON)
@@ -35,6 +35,7 @@ add_library(
 #endif (_WIN32)
 
 find_package(imgui CONFIG REQUIRED)
+find_package(Tracy CONFIG REQUIRED)
 
 target_precompile_headers(rosa 
   PUBLIC
@@ -66,6 +67,7 @@ if(WIN32)
     ${_VCPKG_INSTALLED_DIR}/x64-windows-static-md/lib/glfw3.lib
     imgui::imgui
     soloud
+    Tracy::TracyClient
   )
 else(WIN32)
   target_link_libraries(rosa PRIVATE
@@ -82,6 +84,7 @@ else(WIN32)
     X11
     imgui::imgui
     soloud
+    Tracy::TracyClient
   )
 endif(WIN32)
 

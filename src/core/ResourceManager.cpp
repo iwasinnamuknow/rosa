@@ -74,7 +74,7 @@ auto get_exe_dir() -> std::string {
 namespace rosa {
     
     auto ResourceManager::registerAssetPack(const std::string& path, const std::string& mount_point) -> void {
-        ROSA_PROFILE_SCOPE("Assets:MountAssetPack");
+        ZoneScopedN("Assets:MountAssetPack");
 
         auto exe_dir = get_exe_dir().append("/").append(path);
 
@@ -136,7 +136,7 @@ namespace rosa {
 
     auto ResourceManager::unregisterAssetPack(const std::string& path) -> void {
 
-        ROSA_PROFILE_SCOPE("Assets:UnmountAssetPack");
+        ZoneScopedN("Assets:UnmountAssetPack");
 
         auto real_path = get_exe_dir().append("/").append(path);
 
