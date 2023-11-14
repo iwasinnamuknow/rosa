@@ -23,6 +23,7 @@
 #include <core/Uuid.hpp>
 #include <core/lua_script/CountdownTimer.hpp>
 #include <core/Entity.hpp>
+#include <tracy/Tracy.hpp>
 
 #include <sstream>
 
@@ -373,13 +374,13 @@ namespace rosa {
     }
 
     LuaScriptComponent::LuaScriptComponent(Scene* scene, entt::entity entity) : m_entity(entity), m_scene(scene) {
-        ROSA_PROFILE_SCOPE("LuaScriptComponent:Initialise");
+        ZoneScopedN("LuaScriptComponent:Initialise");
 
         m_state.open_libraries(sol::lib::base, sol::lib::string);
     }
 
     auto LuaScriptComponent::setScript(Uuid uuid, bool deserialised) -> bool {
-        ROSA_PROFILE_SCOPE("LuaScriptComponent:setScript");
+        ZoneScopedN("LuaScriptComponent:setScript");
 
         try {
             const auto& script = ResourceManager::instance().getAsset<LuaScript>(uuid);

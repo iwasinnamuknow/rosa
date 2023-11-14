@@ -18,17 +18,17 @@
 #include <core/GameManager.hpp>
 #include <cstddef>
 #include <memory>
-#include <debug/Profiler.hpp>
 #include <chrono>
 #include <ratio>
 #include <core/EventManager.hpp>
 #include <spdlog/spdlog.h>
 #include <core/SceneSerialiser.hpp>
+#include <tracy/Tracy.hpp>
+#include <tracy/TracyOpenGL.hpp>
 
 namespace rosa {
 
     GameManager::GameManager(int window_width, int window_height, const std::string& window_title) {
-        ROSA_PROFILE_SESSION_BEGIN("test");
 
         #if (DEBUG)
         spdlog::set_level(spdlog::level::debug);
@@ -53,7 +53,7 @@ namespace rosa {
     }
 
     auto GameManager::addScene(const std::string& key, std::unique_ptr<Scene> scene) -> bool {
-        ROSA_PROFILE_SCOPE("Scenes:add");
+        ZoneScopedN("Scenes:Add");
         auto [iterator, inserted] = m_scenes.insert_or_assign(key, std::move(scene));
         return inserted;
     }
@@ -77,7 +77,7 @@ namespace rosa {
             assert(m_current_scene); // Ensure scene pointer is valid - this needs to be managed internally.
 
             {
-                ROSA_PROFILE_SCOPE("DispatchEvents");
+                ZoneScopedNC("Events", 0xFEEF99);
                 EventManager::getInstance().pollEvents(m_render_window);
 
                 while (EventManager::getInstance().hasEvents()) {
@@ -91,28 +91,41 @@ namespace rosa {
                 }
             }
 
-            ImGui_ImplOpenGL3_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
+            {
+                ZoneScopedN("ImGui::NewFrame");
+                ImGui_ImplOpenGL3_NewFrame();
+                ImGui_ImplGlfw_NewFrame();
+                ImGui::NewFrame();
+            }
 
-            m_current_scene->update(delta_time);
+            {
+                ZoneScopedNC("Updates", 0x22AA22);
+                m_current_scene->update(delta_time);
+            }
 
-            m_render_window.clearColour(m_clear_colour);
+            {
+                ZoneScopedNC("Render", 0xFF0000);
+                m_render_window.clearColour(m_clear_colour);
+                m_current_scene->render();
 
-            m_current_scene->render();
+                {
+                    ZoneScopedN("Render::ImGui");
+                    ImGui::Render();
+                    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+                }
+            }
 
-            ImGui::Render();
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            tracy::Profiler::SendFrameMark( nullptr );
 
             //ImGui::SFML::Render(m_render_window);
             m_render_window.display();
-        }
 
-        ROSA_PROFILE_SESSION_END();
+            TracyGpuCollect
+        }
     }
 
     auto GameManager::changeScene(const std::string& key) -> bool {
-        ROSA_PROFILE_SCOPE("Scenes:change");
+        ZoneScopedN("Scenes:Change");
         if (auto search = m_scenes.find(key); search != m_scenes.end()) {
             if (m_current_scene != nullptr) {
                 m_current_scene->onUnload();
@@ -127,6 +140,7 @@ namespace rosa {
     }
 
     auto GameManager::unpackScene(const std::string& key, const std::string& path) -> bool {
+        ZoneScopedN("Scenes:Unpack");
         auto scene = std::make_unique<Scene>(getRenderWindow());
         auto serialiser = SceneSerialiser(*scene.get());
         serialiser.deserialiseFromYaml(path);

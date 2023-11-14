@@ -18,6 +18,7 @@
 #include <graphics/BatchRenderer.hpp>
 #include <graphics/gl.hpp>
 #include <GLFW/glfw3.h>
+#include <tracy/Tracy.hpp>
 
 namespace rosa {
 
@@ -97,6 +98,7 @@ namespace rosa {
     }
 
     auto BatchRenderer::submit(const Quad& quad) -> void {
+        ZoneScopedN("Render:BatchRenderer:Submit");
 
         if ((m_index_count) + 6 > max_index_count || m_texture_count > 31) {
             flush();
@@ -145,6 +147,7 @@ namespace rosa {
     }
 
     auto BatchRenderer::flush() -> void {
+        ZoneScopedN("Render:BatchRenderer:Flush");
         
         glUseProgram(m_pid);
         glBindVertexArray(m_vao);

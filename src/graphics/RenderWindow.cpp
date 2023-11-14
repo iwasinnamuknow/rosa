@@ -21,6 +21,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <core/EventManager.hpp>
+#include <tracy/TracyOpenGL.hpp>
 
 void key_callback(GLFWwindow* /*window*/, int key, int /*scancode*/, int action, int mode) {
     // TODO EVENTS
@@ -89,6 +90,8 @@ namespace rosa {
 
         gladLoadGL(glfwGetProcAddress);
 
+        TracyGpuContext;
+
         GLint version_major{};
         GLint version_minor{};
         glGetIntegerv(GL_MAJOR_VERSION, &version_major);
@@ -145,6 +148,7 @@ namespace rosa {
     auto RenderWindow::display() -> void {
         if ( m_updateViewport )
         {
+            TracyGpuZone("Update Viewport");
             glfwGetFramebufferSize( m_wnd, &m_vpSize[0], &m_vpSize[1] );
             glViewport(0, 0, m_vpSize[0], m_vpSize[1]);
             m_updateViewport = false;
@@ -152,10 +156,15 @@ namespace rosa {
 
         m_projection = glm::ortho(0.F, static_cast<float>(m_vpSize[0]), static_cast<float>(m_vpSize[1]), 0.F);
 
-        glfwSwapBuffers(m_wnd);
+        {
+            TracyGpuZone("Swap Buffers");
+            glfwSwapBuffers(m_wnd);
+        }
     }
 
     auto RenderWindow::clearColour(Colour colour) -> void {
+        ZoneScopedN("Render:Clear");
+        TracyGpuZone("Clear");
         glClearColor(colour.r, colour.g, colour.b, colour.a);
         glClear(GL_COLOR_BUFFER_BIT);
     }

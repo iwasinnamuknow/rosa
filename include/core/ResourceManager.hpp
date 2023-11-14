@@ -17,7 +17,6 @@
 #pragma once
 
 #include <core/Resource.hpp>
-#include <debug/Profiler.hpp>
 #include <graphics/Texture.hpp>
 #include <audio/AudioFile.hpp>
 #include <core/Uuid.hpp>
@@ -26,6 +25,7 @@
 #include <string>
 #include <unordered_map>
 #include <physfs.h>
+#include <tracy/Tracy.hpp>
 
 namespace rosa {
 
@@ -90,6 +90,7 @@ namespace rosa {
              */
             template<typename T>
             auto getAsset(Uuid uuid) -> T& {
+                ZoneScopedN("Assets:GetAsset");
                 if (m_resources.contains(uuid)) {
                     T& resource = *(dynamic_cast<T*>(m_resources.at(uuid).get()));
                     return resource;
