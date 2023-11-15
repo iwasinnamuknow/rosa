@@ -96,10 +96,10 @@ namespace rosa {
             /**
              * @brief Get the current scene
              * 
-             * @return Scene& reference to the scene
+             * @return Scene* An observer pointer to the scene
              */
-            auto getCurrentScene() -> Scene& {
-                return *m_current_scene;
+            auto getCurrentScene() -> Scene* {
+                return m_current_scene;
             }
 
             /**
@@ -107,8 +107,8 @@ namespace rosa {
              * 
              * @return RenderWindow& reference to the render window
              */
-            auto getRenderWindow() -> RenderWindow& {
-                return m_render_window;
+            auto getRenderWindow() -> RenderWindow* {
+                return &m_render_window;
             }
 
             /**

@@ -271,7 +271,7 @@ namespace rosa {
                 auto entities = scene["entities"];
                 for (auto entity: entities) {
                     if (entity["uuid"]) {
-                        Entity new_entity = m_scene.create_entity(Uuid(entity["uuid"].as<std::string>()));
+                        Entity new_entity = m_scene.createEntity(Uuid(entity["uuid"].as<std::string>()));
 
                         if (entity["components"]) {
                             for (auto comp : entity["components"]) {

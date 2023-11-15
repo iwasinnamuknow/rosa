@@ -30,13 +30,13 @@
 #include <core/components/CameraComponent.hpp>
 #include <functional>
 #include <stack>
-#include <core/Entity.hpp>
 
+#include <core/Entity.hpp>
 #include <graphics/BatchRenderer.hpp>
 
 namespace rosa {
 
-    Scene::Scene(RenderWindow& render_window) : m_render_window(render_window) { }
+    Scene::Scene(RenderWindow* render_window) : m_render_window(render_window) { }
 
     auto Scene::createEntity() -> Entity& {
         
@@ -50,7 +50,7 @@ namespace rosa {
         return m_entities.at(entity.getId());
     }
 
-    auto Scene::create_entity(Uuid uuid) -> Entity& {
+    auto Scene::createEntity(Uuid uuid) -> Entity& {
 
         ZoneScopedN("Entity:Create_UUID");
 
@@ -84,7 +84,7 @@ namespace rosa {
             switch (event.keyboard.type) {
                 case KeyboardEventType::KeyReleased:
                     if (event.keyboard.key == KeyEscape) {
-                        m_render_window.close();
+                        getRenderWindow().close();
                     }
                     break;
                 case KeyboardEventType::KeyPressed:
@@ -250,9 +250,10 @@ namespace rosa {
 
     auto Scene::render() -> void {
 
-        //auto size = getRenderWindow().getViewport();
-        //auto projection = glm::ortho(0.F, static_cast<float>(size.x), static_cast<float>(size.y), 0.F);
-        //auto combined = mvp * transform;
+        if (m_render_window == nullptr) {
+            spdlog::critical("Rendering disabled. Running in test mode?");
+            return;
+        }
 
         {
             ZoneScopedN("Render:BatchRenderer:Setup");

@@ -20,6 +20,7 @@
 #include <graphics/RenderWindow.hpp>
 #include <spdlog/spdlog.h>
 #include <unordered_map>
+
 //#include <core/Entity.hpp>
 #include <core/Event.hpp>
 #include <core/Uuid.hpp>
@@ -45,7 +46,7 @@ namespace rosa {
              * 
              * @param render_window The OpenGL render window
              */
-            explicit Scene(RenderWindow& render_window);
+            explicit Scene(RenderWindow* render_window = nullptr);
 
             Scene(Scene const &) = delete;
             auto operator=(Scene const &) -> Scene & = delete;
@@ -84,7 +85,7 @@ namespace rosa {
              * @return RenderWindow& reference to the render window
              */
             auto getRenderWindow() const -> RenderWindow& {
-                return m_render_window;
+                return *m_render_window;
             }
 
             /**
@@ -104,6 +105,16 @@ namespace rosa {
              * @return Entity& reference to a new entity
              */
             auto createEntity() -> Entity&;
+
+            /**
+             * @brief Create a new entity in the scene with a predetermined uuid.
+             *
+             *  The new entity will contain only a transform component
+             * 
+             * @param Uuid A predetermined uuid
+             * @return Entity& reference to a new entity
+             */
+            auto createEntity(Uuid uuid) -> Entity&;
 
             /**
              * @brief Remove an entity from the scene
@@ -127,12 +138,10 @@ namespace rosa {
 
         private:
             entt::registry m_registry{};
-            RenderWindow& m_render_window;
+            RenderWindow* m_render_window;
             std::unordered_map<entt::entity, Entity> m_entities{};
             std::unordered_map<Uuid, entt::entity> m_uuid_to_entity{};
             std::unordered_map<entt::entity, Uuid> m_entity_to_uuid{};
-
-            auto create_entity(Uuid uuid) -> Entity&;
 
             virtual auto onLoad() -> void {}
             virtual auto onUnload() ->  void {}

@@ -31,7 +31,7 @@ class CountdownScene : public rosa::Scene {
     public:
 
         // Pass default params to the base class constructor
-        explicit CountdownScene(rosa::RenderWindow& render_window) : rosa::Scene(render_window) {}
+        explicit CountdownScene(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {}
 
         // Override the onLoad function so we can set up our scene. This will be called
         // any time the GameManager activates the scene.
