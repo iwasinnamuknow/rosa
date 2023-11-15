@@ -27,6 +27,7 @@
 #include <core/components/TransformComponent.hpp>
 #include <core/components/NativeScriptComponent.hpp>
 #include <core/components/LuaScriptComponent.hpp>
+#include <core/components/CameraComponent.hpp>
 #include <functional>
 #include <stack>
 #include <core/Entity.hpp>
@@ -163,7 +164,7 @@ namespace rosa {
         }
 
         {
-            ZoneScopedN("Updates:SpriteTransformUpdate");
+            ZoneScopedN("Updates:TransformUpdate");
 
             // This function only cares about entities with TransformComponent, which is all of them i guess
             auto view = m_registry.view<TransformComponent>();
@@ -217,6 +218,30 @@ namespace rosa {
                     m_uuid_to_entity.erase(actual->getUUID());
                     m_entity_to_uuid.erase(entity);
                     m_registry.destroy(entity);
+                }
+            }
+        }
+
+        {
+            ZoneScopedN("Updates:Camera");
+
+            bool found_active{false};
+            auto view = m_registry.view<CameraComponent>();
+
+            for (const auto& entid : view)
+            {
+                if (found_active) {
+                    break;
+                }
+
+                auto& entity = m_entities.at(entid);
+                auto& cam = entity.getComponent<CameraComponent>();
+                auto& transform = entity.getComponent<TransformComponent>();
+
+                if (cam.getEnabled()) {
+                    found_active = true;
+                    auto global_transform = transform.getGlobalTransform();
+                    m_active_camera_pos = global_transform * glm::vec4(1, 1, 1, 1);
                 }
             }
         }
