@@ -144,6 +144,7 @@ namespace rosa {
             friend class GameManager;
 
             double m_last_frame_time{};
+            glm::vec4 m_active_camera_pos{0};
     };
 
 } // namespace rosa

@@ -145,15 +145,15 @@ namespace rosa {
         return glfwWindowShouldClose(m_wnd) == 0;
     }
 
-    auto RenderWindow::display() -> void {
+    auto RenderWindow::display(glm::vec2 camera_pos) -> void {
         if ( m_updateViewport )
         {
             TracyGpuZone("Update Viewport");
             glfwGetFramebufferSize( m_wnd, &m_vpSize[0], &m_vpSize[1] );
-            glViewport(0, 0, m_vpSize[0], m_vpSize[1]);
             m_updateViewport = false;
         }
 
+        glViewport(camera_pos.x, camera_pos.y, m_vpSize[0], m_vpSize[1]);
         m_projection = glm::ortho(0.F, static_cast<float>(m_vpSize[0]), static_cast<float>(m_vpSize[1]), 0.F);
 
         {
@@ -215,6 +215,10 @@ namespace rosa {
 
     auto RenderWindow::getProjection() const -> glm::mat4 {
         return m_projection;
+    }
+
+    auto RenderWindow::isKeyDown(Key key) -> bool {
+        return glfwGetKey(m_wnd, key);
     }
 
 } // namespace rosa

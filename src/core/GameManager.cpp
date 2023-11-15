@@ -118,7 +118,7 @@ namespace rosa {
             tracy::Profiler::SendFrameMark( nullptr );
 
             //ImGui::SFML::Render(m_render_window);
-            m_render_window.display();
+            m_render_window.display(m_current_scene->m_active_camera_pos);
 
             TracyGpuCollect
         }

@@ -27,6 +27,7 @@
 #include <vector>
 #include <graphics/Sprite.hpp>
 #include <graphics/Texture.hpp>
+#include <core/input/Keyboard.hpp>
 
 namespace rosa {
 
@@ -53,7 +54,7 @@ namespace rosa {
             auto setFullScreen(bool fullscreen) -> void;
             auto clearColour(Colour colour) -> void;
             auto isOpen() const -> bool;
-            auto display() -> void;
+            auto display(glm::vec2 camera_pos) -> void;
             auto getSize() const -> glm::vec2 {
                 return {m_wndSize[0], m_wndSize[1]};
             }
@@ -65,6 +66,8 @@ namespace rosa {
             auto close() -> void {
                 glfwSetWindowShouldClose(m_wnd, 1);
             }
+
+            auto isKeyDown(Key key) -> bool;
 
             auto getViewportSize() const -> glm::vec2;
 

@@ -13,27 +13,19 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <glm/vec2.hpp>
 
-#include <core/Entity.hpp>
-#include <core/Scene.hpp>
+namespace rosa {
 
-#include <string>
-#include <memory>
-#include <algorithm>
-#include <unordered_map>
-#include <vector>
+    class CameraComponent {
+        public:
+            CameraComponent() = default;
+            
+            auto setEnabled(bool enable) -> void;
+            auto getEnabled() -> bool;
 
-#include <glm/glm.hpp>
-#include <physfs.h>
-#include <spdlog/spdlog.h>
-#include <sol/sol.hpp>
-#include <fmt/format.h>
-#include <entt/entt.hpp>
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
-#include <graphics/gl.hpp>
-#include <GLFW/glfw3.h>
-#include <tracy/Tracy.hpp>
-#include <yaml-cpp/yaml.h>
+        private:
+            bool m_enabled{false};
+    };
+
+} // namespace rosa

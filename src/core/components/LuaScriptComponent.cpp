@@ -418,6 +418,10 @@ namespace rosa {
                     spdlog::debug(message);
                 });
 
+                m_state.set_function("isKeyDown", [this](Key key) {
+                    return m_scene->getRenderWindow().isKeyDown(key);
+                });
+
                 // Transform component
                 m_state["entity"] = &entity;
 

@@ -46,6 +46,15 @@ target_compile_features(generate_uuids PRIVATE cxx_std_20)
 target_include_directories(generate_uuids PRIVATE ../include/)
 target_link_libraries(generate_uuids PRIVATE rosa)
 
+if (_WIN32)
+    add_executable(camera_movement WIN32 camera_movement.cpp) 
+else (_WIN32)
+    add_executable(camera_movement camera_movement.cpp) 
+endif (_WIN32)
+target_compile_features(camera_movement PRIVATE cxx_std_20)
+target_include_directories(camera_movement PRIVATE ../include/)
+target_link_libraries(camera_movement PRIVATE rosa)
+
 # Asset packaging
 file(GLOB_RECURSE ASSETS "assets/*")
 
