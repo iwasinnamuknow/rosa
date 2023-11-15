@@ -27,7 +27,7 @@ function onUpdate(delta_time)
     
     transform:setPosition(pos);
 
-    print(transform:getPosition():to_string())
+    --print(transform:getPosition():to_string())
 end
 
 function onInput(event)
