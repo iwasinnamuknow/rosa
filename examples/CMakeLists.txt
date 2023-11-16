@@ -1,4 +1,4 @@
-project(rosa_testbed)
+project(rosa_examples)
 
 # Per-example targets
 if (_WIN32)
