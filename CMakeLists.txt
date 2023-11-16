@@ -55,38 +55,74 @@ target_include_directories(rosa SYSTEM PUBLIC
 )
 
 if(WIN32)
-  target_link_libraries(rosa PRIVATE
-    ${PHYSFS_LIBRARY}
-    spdlog::spdlog_header_only
-    fmt::fmt-header-only
-    yaml-cpp
-    stduuid
-    lua
-    sol2
-    ${_VCPKG_INSTALLED_DIR}/x64-windows-static-md/lib/glad.lib
-    ${_VCPKG_INSTALLED_DIR}/x64-windows-static-md/lib/glfw3.lib
-    imgui::imgui
-    soloud
-    Tracy::TracyClient
+  set(VCPKG_LIB ${_VCPKG_INSTALLED_DIR}/x64-windows-static-md/lib/)
+  set(OPENGL_SHIT
+    ${VCPKG_LIB}/glad.lib
+    ${VCPKG_LIB}/glfw3.lib
   )
-else(WIN32)
-  target_link_libraries(rosa PRIVATE
-    ${PHYSFS_LIBRARY}
-    spdlog::spdlog_header_only
-    fmt::fmt-header-only
-    yaml-cpp
-    stduuid
-    lua
-    sol2
-    ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/libglad.a
-    ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/libglfw3.a
-    ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/libuuid.a
-    X11
-    imgui::imgui
-    soloud
-    Tracy::TracyClient
+else()
+  set(VCPKG_LIB ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/)
+  set(OPENGL_SHIT
+    ${VCPKG_LIB}/libglad.a
+    ${VCPKG_LIB}/libglfw3.a
   )
-endif(WIN32)
+endif()
+
+if (CMAKE_BUILD_TYPE MATCHES Debug)
+  list(GET PHYSFS_LIBRARY 3 FINAL_PHYSFS_LIB)
+else()
+  list(GET PHYSFS_LIBRARY 1 FINAL_PHYSFS_LIB)
+endif()
+
+set (GENERAL_LIBS
+  ${FINAL_PHYSFS_LIB}
+  spdlog::spdlog_header_only
+  fmt::fmt-header-only
+  yaml-cpp
+  stduuid
+  lua
+  sol2
+  ${OPENGL_SHIT}
+  imgui::imgui
+  soloud
+)
+
+# set (WINDOWS_LIBS)
+
+set (LINUX_LIBS
+  X11
+)
+
+set (PROFILE_LIBS
+  Tracy::TracyClient
+)
+
+set (FINAL_LIBS
+  ${GENERAL_LIBS}
+)
+
+if (ROSA_PROFILE)
+  set (FINAL_LIBS
+    ${FINAL_LIBS}
+    ${PROFILE_LIBS}
+  )
+endif (ROSA_PROFILE)
+
+if(WIN32)
+  set(FINAL_LIBS
+    ${FINAL_LIBS}
+    ${WINDOWS_LIBS}
+  )
+else()
+  set(FINAL_LIBS
+    ${FINAL_LIBS}
+    ${LINUX_LIBS}
+  )
+endif()
+  
+target_link_libraries(rosa PRIVATE
+  ${FINAL_LIBS}
+)
 
 add_subdirectory(examples)
 add_subdirectory(docs)
