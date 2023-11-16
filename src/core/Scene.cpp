@@ -69,7 +69,7 @@ namespace rosa {
         auto ent_id = m_uuid_to_entity.at(uuid);
 
         if (m_entities.contains(ent_id)) {
-            auto entity = m_entities.at(ent_id);
+            auto& entity = m_entities.at(ent_id);
             entity.m_for_deletion = true;
             return true;
         }
