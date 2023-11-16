@@ -19,7 +19,7 @@ set(TESTS
 )
 
 foreach(TEST IN LISTS TESTS)
-    project(${TEST})
+    project(test_${TEST})
     add_executable(${TEST} ${TEST}.cpp)                       
     set_target_properties(${TEST} PROPERTIES OUTPUT_NAME test_${TEST})
     target_include_directories(${TEST} PRIVATE "../include/")                                            
