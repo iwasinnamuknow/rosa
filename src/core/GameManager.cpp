@@ -28,7 +28,7 @@
 
 namespace rosa {
 
-    GameManager::GameManager(int window_width, int window_height, const std::string& window_title) {
+    GameManager::GameManager(int window_width, int window_height, const std::string& window_title, bool window_hidden) {
 
         #if (DEBUG)
         spdlog::set_level(spdlog::level::debug);

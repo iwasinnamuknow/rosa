@@ -50,7 +50,7 @@ namespace rosa {
             FrameBuffer m_framebuffer;
 
         public:
-            void init( int width, int height, std::string title = "OpenGL");
+            void init( int width, int height, std::string title = "OpenGL", bool window_hidden = false);
             static void callback_resize(GLFWwindow* window, int cx, int cy);
             //auto draw(Drawable& drawable, glm::mat4 transform) -> void;
             auto isFullscreen() const -> bool;

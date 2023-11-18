@@ -67,7 +67,7 @@ class MyScene : public rosa::Scene {
 TEST_CASE("Displays a simple 2d image on a quad", "[gl]") {
 
     // Grab the GameManager
-    auto game_mgr = rosa::GameManager(800, 600);
+    auto game_mgr = rosa::GameManager(800, 600, "Display Image", true);
 
     rosa::ResourceManager::instance().registerAssetPack("../examples/base.pak", "");
 
@@ -80,11 +80,11 @@ TEST_CASE("Displays a simple 2d image on a quad", "[gl]") {
     // Away we go with our desired window size
     game_mgr.run(3);
 
-    //auto size = game_mgr.getRenderWindow()->getSize();
+    auto size = game_mgr.getRenderWindow()->getSize();
     
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
     std::vector<unsigned char> pixels = game_mgr.getRenderWindow()->readFrame();
-    //encodeOneStep("test.png", pixels, size.x, size.y);
+    rosa::ImageComparator::writePNG("test.png", pixels, size.x, size.y);
 
     std::vector<unsigned char> ref_pixels = rosa::ImageComparator::readPNG("references/display_image.png");
     
