@@ -77,6 +77,7 @@ namespace rosa {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_SAMPLES, 4);
+        //glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
         m_wnd = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
         if (m_wnd == nullptr)
@@ -115,6 +116,8 @@ namespace rosa {
         m_updateViewport = true;
 
         m_projection = glm::ortho(0.F, static_cast<float>(width), static_cast<float>(height), 0.F);
+
+        m_framebuffer.init(m_wndSize[0], m_wndSize[1]);
     }
 
     void RenderWindow::callback_resize(GLFWwindow* window, int cx, int cy)
@@ -219,6 +222,20 @@ namespace rosa {
 
     auto RenderWindow::isKeyDown(Key key) -> bool {
         return glfwGetKey(m_wnd, key);
+    }
+
+    auto RenderWindow::readFrame() -> std::vector<unsigned char> {
+
+        int size = m_wndSize[0] * m_wndSize[1] * 4 * sizeof(unsigned char);
+        const unsigned char* buffer = m_framebuffer.getColorBuffer();
+
+        std::vector<unsigned char> data{ buffer, buffer + size };
+
+        return data;
+    }
+
+    auto RenderWindow::getFrameBuffer() -> FrameBuffer& {
+        return m_framebuffer;
     }
 
 } // namespace rosa

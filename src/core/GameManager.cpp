@@ -109,6 +109,7 @@ namespace rosa {
 
             {
                 ZoneScopedNC("Render", 0xFF0000);
+                m_render_window.getFrameBuffer().bind();
                 m_render_window.clearColour(m_clear_colour);
                 m_current_scene->render();
 
@@ -117,6 +118,10 @@ namespace rosa {
                     ImGui::Render();
                     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
                 }
+
+                m_render_window.getFrameBuffer().unbind();
+                auto size = m_render_window.getSize();
+                m_render_window.getFrameBuffer().blitColorTo(0, 0, 0, size.x, size.y);
             }
 
             FrameMark(nullptr);

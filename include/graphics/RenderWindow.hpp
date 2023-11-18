@@ -28,6 +28,7 @@
 #include <graphics/Sprite.hpp>
 #include <graphics/Texture.hpp>
 #include <core/input/Keyboard.hpp>
+#include <graphics/FrameBuffer.hpp>
 
 namespace rosa {
 
@@ -45,6 +46,8 @@ namespace rosa {
             void resize( int cx, int cy );
 
             glm::mat4 m_projection;
+
+            FrameBuffer m_framebuffer;
 
         public:
             void init( int width, int height, std::string title = "OpenGL");
@@ -69,9 +72,13 @@ namespace rosa {
 
             auto isKeyDown(Key key) -> bool;
 
+            auto readFrame() -> std::vector<unsigned char>;
+
             auto getViewportSize() const -> glm::vec2;
 
             auto getProjection() const -> glm::mat4;
+
+            auto getFrameBuffer() -> FrameBuffer&;
 
             // TODO EVENTS
             auto pollEvents() -> bool;
