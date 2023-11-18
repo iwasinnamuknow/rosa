@@ -18,6 +18,7 @@ find_package(yaml-cpp CONFIG REQUIRED)
 find_package(stduuid CONFIG REQUIRED)
 find_package(sol2 CONFIG REQUIRED)
 find_package(Lua REQUIRED)
+find_package(lodepng CONFIG REQUIRED)
 #find_package(thor REQUIRED)
 #find_package(entt)
 #find_package(Boost COMPONENTS di REQUIRED)
@@ -85,6 +86,7 @@ set (GENERAL_LIBS
   ${OPENGL_SHIT}
   imgui::imgui
   soloud
+  lodepng
 )
 
 # set (WINDOWS_LIBS)

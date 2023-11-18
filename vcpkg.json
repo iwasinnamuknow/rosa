@@ -77,6 +77,10 @@
         "gui-tools",
         "on-demand"
       ]
+    },
+    {
+      "name": "lodepng",
+      "version>=": "2021-12-04#1"
     }
   ],
   "default-features": [],
