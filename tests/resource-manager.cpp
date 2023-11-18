@@ -27,15 +27,15 @@ TEST_CASE("Fails to load an asset pack with no manifest", "[resource-manager]") 
 
     auto& rm = rosa::ResourceManager::instance();
     
-    REQUIRE_THROWS_AS(rm.registerAssetPack("nomanifest.pak", ""), rosa::MissingManifestException);
+    REQUIRE_THROWS_AS(rm.registerAssetPack("packs/nomanifest.pak", ""), rosa::MissingManifestException);
 }
 
 TEST_CASE("Fails to load an asset pack with missing assets", "[resource-manager]") {
 
     auto& rm = rosa::ResourceManager::instance();
     
-    REQUIRE_THROWS_AS(rm.registerAssetPack("missingfile.pak", ""), rosa::ResourceNotFoundException);
-    REQUIRE_NOTHROW(rm.unregisterAssetPack("missingfile.pak"));
+    REQUIRE_THROWS_AS(rm.registerAssetPack("packs/missingfile.pak", ""), rosa::ResourceNotFoundException);
+    REQUIRE_NOTHROW(rm.unregisterAssetPack("packs/missingfile.pak"));
 }
 
 TEST_CASE("Retrieve a texture from the example pack and verify size", "[resource-manager]") {
@@ -54,16 +54,16 @@ TEST_CASE("Fails to load a texture with a missing DDS header", "[resource-manage
 
     auto& rm = rosa::ResourceManager::instance();
     
-    REQUIRE_THROWS_AS(rm.registerAssetPack("notadds.pak", ""), rosa::MalformedDDSException);
-    REQUIRE_NOTHROW(rm.unregisterAssetPack("notadds.pak"));
+    REQUIRE_THROWS_AS(rm.registerAssetPack("packs/notadds.pak", ""), rosa::MalformedDDSException);
+    REQUIRE_NOTHROW(rm.unregisterAssetPack("packs/notadds.pak"));
 }
 
 TEST_CASE("Fails to load a texture from an empty file", "[resource-manager]") {
 
     auto& rm = rosa::ResourceManager::instance();
     
-    REQUIRE_THROWS_AS(rm.registerAssetPack("emptydds.pak", ""), rosa::MalformedDDSException);
-    REQUIRE_NOTHROW(rm.unregisterAssetPack("emptydds.pak"));
+    REQUIRE_THROWS_AS(rm.registerAssetPack("packs/emptydds.pak", ""), rosa::MalformedDDSException);
+    REQUIRE_NOTHROW(rm.unregisterAssetPack("packs/emptydds.pak"));
 }
 
 TEST_CASE("Fails to unload a non-existent pack", "[resource-manager]") {
