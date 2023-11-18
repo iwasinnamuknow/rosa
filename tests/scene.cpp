@@ -22,7 +22,7 @@ TEST_CASE("Allows us to create an entity in a scene", "[scene]") {
     auto scene = rosa::Scene();
     auto& entity = scene.createEntity();
 
-    REQUIRE(scene.getRegistry().alive() == 1);
+    REQUIRE(scene.getRegistry().storage<entt::entity>().in_use() == 1);
     REQUIRE(entity.getUUID() != rosa::Uuid());
     REQUIRE(entity.hasComponent<rosa::TransformComponent>() == true);
 }
@@ -34,7 +34,7 @@ TEST_CASE("Allows us to create an entity in a scene with a Uuid", "[scene]") {
     auto scene = rosa::Scene();
     auto& entity = scene.createEntity(uuid);
 
-    REQUIRE(scene.getRegistry().alive() == 1);
+    REQUIRE(scene.getRegistry().storage<entt::entity>().in_use() == 1);
     REQUIRE(entity.getUUID() == uuid);
     REQUIRE(entity.hasComponent<rosa::TransformComponent>() == true);
 }
@@ -44,8 +44,18 @@ TEST_CASE("Allows us to create an entity in a scene and remove it", "[scene]") {
     auto scene = rosa::Scene();
     auto& entity = scene.createEntity();
 
-    REQUIRE(scene.getRegistry().alive() == 1);
+    REQUIRE(scene.getRegistry().storage<entt::entity>().in_use() == 1);
     REQUIRE(scene.removeEntity(entity.getUUID()) == true);
     scene.update(0.F);
-    REQUIRE(scene.getRegistry().alive() == 0);
+    REQUIRE(scene.getRegistry().storage<entt::entity>().in_use() == 0);
+}
+
+TEST_CASE("Create an entity and retrieve it", "[scene]") {
+
+    auto scene = rosa::Scene();
+    auto& original_entity = scene.createEntity();
+
+    auto& retrieved_entity = scene.getEntity(original_entity.getUUID());
+
+    REQUIRE(original_entity == retrieved_entity);
 }
