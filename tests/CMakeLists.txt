@@ -33,7 +33,13 @@ foreach(TEST IN LISTS TESTS)
 endforeach()
 
 
-file(GLOB PACKS "*.pak")
+# copy pak files for resource tests
+set(RESOURCE_PACKS
+  ${CMAKE_CURRENT_SOURCE_DIR}/packs/emptydds.pak
+  ${CMAKE_CURRENT_SOURCE_DIR}/packs/missingfile.pak
+  ${CMAKE_CURRENT_SOURCE_DIR}/packs/nomanifest.pak
+  ${CMAKE_CURRENT_SOURCE_DIR}/packs/notadds.pak
+)
 add_custom_target(copy_packs ALL
   COMMAND cp ${PACKS} ${CMAKE_CURRENT_BINARY_DIR}/
 )
