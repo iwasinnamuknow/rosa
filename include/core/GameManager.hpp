@@ -61,8 +61,9 @@ namespace rosa {
              *
              *  Also handles ImGUI setup/rendering.
              * 
+             *  @param int stop after n frames, zero to disable
              */
-            auto run() -> void;
+            virtual auto run(int frames = 0) -> void;
 
             /**
              * @brief Change the currently active scene
@@ -131,6 +132,7 @@ namespace rosa {
             Colour m_clear_colour{0,0,0,1};
 
             bool m_initialised{false};
+            long long m_frame_count{0};
     };
 
 } // namespace rosa

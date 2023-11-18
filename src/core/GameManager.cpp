@@ -58,7 +58,7 @@ namespace rosa {
         return inserted;
     }
 
-    auto GameManager::run() -> void {
+    auto GameManager::run(int frames) -> void {
     
         // Setup imgui
         IMGUI_CHECKVERSION();
@@ -68,6 +68,10 @@ namespace rosa {
         ImGui_ImplOpenGL3_Init("#version 150");
 
         while (m_render_window.isOpen()) {
+
+            if (frames > 0 && m_frame_count >= frames) {
+                break;
+            }
 
             std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
             auto micros = std::chrono::duration_cast<std::chrono::microseconds>(now - m_time);
@@ -121,6 +125,8 @@ namespace rosa {
             m_render_window.display(m_current_scene->m_active_camera_pos);
 
             TracyGpuCollect
+
+            m_frame_count++;
         }
     }
 
