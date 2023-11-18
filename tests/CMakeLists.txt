@@ -16,6 +16,7 @@ set(TESTS
   uuid
   resource-manager
   scene
+  display_image
 )
 
 foreach(TEST IN LISTS TESTS)
@@ -32,6 +33,15 @@ foreach(TEST IN LISTS TESTS)
     target_link_libraries(${TEST} PRIVATE snitch::snitch rosa)
 endforeach()
 
+# Copy reference images for gl tests
+set(REFERENCE_IMAGES
+${CMAKE_CURRENT_SOURCE_DIR}/references/display_image.png
+)
+add_custom_target(copy_refs ALL
+  COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/references ${CMAKE_CURRENT_BINARY_DIR}/
+  DEPENDS ${REFERENCE_IMAGES}
+)
+ADD_DEPENDENCIES(copy_refs ${TESTS})
 
 # copy pak files for resource tests
 set(RESOURCE_PACKS
@@ -41,6 +51,7 @@ set(RESOURCE_PACKS
   ${CMAKE_CURRENT_SOURCE_DIR}/packs/notadds.pak
 )
 add_custom_target(copy_packs ALL
-  COMMAND cp ${PACKS} ${CMAKE_CURRENT_BINARY_DIR}/
+  COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/packs ${CMAKE_CURRENT_BINARY_DIR}/
+  DEPENDS ${RESOURCE_PACKS}
 )
 ADD_DEPENDENCIES(copy_packs ${TESTS})
