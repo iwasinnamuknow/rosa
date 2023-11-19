@@ -38,7 +38,7 @@ namespace rosa {
 
         try {
             spdlog::info("Setting up OpenGL context");
-            m_render_window.init(window_width, window_height, window_title);
+            m_render_window.init(window_width, window_height, window_title, window_hidden);
 
             spdlog::info("Initialising resource management");
             [[maybe_unused]]auto& res = ResourceManager::instance();
@@ -109,6 +109,7 @@ namespace rosa {
 
             {
                 ZoneScopedNC("Render", 0xFF0000);
+
                 m_render_window.getFrameBuffer().bind();
                 m_render_window.clearColour(m_clear_colour);
                 m_current_scene->render();
@@ -119,15 +120,18 @@ namespace rosa {
                     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
                 }
 
+                m_render_window.getFrameBuffer().update();
                 m_render_window.getFrameBuffer().unbind();
-                auto size = m_render_window.getSize();
-                m_render_window.getFrameBuffer().blitColorTo(0, 0, 0, size.x, size.y);
             }
 
-            FrameMark(nullptr);
-
+            auto size = m_render_window.getSize();
+            m_render_window.getFrameBuffer().blitColorTo(0, 0, 0, size.x, size.y);
+            m_render_window.getFrameBuffer().blitDepthTo(0, 0, 0, size.x, size.y);
+        
             //ImGui::SFML::Render(m_render_window);
             m_render_window.display(m_current_scene->m_active_camera_pos);
+
+            FrameMark(nullptr);
 
             TracyGpuCollect
 

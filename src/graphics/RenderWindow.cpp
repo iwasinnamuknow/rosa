@@ -77,7 +77,10 @@ namespace rosa {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_SAMPLES, 4);
-        glfwWindowHint(GLFW_VISIBLE, static_cast<int>(window_hidden));
+
+        if (window_hidden) {
+            glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+        }
 
         m_wnd = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
         if (m_wnd == nullptr)
@@ -130,6 +133,8 @@ namespace rosa {
 
     void RenderWindow::resize( int cx, int cy )
     {
+        m_framebuffer.init(cx, cy);
+
         m_updateViewport = true;
         m_projection = glm::ortho(0.F, static_cast<float>(cx), static_cast<float>(cy), 0.F);
 
