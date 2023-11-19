@@ -17,6 +17,7 @@ set(TESTS
   resource-manager
   scene
   display_image
+  lua_rotating_image
 )
 
 foreach(TEST IN LISTS TESTS)
@@ -35,10 +36,10 @@ endforeach()
 
 # Copy reference images for gl tests
 set(REFERENCE_IMAGES
-${CMAKE_CURRENT_SOURCE_DIR}/references/display_image.png
+${CMAKE_CURRENT_SOURCE_DIR}/references/images/display_image.png
 )
 add_custom_target(copy_refs ALL
-  COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/references ${CMAKE_CURRENT_BINARY_DIR}/
+  COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/references/images/* ${CMAKE_CURRENT_BINARY_DIR}/references/
   DEPENDS ${REFERENCE_IMAGES}
 )
 ADD_DEPENDENCIES(copy_refs ${TESTS})
@@ -55,3 +56,17 @@ add_custom_target(copy_packs ALL
   DEPENDS ${RESOURCE_PACKS}
 )
 ADD_DEPENDENCIES(copy_packs ${TESTS})
+
+
+file(GLOB_RECURSE ASSETS "references/assets/*")
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/references/base.pak
+    COMMAND ${CMAKE_COMMAND} -E tar cvf ${CMAKE_CURRENT_BINARY_DIR}/references/base.pak --format=zip -- .
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/references/assets/
+    DEPENDS ${ASSETS}
+)
+ADD_CUSTOM_TARGET(
+    pack_reference_assets ALL
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/references/base.pak
+)
+ADD_DEPENDENCIES(pack_reference_assets ${TESTS})

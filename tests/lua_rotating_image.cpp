@@ -18,10 +18,12 @@
 #include <snitch/snitch.hpp>
 #include <core/GameManager.hpp>
 #include <core/components/SpriteComponent.hpp>
+#include <core/components/LuaScriptComponent.hpp>
 #include <graphics/ImageComparator.hpp>
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
 static const auto dds_uuid = rosa::Uuid("f7055f226bfa1a3b4dbdb366dd18866d");
+static const auto script_uuid = rosa::Uuid("9046e8fecb017adf1029c79e71961173");
 
 // Create a class to represent our scene
 class MyScene : public rosa::Scene {
@@ -61,13 +63,20 @@ class MyScene : public rosa::Scene {
 
             // Set the position to screen-center
             entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
+
+            entity.getComponent<rosa::TransformComponent>().setRotation(45);
+
+            auto& script_comp = entity.addComponent<rosa::LuaScriptComponent>(this, entity);
+            script_comp.setScript(script_uuid);
         }
 };
 
-TEST_CASE("Displays a simple 2d image on a quad", "[gl]") {
+//TEST_CASE("Rotate an image via lua script", "[lua]") {
+
+int main(){
 
     // Grab the GameManager
-    auto game_mgr = rosa::GameManager(800, 600, "Display Image", true);
+    auto game_mgr = rosa::GameManager(800, 600, "Lua Rotate Image");
 
     rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
 
@@ -78,15 +87,22 @@ TEST_CASE("Displays a simple 2d image on a quad", "[gl]") {
     game_mgr.changeScene("simple_image");
 
     // Away we go with our desired window size
-    game_mgr.run(3);
+    game_mgr.run();
 
     auto size = game_mgr.getRenderWindow()->getSize();
     
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
-    std::vector<unsigned char> pixels = game_mgr.getRenderWindow()->readFrame();
-    //rosa::ImageComparator::writePNG("test.png", pixels, size.x, size.y);
 
-    std::vector<unsigned char> ref_pixels = rosa::ImageComparator::readPNG("references/display_image.png");
+    std::vector<unsigned char> pixels = game_mgr.getRenderWindow()->readFrame();
+    rosa::ImageComparator::writePNG("test3.png", pixels, size.x, size.y);
+    std::vector<unsigned char> ref3_pixels = rosa::ImageComparator::readPNG("references/lua_rotating_image-3.png");
+    //REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref3_pixels) == true);
+
+    // game_mgr.run(30);
+    // pixels = game_mgr.getRenderWindow()->readFrame();
+    // rosa::ImageComparator::writePNG("test6.png", pixels, size.x, size.y);
+    // std::vector<unsigned char> ref6_pixels = rosa::ImageComparator::readPNG("references/lua_rotating_image-6.png");
+    // REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref6_pixels) == true);
+
     
-    REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref_pixels) == true);
 }

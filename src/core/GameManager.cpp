@@ -48,6 +48,13 @@ namespace rosa {
             abort();
         }
 
+        // Setup imgui
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGui::StyleColorsDark();
+        ImGui_ImplGlfw_InitForOpenGL(m_render_window.getGlWindowPtr(), true);
+        ImGui_ImplOpenGL3_Init("#version 150");
+
         m_initialised = true;
         spdlog::info("Rosa is up and running!");
     }
@@ -59,13 +66,8 @@ namespace rosa {
     }
 
     auto GameManager::run(int frames) -> void {
-    
-        // Setup imgui
-        IMGUI_CHECKVERSION();
-        ImGui::CreateContext();
-        ImGui::StyleColorsDark();
-        ImGui_ImplGlfw_InitForOpenGL(m_render_window.getGlWindowPtr(), true);
-        ImGui_ImplOpenGL3_Init("#version 150");
+
+        m_frame_count = 0;
 
         while (m_render_window.isOpen()) {
 
