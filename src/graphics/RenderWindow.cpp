@@ -133,6 +133,9 @@ namespace rosa {
 
     void RenderWindow::resize( int cx, int cy )
     {
+        spdlog::debug("resized: {},{}", cx, cy);
+        m_wndSize[0] = cx;
+        m_wndSize[1] = cy;
         m_framebuffer.init(cx, cy);
 
         m_updateViewport = true;

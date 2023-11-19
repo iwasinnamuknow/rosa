@@ -127,6 +127,7 @@ namespace rosa {
             }
 
             auto size = m_render_window.getSize();
+            assert(m_render_window.getFrameBuffer().getWidth() == size.x);
             m_render_window.getFrameBuffer().blitColorTo(0, 0, 0, size.x, size.y);
             m_render_window.getFrameBuffer().blitDepthTo(0, 0, 0, size.x, size.y);
         
