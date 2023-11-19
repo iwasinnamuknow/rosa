@@ -64,7 +64,7 @@ class MyScene : public rosa::Scene {
             // Set the position to screen-center
             entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
 
-            entity.getComponent<rosa::TransformComponent>().setRotation(45);
+            //entity.getComponent<rosa::TransformComponent>().setRotation(45);
 
             auto& script_comp = entity.addComponent<rosa::LuaScriptComponent>(this, entity);
             script_comp.setScript(script_uuid);
