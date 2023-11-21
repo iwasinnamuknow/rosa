@@ -69,14 +69,19 @@ void mouse_button_callback(GLFWwindow* /*window*/, int button, int action, int /
 
 namespace rosa {
 
-    void RenderWindow::init( int width, int height, std::string title, bool window_hidden)
+    void RenderWindow::init( int width, int height, std::string title, int msaa, bool window_hidden)
     {
         glfwInit();
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_SAMPLES, 4);
+
+        if (msaa == 0) {
+            glfwWindowHint(GLFW_SAMPLES, 1);
+        } else {
+            glfwWindowHint(GLFW_SAMPLES, msaa);
+        }
 
         if (window_hidden) {
             glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
@@ -115,6 +120,7 @@ namespace rosa {
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_MULTISAMPLE);
 
         m_monitor =  glfwGetPrimaryMonitor();
         glfwGetWindowSize( m_wnd, m_wndSize.data(), &m_wndSize[1] );
@@ -123,7 +129,12 @@ namespace rosa {
 
         m_projection = glm::ortho(0.F, static_cast<float>(width), static_cast<float>(height), 0.F);
 
-        m_framebuffer.init(width, height);
+        if (msaa > 0) {
+            m_framebuffer.init(width, height, msaa);
+        } else {
+            m_framebuffer.init(width, height);
+        }
+        
     }
 
     void RenderWindow::callback_resize(GLFWwindow* window, int cx, int cy)

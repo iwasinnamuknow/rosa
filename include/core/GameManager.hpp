@@ -44,7 +44,7 @@ namespace rosa {
              * @param window_width in pixels
              * @param window_height in pixels
              */
-            explicit GameManager(int window_width, int window_height, const std::string& window_title = "rosa window", bool window_hidden = false);
+            explicit GameManager(int window_width, int window_height, const std::string& window_title = "rosa window", int msaa = 0, bool window_hidden = false);
             
             ~GameManager() = default;
 

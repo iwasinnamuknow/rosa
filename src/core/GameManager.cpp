@@ -28,7 +28,7 @@
 
 namespace rosa {
 
-    GameManager::GameManager(int window_width, int window_height, const std::string& window_title, bool window_hidden) {
+    GameManager::GameManager(int window_width, int window_height, const std::string& window_title, int msaa, bool window_hidden) {
 
         #if (DEBUG)
         spdlog::set_level(spdlog::level::debug);
@@ -38,7 +38,7 @@ namespace rosa {
 
         try {
             spdlog::info("Setting up OpenGL context");
-            m_render_window.init(window_width, window_height, window_title, window_hidden);
+            m_render_window.init(window_width, window_height, window_title, msaa, window_hidden);
 
             spdlog::info("Initialising resource management");
             [[maybe_unused]]auto& res = ResourceManager::instance();

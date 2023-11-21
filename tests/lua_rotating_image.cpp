@@ -76,7 +76,7 @@ TEST_CASE("Rotate an image via lua script", "[lua]") {
 // int main(){
 
     // Grab the GameManager
-    auto game_mgr = rosa::GameManager(800, 600, "Lua Rotate Image", true);
+    auto game_mgr = rosa::GameManager(800, 600, "Lua Rotate Image", 0, true);
 
     rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
 

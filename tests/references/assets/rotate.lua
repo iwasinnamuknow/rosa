@@ -10,7 +10,7 @@ end
 function onUpdate(delta_time)
   persist["rotation"] = (persist["rotation"] + 1) % 360
   entity:getTransform():setRotation(persist["rotation"])
-  print(persist["rotation"])
+  --print(persist["rotation"])
 end
 
 function onInput(event)
