@@ -23,7 +23,7 @@ namespace rosa {
     struct Quad {
         glm::vec2 size{0.F, 0.F};
         glm::vec2 pos{0.F, 0.F};
-        Colour colour{1, 1, 1, 1};
+        Colour colour;
         uint32_t texture_id{0};
         glm::vec2 texture_rect_pos{0, 0};
         glm::vec2 texture_rect_size{0, 0};

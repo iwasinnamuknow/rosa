@@ -1,5 +1,4 @@
 persist = {}
-persist["last_rot"] = 0
 persist["rotation"] = 0
 
 function onCreate()
@@ -9,14 +8,9 @@ function onLoad()
 end
 
 function onUpdate(delta_time)
-  -- if persist["last_rot"] > 0.1 then
-  --   entity:getTransform():setRotation(persist["rotation"])
-  --   persist["rotation"] = (persist["rotation"] + 5) % 360
-  --   persist["last_rot"] = 0
-  --   print(persist["rotation"])
-  -- else
-  --   persist["last_rot"] = persist["last_rot"] + delta_time
-  -- end
+  persist["rotation"] = (persist["rotation"] + 1) % 360
+  entity:getTransform():setRotation(persist["rotation"])
+  print(persist["rotation"])
 end
 
 function onInput(event)

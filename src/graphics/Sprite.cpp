@@ -19,7 +19,7 @@
 #include <graphics/Sprite.hpp>
 #include <graphics/gl.hpp>
 #include <GLFW/glfw3.h>
-#include <graphics/BatchRenderer.hpp>
+#include <graphics/Renderer.hpp>
 #include <spdlog/spdlog.h>
 
 namespace rosa {
@@ -35,7 +35,12 @@ namespace rosa {
         //auto temptrans = (projection * transform);
         m_quad.pos.x = transform[3].x;
         m_quad.pos.y = transform[3].y;
-        BatchRenderer::getInstance().submit(m_quad);
+
+        if (m_batched) {
+            Renderer::getInstance().submitForBatch(m_quad);
+        } else {
+            Renderer::getInstance().submit(m_quad, transform);
+        }
     }
 
     auto Sprite::setColour(const Colour& colour) -> void {
@@ -49,7 +54,18 @@ namespace rosa {
         m_quad.size = m_texture->getSize();
     }
 
-    auto Sprite::getTexture() -> Texture& {
+    auto Sprite::setBatched(bool batched) -> void
+    {
+        m_batched = batched;
+    }
+
+    auto Sprite::getBatched() -> bool
+    {
+        return m_batched;
+    }
+
+    auto Sprite::getTexture() -> Texture &
+    {
         return *m_texture;
     }
 
