@@ -45,8 +45,8 @@ class MyScene : public rosa::Scene {
 
             // Calculate a screen-centered position for the image
             const auto position = glm::vec2(
-                (static_cast<float>(window_size.x) / 2.F) - (static_cast<float>(texture_size.x) / 2.F),
-                (static_cast<float>(window_size.y) / 2.F) - (static_cast<float>(texture_size.y) / 2.F)
+                (static_cast<float>(window_size.x) / 2.F),
+                (static_cast<float>(window_size.y) / 2.F)
             );
 
             // Create a blank entity. It's not really blank, every entity has a TransformComponent
@@ -84,7 +84,7 @@ TEST_CASE("Displays a simple 2d image on a quad", "[gl]") {
     
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
     std::vector<unsigned char> pixels = game_mgr.getRenderWindow()->readFrame();
-    //rosa::ImageComparator::writePNG("test.png", pixels, size.x, size.y);
+    rosa::ImageComparator::writePNG("test.png", pixels, size.x, size.y);
 
     std::vector<unsigned char> ref_pixels = rosa::ImageComparator::readPNG("references/display_image.png");
     

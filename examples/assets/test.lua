@@ -31,12 +31,13 @@ end
 
 function onUpdate(delta_time)
   if persist["last_rot"] > 0.1 then
-    transform.setRotation(persist["rotation"])
+    entity:getTransform():setRotation(persist["rotation"])
     persist["rotation"] = (persist["rotation"] + 0.2) % 360
-    sprite.setColour(persist["red"], 255, 255, 255)
-    persist["red"] = (persist["red"] + 5) % 255
+    local col = Colour.new(persist["red"], 1, 1, 1)
+    entity:getSprite():setColour(col)
+    persist["red"] = (persist["red"] + 0.05) % 1
     persist["last_rot"] = 0
-    log.debug("Red: " .. tostring(persist["red"]))
+    -- log.debug("Red: " .. tostring(persist["red"]))
   else
     persist["last_rot"] = persist["last_rot"] + delta_time
   end
@@ -55,7 +56,7 @@ function onInput(event)
   elseif (event.type == EventType.Resize) then
     print(event.resize.size.x)
     print(event.resize.size.y)
-    transform.setPosition(event.resize.size.x / 2, event.resize.size.y / 2)
+    entity:getTransform():setPosition(event.resize.size.x / 2, event.resize.size.y / 2)
   end
 end
 

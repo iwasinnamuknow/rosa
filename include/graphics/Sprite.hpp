@@ -43,6 +43,9 @@ namespace rosa {
             auto getTexture() -> Texture&;
             auto setTexture(Uuid uuid) -> void;
 
+            auto setBatched(bool batched) -> void;
+            auto getBatched() -> bool;
+
         protected:
             auto draw(glm::mat4 transform) -> void override;
             Texture* m_texture{nullptr};
@@ -53,6 +56,7 @@ namespace rosa {
             friend class Scene;
 
             Quad m_quad;
+            bool m_batched{false};
     };
 
 } // namespace rosa

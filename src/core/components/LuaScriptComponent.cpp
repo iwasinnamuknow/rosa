@@ -257,9 +257,9 @@ namespace rosa {
         );
 
         state.new_usertype<rosa::Colour>("Colour",
-            sol::constructors<rosa::Colour()>(),
-            sol::constructors<rosa::Colour(uint8_t, uint8_t, uint8_t)>(),
-            sol::constructors<rosa::Colour(uint8_t, uint8_t, uint8_t, uint8_t)>(),
+            // sol::constructors<rosa::Colour()>(),
+            // sol::constructors<rosa::Colour(int, int, int)>(),
+            sol::constructors<rosa::Colour(float, float, float, float)>(),
             "r", &rosa::Colour::r,
             "g", &rosa::Colour::g,
             "b", &rosa::Colour::b,

@@ -42,7 +42,8 @@ class CountdownScene : public rosa::Scene {
             for (int i = 0; i < 12; i++) {
                 auto& entity = createEntity();
                 entity.setParent(parent.getUUID());
-                entity.addComponent<rosa::SpriteComponent>();
+                auto& sprite = entity.addComponent<rosa::SpriteComponent>();
+                sprite.setBatched(true);
             }
 
             parent.addComponent<rosa::SoundPlayerComponent>();

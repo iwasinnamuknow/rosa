@@ -29,32 +29,34 @@ constexpr int max_textures{32};
 
 namespace rosa {
 
-    struct BatchRendererStats {
+    struct RendererStats {
         int draws{0};
         int verts{0};
         int textures{0};
     };
 
-    class BatchRenderer {
+    class Renderer {
         public:
-            static auto getInstance() -> BatchRenderer& {
-                static BatchRenderer s_instance;
+            static auto getInstance() -> Renderer& {
+                static Renderer s_instance;
                 return s_instance;
             }
 
-            auto submit(const Quad& quad) -> void;
-            auto flush() -> void;
+            auto submitForBatch(const Quad& quad) -> void;
+            auto flushBatch() -> void;
+
+            auto submit(const Quad& quad, glm::mat4 transform) -> void;
 
             auto updateMvp(glm::mat4 projection) -> void;
-            auto getStats() -> BatchRendererStats;
+            auto getStats() -> RendererStats;
             auto clearStats() -> void;
 
             auto setShader(ShaderType type, Shader* shader) -> void;
             auto linkShaders() -> void;
 
         private:
-            BatchRenderer();
-            ~BatchRenderer();
+            Renderer();
+            ~Renderer();
 
             Vertex* m_vertex_buffer;
             Vertex* m_vertex_buffer_ptr;

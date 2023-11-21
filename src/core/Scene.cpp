@@ -32,7 +32,7 @@
 #include <stack>
 
 #include <core/Entity.hpp>
-#include <graphics/BatchRenderer.hpp>
+#include <graphics/Renderer.hpp>
 
 namespace rosa {
 
@@ -257,8 +257,8 @@ namespace rosa {
 
         {
             ZoneScopedN("Render:BatchRenderer:Setup");
-            BatchRenderer::getInstance().clearStats();
-            BatchRenderer::getInstance().updateMvp(getRenderWindow().getProjection());
+            Renderer::getInstance().clearStats();
+            Renderer::getInstance().updateMvp(getRenderWindow().getProjection());
         }
 
         {
@@ -276,7 +276,7 @@ namespace rosa {
             };
         }
 
-        BatchRenderer::getInstance().flush();
+        Renderer::getInstance().flushBatch();
     }
 
 } // namespace rosa
