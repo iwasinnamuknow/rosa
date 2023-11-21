@@ -167,22 +167,22 @@ namespace rosa {
 
         vertices[0].position = glm::vec2(-(quad.size.x/2), -(quad.size.y/2));
         vertices[0].colour = quad.colour;
-        vertices[0].texture_coords = quad.texture_rect_pos;
+        vertices[0].texture_coords = glm::vec2(quad.texture_rect_pos.x, quad.texture_rect_pos.y + quad.texture_rect_size.y);
         vertices[0].texture_slot = texture_index;
 
         vertices[1].position = glm::vec2(  quad.size.x/2,  -(quad.size.y/2));
         vertices[1].colour = quad.colour;
-        vertices[1].texture_coords = {quad.texture_rect_pos.x + quad.texture_rect_size.x, quad.texture_rect_pos.y};
+        vertices[1].texture_coords = (quad.texture_rect_pos + quad.texture_rect_size);
         vertices[1].texture_slot = texture_index;
 
         vertices[2].position = glm::vec2(-(quad.size.x/2),   quad.size.y/2);
         vertices[2].colour = quad.colour;
-        vertices[2].texture_coords = {quad.texture_rect_pos.x, quad.texture_rect_pos.y + quad.texture_rect_size.y};
+        vertices[2].texture_coords = quad.texture_rect_pos;
         vertices[2].texture_slot = texture_index;
 
         vertices[3].position = glm::vec2(  quad.size.x/2,    quad.size.y/2);
         vertices[3].colour = quad.colour;
-        vertices[3].texture_coords = quad.texture_rect_pos + quad.texture_rect_size;
+        vertices[3].texture_coords = glm::vec2(quad.texture_rect_pos.x + quad.texture_rect_size.x, quad.texture_rect_pos.y);
         vertices[3].texture_slot = texture_index;
 
         m_quad_draws++;

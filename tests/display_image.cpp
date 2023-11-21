@@ -84,7 +84,7 @@ TEST_CASE("Displays a simple 2d image on a quad", "[gl]") {
     
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
     std::vector<unsigned char> pixels = game_mgr.getRenderWindow()->readFrame();
-    rosa::ImageComparator::writePNG("test.png", pixels, size.x, size.y);
+    //rosa::ImageComparator::writePNG("test.png", pixels, size.x, size.y);
 
     std::vector<unsigned char> ref_pixels = rosa::ImageComparator::readPNG("references/display_image.png");
     
