@@ -76,7 +76,7 @@ TEST_CASE("Colour an image via lua script", "[lua]") {
 // int main(){
 
     // Grab the GameManager
-    auto game_mgr = rosa::GameManager(800, 600, "Lua Colour Image", true);
+    auto game_mgr = rosa::GameManager(800, 600, "Lua Colour Image", 0, true);
 
     rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
 
@@ -94,28 +94,28 @@ TEST_CASE("Colour an image via lua script", "[lua]") {
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
 
     std::vector<unsigned char> pixels = game_mgr.getRenderWindow()->readFrame();
-    //rosa::ImageComparator::writePNG("test2.png", pixels, size.x, size.y);
+    //rosa::ImageComparator::writePNG("lua_coloured_image-2.png", pixels, size.x, size.y);
     std::vector<unsigned char> ref2_pixels = rosa::ImageComparator::readPNG("references/lua_coloured_image-2.png");
     REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref2_pixels) == true);
 
     game_mgr.run(5);
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
     pixels = game_mgr.getRenderWindow()->readFrame();
-    //rosa::ImageComparator::writePNG("test7.png", pixels, size.x, size.y);
+    //rosa::ImageComparator::writePNG("lua_coloured_image-7.png", pixels, size.x, size.y);
     std::vector<unsigned char> ref7_pixels = rosa::ImageComparator::readPNG("references/lua_coloured_image-7.png");
     REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref7_pixels) == true);
 
     game_mgr.run(5);
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
     pixels = game_mgr.getRenderWindow()->readFrame();
-    //rosa::ImageComparator::writePNG("test12.png", pixels, size.x, size.y);
+    //rosa::ImageComparator::writePNG("lua_coloured_image-12.png", pixels, size.x, size.y);
     std::vector<unsigned char> ref12_pixels = rosa::ImageComparator::readPNG("references/lua_coloured_image-12.png");
     REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref12_pixels) == true);
 
     game_mgr.run(5);
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
     pixels = game_mgr.getRenderWindow()->readFrame();
-    //rosa::ImageComparator::writePNG("test17.png", pixels, size.x, size.y);
+    //rosa::ImageComparator::writePNG("lua_coloured_image-17.png", pixels, size.x, size.y);
     std::vector<unsigned char> ref17_pixels = rosa::ImageComparator::readPNG("references/lua_coloured_image-17.png");
     REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref17_pixels) == true);
     
