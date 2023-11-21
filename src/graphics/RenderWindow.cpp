@@ -113,6 +113,9 @@ namespace rosa {
         glfwSetWindowUserPointer( m_wnd, this );
         glfwSetWindowSizeCallback( m_wnd, RenderWindow::callback_resize );
 
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         m_monitor =  glfwGetPrimaryMonitor();
         glfwGetWindowSize( m_wnd, m_wndSize.data(), &m_wndSize[1] );
         glfwGetWindowPos( m_wnd, m_wndPos.data(), &m_wndPos[1] );

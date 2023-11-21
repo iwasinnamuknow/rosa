@@ -18,6 +18,7 @@ set(TESTS
   scene
   display_image
   lua_rotating_image
+  lua_coloured_image
 )
 
 foreach(TEST IN LISTS TESTS)
