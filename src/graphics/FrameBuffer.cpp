@@ -82,16 +82,6 @@ namespace rosa {
             return true;
         }
 
-        // validate multi sample count
-        int maxMsaa = 0;
-        glGetIntegerv(GL_MAX_SAMPLES, &maxMsaa);
-        if(msaa < 0)
-            msaa = 0;
-        else if(msaa > maxMsaa)
-            msaa = maxMsaa;
-        else if(msaa % 2 != 0)
-            msaa--;
-
         // reset error message
         errorMessage = "no error";
 
