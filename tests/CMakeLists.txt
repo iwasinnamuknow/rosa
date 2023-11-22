@@ -19,6 +19,7 @@ set(TESTS
   display_image
   lua_rotating_image
   lua_coloured_image
+  msaa
 )
 
 foreach(TEST IN LISTS TESTS)
