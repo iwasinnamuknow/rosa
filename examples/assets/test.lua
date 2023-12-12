@@ -21,8 +21,8 @@ general = 2
 
 function onCreate()
   print("Created!")
-  sound.play()
-  music.play()
+  entity:getSoundPlayer():play()
+  entity:getMusicPlayer():play()
 end
 
 function onLoad()
@@ -54,8 +54,8 @@ function onInput(event)
       --print(event.mouse.position == vec2.new(100.0, 100.0))
     end
   elseif (event.type == EventType.Resize) then
-    print(event.resize.size.x)
-    print(event.resize.size.y)
+    -- print(event.resize.size.x)
+    -- print(event.resize.size.y)
     entity:getTransform():setPosition(event.resize.size.x / 2, event.resize.size.y / 2)
   end
 end
