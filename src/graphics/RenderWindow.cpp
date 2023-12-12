@@ -71,27 +71,11 @@ namespace rosa {
 
     void RenderWindow::init( int width, int height, std::string title, int msaa, bool window_hidden)
     {
-        // validate multi sample count
-        int maxMsaa = 8;
-        //glGetIntegerv(GL_MAX_SAMPLES, &maxMsaa);
-        if(msaa < 0)
-            msaa = 0;
-        else if(msaa > maxMsaa)
-            msaa = maxMsaa;
-        else if(msaa % 2 != 0)
-            msaa--;
-
         glfwInit();
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-        if (msaa == 0) {
-            glfwWindowHint(GLFW_SAMPLES, 1);
-        } else {
-            glfwWindowHint(GLFW_SAMPLES, msaa);
-        }
 
         if (window_hidden) {
             glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
@@ -108,6 +92,22 @@ namespace rosa {
         //glfwSwapInterval(0); // Vsync disable
 
         gladLoadGL(glfwGetProcAddress);
+
+        // validate multi sample count
+        int maxMsaa = 8;
+        glGetIntegerv(GL_MAX_SAMPLES, &maxMsaa);
+        if(msaa < 0)
+            msaa = 0;
+        else if(msaa > maxMsaa)
+            msaa = maxMsaa;
+        else if(msaa % 2 != 0)
+            msaa--;
+
+        if (msaa == 0) {
+            glfwWindowHint(GLFW_SAMPLES, 1);
+        } else {
+            glfwWindowHint(GLFW_SAMPLES, msaa);
+        }
 
         TracyGpuContext;
 
