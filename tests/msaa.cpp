@@ -74,7 +74,7 @@ TEST_CASE("Render a sprite with 8x MSAA enabled", "[lua]") {
 // int main(){
 
     // Grab the GameManager
-    auto game_mgr = rosa::GameManager(800, 600, "MSAA Image", 16, true);
+    auto game_mgr = rosa::GameManager(800, 600, "MSAA Image", 8, true);
 
     rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
 
@@ -92,7 +92,7 @@ TEST_CASE("Render a sprite with 8x MSAA enabled", "[lua]") {
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
 
     std::vector<unsigned char> pixels = game_mgr.getRenderWindow()->readFrame();
-    //rosa::ImageComparator::writePNG("msaa4.png", pixels, size.x, size.y);
+    //rosa::ImageComparator::writePNG("msaa.png", pixels, size.x, size.y);
     std::vector<unsigned char> ref3_pixels = rosa::ImageComparator::readPNG("references/msaa.png");
     REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref3_pixels) == true);    
 }
