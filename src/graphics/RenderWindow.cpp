@@ -72,8 +72,8 @@ namespace rosa {
     void RenderWindow::init( int width, int height, std::string title, int msaa, bool window_hidden)
     {
         // validate multi sample count
-        int maxMsaa = 0;
-        glGetIntegerv(GL_MAX_SAMPLES, &maxMsaa);
+        int maxMsaa = 8;
+        //glGetIntegerv(GL_MAX_SAMPLES, &maxMsaa);
         if(msaa < 0)
             msaa = 0;
         else if(msaa > maxMsaa)
