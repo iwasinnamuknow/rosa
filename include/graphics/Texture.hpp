@@ -20,6 +20,7 @@
 #include <physfs.h>
 #include <core/Resource.hpp>
 #include <core/Uuid.hpp>
+#include <graphics/gl.hpp>
 
 #define FOURCC_DXT1 0x31545844 // Equivalent to "DXT1" in ASCII
 #define FOURCC_DXT3 0x33545844 // Equivalent to "DXT3" in ASCII
@@ -35,6 +36,20 @@
 
 namespace rosa {
 
+    enum TextureFilterMode {
+        Nearest = GL_NEAREST,
+        Linear = GL_LINEAR,
+        NearestMipMapNearest = GL_NEAREST_MIPMAP_NEAREST,
+        NearestMipMapLinear = GL_NEAREST_MIPMAP_LINEAR,
+        LinearMipMapNearest = GL_LINEAR_MIPMAP_NEAREST,
+        LinearMipMapLinear = GL_LINEAR_MIPMAP_LINEAR
+    };
+
+    struct TextureFilterParams {
+        TextureFilterMode minify{TextureFilterMode::NearestMipMapLinear};
+        TextureFilterMode magnify{TextureFilterMode::Linear};
+    };
+
     class MalformedDDSException : public Exception {
         public:
             explicit MalformedDDSException(const std::string& msg) : Exception(msg) {}
@@ -43,7 +58,9 @@ namespace rosa {
     class Texture : public Resource {
 
         public:
-            Texture(std::string name, Uuid uuid, std::string pack) : rosa::Resource(std::move(name), uuid, std::move(pack)) {}
+            Texture(std::string name, Uuid uuid, std::string pack, 
+                TextureFilterParams filter_params = {}) : 
+                    rosa::Resource(std::move(name), uuid, std::move(pack)), m_filter_params(filter_params) {}
 
             auto getOpenGlId() const -> unsigned int {
                 return m_texture_id;
@@ -58,6 +75,7 @@ namespace rosa {
         private:
             unsigned int m_texture_id{0};
             glm::vec2 m_size{0.F, 0.F};
+            TextureFilterParams m_filter_params;
     };
 
 } // namespace rosa

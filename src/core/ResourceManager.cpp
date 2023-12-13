@@ -32,6 +32,7 @@
 #include <utility>
 #include <filesystem>
 #include <fmt/format.h>
+#include <yaml-cpp/yaml.h>
 
 #if (_WIN32)
 #include <stdlib.h>
@@ -39,17 +40,6 @@
 #include <unistd.h>
 #include <climits>
 #endif
-
-auto split_lines(const std::string& string, char delimiter) -> std::vector<std::string> {
-    auto result = std::vector<std::string>{};
-    auto stream = std::stringstream(string);
-
-    for (std::string line; std::getline(stream, line, delimiter);) {
-        result.push_back(line);
-    }
-
-    return result;
-}
 
 auto get_exe_dir() -> std::string {
     #if (_WIN32)
@@ -71,6 +61,24 @@ auto get_exe_dir() -> std::string {
     return directory.substr(0, directory.find_last_of("\\/"));
 }
 
+namespace YAML {
+    template<>
+    struct convert<rosa::Uuid> {
+        static auto decode(const Node& node, rosa::Uuid& rhs) -> bool {
+            rhs = node.as<std::string>();
+            return true;
+        }
+    };
+
+    template<>
+    struct convert<rosa::TextureFilterMode> {
+        static auto decode(const Node& node, rosa::TextureFilterMode& rhs) -> bool {
+            rhs = static_cast<rosa::TextureFilterMode>(node.as<int>());
+            return true;
+        }
+    };
+}
+
 namespace rosa {
     
     auto ResourceManager::registerAssetPack(const std::string& path, const std::string& mount_point) -> void {
@@ -85,46 +93,58 @@ namespace rosa {
         }
 
         // Attempt to read assets.lst
-        if (PHYSFS_exists("assets.lst") != 0) {
-            PHYSFS_file* myfile = PHYSFS_openRead(fmt::format("{}/assets.lst", mount_point).c_str());
+        if (PHYSFS_exists("manifest.yaml") != 0) {
+            PHYSFS_file* myfile = PHYSFS_openRead(fmt::format("{}/manifest.yaml", mount_point).c_str());
             std::string buffer{};
             buffer.resize(PHYSFS_fileLength(myfile));
             std::int64_t length_read = PHYSFS_readBytes(myfile, buffer.data(), static_cast<std::uint64_t>(PHYSFS_fileLength(myfile)));
             assert(length_read == PHYSFS_fileLength(myfile));
             PHYSFS_close(myfile);
 
-            std::vector<std::string> lines = split_lines(buffer, '\n');
+            YAML::Node manifest = YAML::Load(buffer);
 
-            for (const auto& line : lines) {
-                std::vector line_data = split_lines(line, ':');
-                auto uuid = Uuid(line_data.at(2));
-                auto type = static_cast<resource_type>(std::stoi(line_data.at(0)));
+            if (manifest["assets"]) {
+                for (const auto& a : manifest["assets"]) {
+                    auto uuid = Uuid(a["uuid"].as<Uuid>());
+                    auto type = static_cast<resource_type>(a["type"].as<int>());
+                    auto filename = a["path"].as<std::string>();
 
-                if (type == resource_type::resource_texture) {
-                    auto new_resource = std::make_unique<Texture>( line_data.at(1), uuid, path);
-                    new_resource->loadFromPhysFS();
-                    m_resources[uuid] = std::move(new_resource);
-                
-                } else if (type == resource_type::resource_vertex_shader) {
-                    auto new_resource = std::make_unique<Shader>( line_data.at(1), uuid, path, ShaderType::VertexShader);
-                    new_resource->loadFromPhysFS();
-                    m_resources[uuid] = std::move(new_resource);
+                    if (type == resource_type::resource_texture) {
+                        TextureFilterParams params;
+                        if (a["filtering"]) {
+                            if (a["filtering"]["minify"]) {
+                                params.minify = a["filtering"]["minify"].as<TextureFilterMode>();
+                            }
 
-                } else if (type == resource_type::resource_fragment_shader) {
-                    auto new_resource = std::make_unique<Shader>( line_data.at(1), uuid, path, ShaderType::FragmentShader);
-                    new_resource->loadFromPhysFS();
-                    m_resources[uuid] = std::move(new_resource);
+                            if (a["filtering"]["magnify"]) {
+                                params.magnify = a["filtering"]["magnify"].as<TextureFilterMode>();
+                            }
+                        }
+                        auto new_resource = std::make_unique<Texture>( filename, uuid, path, params);
+                        new_resource->loadFromPhysFS();
+                        m_resources[uuid] = std::move(new_resource);
+                    
+                    } else if (type == resource_type::resource_vertex_shader) {
+                        auto new_resource = std::make_unique<Shader>( filename, uuid, path, ShaderType::VertexShader);
+                        new_resource->loadFromPhysFS();
+                        m_resources[uuid] = std::move(new_resource);
 
-                } else if (type == resource_type::resource_script) {
-                    auto new_resource = std::make_unique<LuaScript>( line_data.at(1), uuid, path);
-                    new_resource->loadFromPhysFS();
-                    m_resources[uuid] = std::move(new_resource);
+                    } else if (type == resource_type::resource_fragment_shader) {
+                        auto new_resource = std::make_unique<Shader>( filename, uuid, path, ShaderType::FragmentShader);
+                        new_resource->loadFromPhysFS();
+                        m_resources[uuid] = std::move(new_resource);
 
-                } else if (type == resource_type::resource_sound || type == resource_type::resource_music) {
-                    auto new_resource = std::make_unique<AudioFile>( line_data.at(1), uuid, path);
-                    new_resource->loadFromPhysFS();
-                    m_resources[uuid] = std::move(new_resource);
-                }     
+                    } else if (type == resource_type::resource_script) {
+                        auto new_resource = std::make_unique<LuaScript>( filename, uuid, path);
+                        new_resource->loadFromPhysFS();
+                        m_resources[uuid] = std::move(new_resource);
+
+                    } else if (type == resource_type::resource_sound || type == resource_type::resource_music) {
+                        auto new_resource = std::make_unique<AudioFile>( filename, uuid, path);
+                        new_resource->loadFromPhysFS();
+                        m_resources[uuid] = std::move(new_resource);
+                    }
+                }
             }
 
         } else {
@@ -152,13 +172,10 @@ namespace rosa {
         if (PHYSFS_unmount(real_path.c_str()) == 0) {
             auto error = PHYSFS_getLastErrorCode();
 
-            switch (error) {
-                case PHYSFS_ERR_FILES_STILL_OPEN:
-                    throw UnmountFailedException("Files are still open");
-                    break;
-                case PHYSFS_ERR_NOT_MOUNTED:
-                    throw UnmountFailedException("Pack not mounted");
-                    break;
+            if (error == PHYSFS_ERR_FILES_STILL_OPEN) {
+                throw UnmountFailedException("Files are still open");
+            } else if (error == PHYSFS_ERR_NOT_MOUNTED) {
+                throw UnmountFailedException("Pack not mounted");
             }
         }
     }
