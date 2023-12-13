@@ -69,7 +69,7 @@ class MyScene : public rosa::Scene {
         }
 };
 
-TEST_CASE("Render a sprite with 8x MSAA enabled", "[lua]") {
+TEST_CASE("Render a sprite with 8x MSAA enabled", "[renderer]") {
 
 // int main(){
 
@@ -93,6 +93,62 @@ TEST_CASE("Render a sprite with 8x MSAA enabled", "[lua]") {
 
     std::vector<unsigned char> pixels = game_mgr.getRenderWindow()->readFrame();
     //rosa::ImageComparator::writePNG("msaa.png", pixels, size.x, size.y);
-    std::vector<unsigned char> ref3_pixels = rosa::ImageComparator::readPNG("references/msaa.png");
+    std::vector<unsigned char> ref3_pixels = rosa::ImageComparator::readPNG("references/msaa8.png");
+    REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref3_pixels) == true);    
+}
+
+TEST_CASE("Render a sprite with 16x MSAA enabled", "[renderer]") {
+
+// int main(){
+
+    // Grab the GameManager
+    auto game_mgr = rosa::GameManager(800, 600, "MSAA Image", 16, true);
+
+    rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
+
+    // Instantiate our scene from the class above and register it
+    game_mgr.addScene("simple_image", std::make_unique<MyScene>(game_mgr.getRenderWindow()));
+
+    // Set the scene as active
+    game_mgr.changeScene("simple_image");
+
+    // Away we go with our desired window size
+    game_mgr.run(3);
+
+    auto size = game_mgr.getRenderWindow()->getSize();
+    
+    game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
+
+    std::vector<unsigned char> pixels = game_mgr.getRenderWindow()->readFrame();
+    //rosa::ImageComparator::writePNG("msaa16.png", pixels, size.x, size.y);
+    std::vector<unsigned char> ref3_pixels = rosa::ImageComparator::readPNG("references/msaa16.png");
+    REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref3_pixels) == true);    
+}
+
+TEST_CASE("Render a sprite with 32x MSAA enabled", "[renderer]") {
+
+// int main(){
+
+    // Grab the GameManager
+    auto game_mgr = rosa::GameManager(800, 600, "MSAA Image", 32, true);
+
+    rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
+
+    // Instantiate our scene from the class above and register it
+    game_mgr.addScene("simple_image", std::make_unique<MyScene>(game_mgr.getRenderWindow()));
+
+    // Set the scene as active
+    game_mgr.changeScene("simple_image");
+
+    // Away we go with our desired window size
+    game_mgr.run(3);
+
+    auto size = game_mgr.getRenderWindow()->getSize();
+    
+    game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
+
+    std::vector<unsigned char> pixels = game_mgr.getRenderWindow()->readFrame();
+    //rosa::ImageComparator::writePNG("msaa32.png", pixels, size.x, size.y);
+    std::vector<unsigned char> ref3_pixels = rosa::ImageComparator::readPNG("references/msaa32.png");
     REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref3_pixels) == true);    
 }
