@@ -20,6 +20,7 @@
 #include <string>
 #include <fmt/format.h>
 #include <ostream>
+#include <cstdint>
 
 namespace rosa {
     class Uuid;
@@ -44,8 +45,8 @@ namespace rosa {
 
             static auto generate() -> Uuid;
 
-            auto getLower() -> u_int64_t;
-            auto getUpper() -> u_int64_t;
+            auto getLower() -> std::uint64_t;
+            auto getUpper() -> std::uint64_t;
 
             auto toString() -> std::string;
             
@@ -70,8 +71,8 @@ struct std::hash<rosa::Uuid>
         // Compute individual hash values for first, second and third
         // http://stackoverflow.com/a/1646913/126995
         std::size_t res = 17;
-        res = res * 31 + hash<uint64_t>()( k.m_top );
-        res = res * 31 + hash<uint64_t>()( k.m_bottom );
+        res = res * 31 + hash<std::uint64_t>()( k.m_top );
+        res = res * 31 + hash<std::uint64_t>()( k.m_bottom );
         return res;
     }
 };

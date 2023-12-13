@@ -53,11 +53,11 @@ namespace rosa {
         return Uuid(fmt::format("{:16x}{:16x}", generator(), generator()));
     }
 
-    auto Uuid::getLower() -> u_int64_t {
+    auto Uuid::getLower() -> std::uint64_t {
         return m_bottom;
     }
 
-    auto Uuid::getUpper() -> u_int64_t {
+    auto Uuid::getUpper() -> std::uint64_t {
         return m_top;
     }
 
