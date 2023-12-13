@@ -20,6 +20,7 @@ set(TESTS
   lua_rotating_image
   lua_coloured_image
   msaa
+  texture_filtering
 )
 
 foreach(TEST IN LISTS TESTS)

@@ -9,3 +9,9 @@ assets:
   - type: 4
     path: colour.lua
     uuid: cd20c8a2b6be9553c36377680bbca51c
+  - type: 0
+    path: test.dds
+    uuid: caa424cedb6aac0e78744734b1534f65
+    filtering:
+      minify: 0x2601
+      magnify: 0x2601
