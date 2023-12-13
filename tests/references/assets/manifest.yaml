@@ -1,0 +1,11 @@
+---
+assets:
+  - type: 0
+    path: test.dds
+    uuid: f7055f226bfa1a3b4dbdb366dd18866d
+  - type: 4
+    path: rotate.lua
+    uuid: 9046e8fecb017adf1029c79e71961173
+  - type: 4
+    path: colour.lua
+    uuid: cd20c8a2b6be9553c36377680bbca51c
