@@ -41,7 +41,7 @@ namespace rosa {
     }
 
     Uuid::operator std::string() const {
-        return fmt::format("{:16x}{:16x}", m_top, m_bottom);
+        return fmt::format("{:016x}{:016x}", m_top, m_bottom);
     }
 
     auto Uuid::generate() -> Uuid {
@@ -50,7 +50,7 @@ namespace rosa {
         std::generate(std::begin(seed_data), std::end(seed_data), std::ref(rd));
         std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
         std::mt19937_64 generator(seq);
-        return Uuid(fmt::format("{:16x}{:16x}", generator(), generator()));
+        return Uuid(fmt::format("{:016x}{:016x}", generator(), generator()));
     }
 
     auto Uuid::getLower() -> std::uint64_t {
