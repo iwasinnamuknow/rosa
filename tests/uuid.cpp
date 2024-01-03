@@ -21,21 +21,30 @@ TEST_CASE("Empty Uuid is all zeros", "[uuid]") {
 
     rosa::Uuid empty_uuid{};
 
-    REQUIRE( empty_uuid.getUpper() == 0x0 && empty_uuid.getLower() == 0x0) ;
+    for (const auto& element : empty_uuid.getData()) {
+        REQUIRE(element == 0x0);
+    }
 }
 
 TEST_CASE("Generate Uuid", "[uuid]") {
     
     rosa::Uuid random_uuid = rosa::Uuid::generate();
 
-    REQUIRE( random_uuid.getUpper() != 0x0 && random_uuid.getLower() != 0x0);
+    for (const auto& element : random_uuid.getData()) {
+        REQUIRE(element != 0x0);
+    }
 }
 
 TEST_CASE("Parse Uuid from string", "[uuid]") {
 
-    rosa::Uuid uuid_string("ab80206ed1734beb5fc0639fc9c08526");
+    rosa::Uuid uuid_string("ab80206e-d173-4beb-5fc0-639fc9c08526");
+    REQUIRE( uuid_string.toString() == "ab80206e-d173-4beb-5fc0-639fc9c08526" );
+}
 
-    REQUIRE( uuid_string.getUpper() == 0xab80206ed1734beb && uuid_string.getLower() == 0x5fc0639fc9c08526 );
+TEST_CASE("Parse Uuid from string without dashes", "[uuid]") {
+
+    rosa::Uuid uuid_string("ab80206ed1734beb5fc0639fc9c08526");
+    REQUIRE( uuid_string.toString() == "ab80206e-d173-4beb-5fc0-639fc9c08526" );
 }
 
 TEST_CASE("Copy Uuid by constructor", "[uuid]") {
@@ -43,7 +52,7 @@ TEST_CASE("Copy Uuid by constructor", "[uuid]") {
     rosa::Uuid uuid_string("ab80206ed1734beb5fc0639fc9c08526");
     rosa::Uuid copied_uuid(uuid_string);
 
-    REQUIRE( copied_uuid.getUpper() == 0xab80206ed1734beb && copied_uuid.getLower() == 0x5fc0639fc9c08526 );
+    REQUIRE(copied_uuid.toString() == "ab80206e-d173-4beb-5fc0-639fc9c08526");
 }
 
 TEST_CASE("Copy Uuid by assignment", "[uuid]") {
@@ -51,7 +60,7 @@ TEST_CASE("Copy Uuid by assignment", "[uuid]") {
     rosa::Uuid uuid_string("ab80206ed1734beb5fc0639fc9c08526");
     rosa::Uuid copied_uuid = uuid_string;
 
-    REQUIRE( copied_uuid.getUpper() == 0xab80206ed1734beb && copied_uuid.getLower() == 0x5fc0639fc9c08526 );
+    REQUIRE( copied_uuid.toString() == "ab80206e-d173-4beb-5fc0-639fc9c08526" );
 }
 
 TEST_CASE("Explicit cast Uuid to std::string", "[uuid]") {
@@ -59,7 +68,7 @@ TEST_CASE("Explicit cast Uuid to std::string", "[uuid]") {
     rosa::Uuid uuid("ab80206ed1734beb5fc0639fc9c08526");
     std::string str = static_cast<std::string>(uuid);
 
-    REQUIRE( str == "ab80206ed1734beb5fc0639fc9c08526" );
+    REQUIRE( str == "ab80206e-d173-4beb-5fc0-639fc9c08526" );
 }
 
 TEST_CASE("Uuid as hash key", "[uuid]") {

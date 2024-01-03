@@ -21,6 +21,7 @@
 #include <fmt/format.h>
 #include <ostream>
 #include <cstdint>
+#include <span>
 
 namespace rosa {
     class Uuid;
@@ -45,14 +46,12 @@ namespace rosa {
 
             static auto generate() -> Uuid;
 
-            auto getLower() -> std::uint64_t;
-            auto getUpper() -> std::uint64_t;
+            auto getData() const -> const std::array<std::uint8_t, 16>&;
 
             auto toString() -> std::string;
             
         private:
-            u_int64_t m_top{0};
-            u_int64_t m_bottom{0};
+            std::array<std::uint8_t, 16> m_data{0};
 
             friend std::hash<rosa::Uuid>;
     };
@@ -68,11 +67,12 @@ struct std::hash<rosa::Uuid>
         using std::hash;
         using std::string;
 
-        // Compute individual hash values for first, second and third
-        // http://stackoverflow.com/a/1646913/126995
-        std::size_t res = 17;
-        res = res * 31 + hash<std::uint64_t>()( k.m_top );
-        res = res * 31 + hash<std::uint64_t>()( k.m_bottom );
+        std::size_t res{0};
+
+        for (const auto& element : k.getData()) {
+            res = res * 31 + hash<std::uint8_t>()(element);
+        }
+
         return res;
     }
 };

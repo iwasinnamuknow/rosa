@@ -126,6 +126,13 @@ target_link_libraries(rosa PRIVATE
   ${FINAL_LIBS}
 )
 
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+endif ()
+
 add_subdirectory(examples)
 add_subdirectory(docs)
 add_subdirectory(tests)
