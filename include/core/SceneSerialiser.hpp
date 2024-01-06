@@ -18,6 +18,7 @@
 #include <core/Scene.hpp>
 #include <yaml-cpp/yaml.h>
 #include <sol/sol.hpp>
+#include <unordered_map>
 
 namespace rosa {
 
@@ -30,6 +31,8 @@ namespace rosa {
             auto serialiseToYaml(const std::string& filepath) -> void;
             auto deserialiseFromYaml(const std::string& filepath) -> bool;
 
+            //auto registerNSC(const std::string& name, std::function<void*(void)>& factory_func);
+
         private:
             auto serialise_entity(YAML::Emitter& out, Entity& entity) -> void;
             auto lua_t_to_yaml(YAML::Emitter& out, sol::table& table) -> void;
@@ -38,6 +41,8 @@ namespace rosa {
             auto deserialise_sequence(const YAML::Node& node) -> sol::table;
 
             Scene& m_scene;
+
+            //std::unordered_map<std::string, std::function<void*(void)>> m_nsc_map;
     };
 
 } // namespace rosa

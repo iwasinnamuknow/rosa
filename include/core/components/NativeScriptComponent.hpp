@@ -15,8 +15,8 @@
 
 #pragma once
 
-#include "core/Entity.hpp"
-#include "core/NativeScriptEntity.hpp"
+#include <core/Entity.hpp>
+#include <core/NativeScriptEntity.hpp>
 #include <cstddef>
 #include <functional>
 
@@ -29,6 +29,7 @@ namespace rosa {
         std::function<void()> destroy_instance_function;
 
         std::function<void(NativeScriptEntity*)> on_create_function;
+        std::function<void(NativeScriptEntity*)> on_load_function;
         std::function<void(NativeScriptEntity*)> on_destroy_function;
         std::function<void(NativeScriptEntity*, float)> on_update_function;
         std::function<void(NativeScriptEntity*, const Event&)> on_input_function;
@@ -46,6 +47,10 @@ namespace rosa {
 
             on_create_function = [](NativeScriptEntity* p_instance) -> void {
                 p_instance->onCreate();
+            };
+
+            on_load_function = [](NativeScriptEntity* p_instance) -> void {
+                p_instance->onLoad();
             };
 
             on_destroy_function = [](NativeScriptEntity* p_instance) -> void {

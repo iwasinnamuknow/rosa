@@ -25,6 +25,7 @@
 #include <core/components/LuaScriptComponent.hpp>
 #include <core/components/SoundPlayerComponent.hpp>
 #include <core/components/MusicPlayerComponent.hpp>
+#include <core/components/NativeScriptComponent.hpp>
 #include <graphics/Colour.hpp>
 #include <cmath>
 #include <core/Uuid.hpp>
@@ -129,6 +130,10 @@ namespace rosa {
 
     SceneSerialiser::SceneSerialiser(Scene& scene) : m_scene(scene) {}
 
+//    auto SceneSerialiser::registerNSC(const std::string &name, std::function<void *(void)>& factory_func) {
+//        m_nsc_map.insert(std::make_pair(std::string(name), factory_func));
+//    }
+
     auto SceneSerialiser::serialiseToYaml(const std::string& filepath) -> void {
         YAML::Emitter out;
 
@@ -214,6 +219,15 @@ namespace rosa {
             }
 
             out << YAML::EndMap; // lua script
+        }
+
+        if (entity.hasComponent<NativeScriptComponent>()) {
+            auto nsc = entity.getComponent<NativeScriptComponent>().instance;
+            out << YAML::BeginMap; // nsc
+                out << YAML::Key << "type" << YAML::Value << "native_script";
+                out << YAML::Key << "data" << YAML::Value << nsc->serialise();
+                out << YAML::Key << "script" << YAML::Value << nsc->getName();
+            out << YAML::EndMap; // nsc
         }
 
         out << YAML::EndSeq; // components
@@ -329,6 +343,8 @@ namespace rosa {
                                             player.setPause(false);
                                         }
                                         player.setVolume(comp["volume"].as<float>());
+                                    } else if (type == "native_script") {
+
                                     }
                                 }
                             }

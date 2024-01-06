@@ -23,10 +23,13 @@
 #include <spdlog/spdlog.h>
 #include <core/Entity.hpp>
 #include <core/Scene.hpp>
+#include <yaml-cpp/yaml.h>
 
 #define ROSA_CONSTRUCTOR(class) explicit class(std::reference_wrapper<rosa::Scene> scene, std::reference_wrapper<rosa::Entity> entity) : NativeScriptEntity(scene, entity) {}
 
 namespace rosa {
+
+    class SceneSerialiser;
 
     class NativeScriptEntity {
         public:
@@ -38,7 +41,8 @@ namespace rosa {
             virtual ~NativeScriptEntity() = default;
 
             virtual auto onCreate() -> void{}
-            virtual auto onUpdate([[maybe_unused]] float delta_time) -> void{} 
+            virtual auto onLoad() -> void{}
+            virtual auto onUpdate([[maybe_unused]] float delta_time) -> void{}
             virtual auto onInput([[maybe_unused]] const Event& event) -> void{}
             virtual auto onDestroy() -> void{}
 
@@ -53,11 +57,17 @@ namespace rosa {
             auto die() -> void {
                 m_entity.get().die();
             }
+
+        protected:
+            virtual auto serialise() -> YAML::Node{ return {}; }
+            virtual auto deserialise(YAML::Node& node) -> void{}
+            virtual auto getName() -> std::string{ return{}; }
             
         private:
             std::reference_wrapper<Entity> m_entity;
             std::reference_wrapper<Scene> m_scene;
             friend class Scene;
+            friend class SceneSerialiser;
     };
 
 } // namespace rosa
