@@ -22,8 +22,8 @@ Rosa is my attempt to write a fairly simple, code-only 2d game engine. It is bui
     * ZIP
     * 7z
     * PAK
-* UUID representation of all assets and entities
-    * Use assets via UUID
+* UUIDv4 representation of all assets and entities
+    * Use assets via UUIDv4
     * Asset UUIDs based on archive manifest (manifest.yaml)
 * Event queue on top of OpenGL supporting
     * Mouse movement
@@ -35,6 +35,7 @@ Rosa is my attempt to write a fairly simple, code-only 2d game engine. It is bui
 * Tracy Profiler support
 * **Experimental!** Scene serialisation/deserialisation
     * Using UUIDs for all indices for portability
+    * All components currently supported in Lua and NativeScript (NS is ugly)
 
 I hope to keep extending Rosa, particularly LuaScript support and general code quality/architecture. Additional platforms will also be added hopefully, starting with Windows.
 
