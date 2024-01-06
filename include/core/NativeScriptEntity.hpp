@@ -46,6 +46,10 @@ namespace rosa {
             virtual auto onInput([[maybe_unused]] const Event& event) -> void{}
             virtual auto onDestroy() -> void{}
 
+            static NativeScriptEntity* factoryCreator(Scene* scene, Entity* entity) {
+                return new NativeScriptEntity(*scene, *entity);
+            }
+
             auto getScene() -> Scene& {
                 return m_scene.get();
             }
@@ -60,7 +64,7 @@ namespace rosa {
 
         protected:
             virtual auto serialise() -> YAML::Node{ return {}; }
-            virtual auto deserialise(YAML::Node& node) -> void{}
+            virtual auto deserialise(YAML::Node node) -> void{}
             virtual auto getName() -> std::string{ return{}; }
             
         private:

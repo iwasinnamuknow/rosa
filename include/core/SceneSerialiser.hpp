@@ -19,6 +19,7 @@
 #include <yaml-cpp/yaml.h>
 #include <sol/sol.hpp>
 #include <unordered_map>
+#include <core/NativeScriptEntity.hpp>
 
 namespace rosa {
 
@@ -31,7 +32,7 @@ namespace rosa {
             auto serialiseToYaml(const std::string& filepath) -> void;
             auto deserialiseFromYaml(const std::string& filepath) -> bool;
 
-            //auto registerNSC(const std::string& name, std::function<void*(void)>& factory_func);
+            auto registerNSC(const std::string& name, NativeScriptEntity *(*factory_func)(rosa::Scene *, rosa::Entity *)) -> void;
 
         private:
             auto serialise_entity(YAML::Emitter& out, Entity& entity) -> void;
@@ -42,7 +43,7 @@ namespace rosa {
 
             Scene& m_scene;
 
-            //std::unordered_map<std::string, std::function<void*(void)>> m_nsc_map;
+            std::unordered_map<std::string, NativeScriptEntity *(*)(rosa::Scene *, rosa::Entity *)> m_nsc_map;
     };
 
 } // namespace rosa

@@ -52,6 +52,10 @@ class NSCTest : public rosa::NativeScriptEntity {
             spdlog::info("NativeScript Dieing!");
         }
 
+        static rosa::NativeScriptEntity* factoryCreator(rosa::Scene* scene, rosa::Entity* entity) {
+            return new NSCTest(*scene, *entity);
+        }
+
     protected:
         auto serialise() -> YAML::Node override {
 
@@ -63,7 +67,7 @@ class NSCTest : public rosa::NativeScriptEntity {
             return res;
         }
 
-        auto deserialise(YAML::Node& node) -> void override {
+        auto deserialise(YAML::Node node) -> void override {
             if (node.Type() == YAML::NodeType::Map) {
                 if (node["test_int"]) {
                     m_test_int = node["test_int"].as<int>();
@@ -140,7 +144,7 @@ class SerialiseScene : public rosa::Scene {
 
         ~SerialiseScene() override {
             auto serialiser = rosa::SceneSerialiser(*this);
-            //serialiser.registerNSC("NSCTest", &NSCTest::deserialise);
+            serialiser.registerNSC("NSCTest", &NSCTest::factoryCreator);
             serialiser.serialiseToYaml("serialise.yaml");
         }
 };

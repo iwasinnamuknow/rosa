@@ -65,6 +65,37 @@ namespace rosa {
                 p_instance->onInput(event);
             };
         }
+
+        void bind(NativeScriptEntity* nse) {
+            instantiate_function = [this, nse](std::reference_wrapper<Scene> scene, std::reference_wrapper<Entity> entity) {
+                instance = nse;
+            };
+
+            destroy_instance_function = [this]() {
+                delete instance;
+                instance = nullptr;
+            };
+
+            on_create_function = [](NativeScriptEntity* p_instance) -> void {
+                p_instance->onCreate();
+            };
+
+            on_load_function = [](NativeScriptEntity* p_instance) -> void {
+                p_instance->onLoad();
+            };
+
+            on_destroy_function = [](NativeScriptEntity* p_instance) -> void {
+                p_instance->onDestroy();
+            };
+
+            on_update_function = [](NativeScriptEntity* p_instance, float delta_time) -> void {
+                p_instance->onUpdate(delta_time);
+            };
+
+            on_input_function = [](NativeScriptEntity* p_instance, const Event& event) -> void {
+                p_instance->onInput(event);
+            };
+        }
     };
 
 } // namespace rosa

@@ -130,9 +130,9 @@ namespace rosa {
 
     SceneSerialiser::SceneSerialiser(Scene& scene) : m_scene(scene) {}
 
-//    auto SceneSerialiser::registerNSC(const std::string &name, std::function<void *(void)>& factory_func) {
-//        m_nsc_map.insert(std::make_pair(std::string(name), factory_func));
-//    }
+    auto SceneSerialiser::registerNSC(const std::string &name, NativeScriptEntity *(*factory_func)(rosa::Scene *, rosa::Entity *)) -> void {
+        m_nsc_map.insert(std::make_pair(std::string(name), factory_func));
+    }
 
     auto SceneSerialiser::serialiseToYaml(const std::string& filepath) -> void {
         YAML::Emitter out;
@@ -344,7 +344,11 @@ namespace rosa {
                                         }
                                         player.setVolume(comp["volume"].as<float>());
                                     } else if (type == "native_script") {
-
+                                        auto classname = comp["script"].as<std::string>();
+                                        auto factory_func = m_nsc_map.at(classname);
+                                        auto nsc = factory_func(&m_scene, &new_entity);
+                                        nsc->deserialise(comp["data"]);
+                                        m_scene.getRegistry().emplace<NativeScriptComponent>(new_entity).bind(nsc);
                                     }
                                 }
                             }

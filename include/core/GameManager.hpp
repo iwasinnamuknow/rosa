@@ -96,7 +96,7 @@ namespace rosa {
 
             /**
              * @brief Get the current scene
-             * 
+             *
              * @return Scene* An observer pointer to the scene
              */
             auto getCurrentScene() -> Scene* {
