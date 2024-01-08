@@ -30,3 +30,6 @@ assets:
     - type: 4
       path: camera_test.lua
       uuid: 739c0f32872ee2647fa957ebaa40c420
+    - type: 3
+      path: font.bff
+      uuid: 286d945e-7fd9-4444-a95e-3faa3e541536

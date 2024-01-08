@@ -71,15 +71,15 @@ namespace rosa {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * max_index_count, m_indices.data(), GL_STATIC_DRAW);
 
         // Generate empty texture 1x1 white
-        glGenTextures(1, &m_empty_tex_id);
-        glBindTexture(GL_TEXTURE_2D, m_empty_tex_id);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        uint32_t colour = 0xffffffff;
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &colour);
-        m_textures[0] = m_empty_tex_id;
+//        glGenTextures(1, &m_empty_tex_id);
+//        glBindTexture(GL_TEXTURE_2D, m_empty_tex_id);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//        uint32_t colour = 0xffffffff;
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &colour);
+//        m_textures[0] = m_empty_tex_id;
 
         linkShaders();
 
@@ -146,7 +146,7 @@ namespace rosa {
         m_quad_draws++;
     }
 
-    auto Renderer::submit(const Quad& quad, glm::mat4 transform) -> void {
+    auto Renderer::submit(const Quad& quad, glm::mat4 transform, bool override_mvp) -> void {
         ZoneScopedN("Render:Renderer:Submit");
 
         float texture_index{0.F};
@@ -187,7 +187,12 @@ namespace rosa {
 
         m_quad_draws++;
 
-        glm::mat4 mvp_tmp = m_mvp * transform;
+        glm::mat4 mvp_tmp;
+        if (override_mvp) {
+            mvp_tmp = transform;
+        } else {
+            mvp_tmp = m_mvp * transform;
+        }
 
         glUseProgram(m_pid);
         glBindVertexArray(m_vao);

@@ -28,6 +28,7 @@
 #include <core/components/NativeScriptComponent.hpp>
 #include <core/components/LuaScriptComponent.hpp>
 #include <core/components/CameraComponent.hpp>
+#include <core/components/TextComponent.hpp>
 #include <functional>
 #include <stack>
 
@@ -273,6 +274,23 @@ namespace rosa {
                 auto& transform = m_registry.get<TransformComponent>(entid);
                 //auto sprite_comp = m_registry.get<SpriteComponent>(entid);
                 sprite_comp.draw(transform.getGlobalTransform());
+            };
+        }
+
+        //Renderer::getInstance().flushBatch();
+
+        {
+            ZoneScopedN("Render:Text");
+
+            auto view = m_registry.view<TextComponent>();
+
+            // For every entity with a SpriteComponent, draw it.
+            for (const auto& entid : view)
+            {
+                auto& text_comp = m_registry.get<TextComponent>(entid);
+                auto& transform = m_registry.get<TransformComponent>(entid);
+                //auto sprite_comp = m_registry.get<SpriteComponent>(entid);
+                text_comp.render(transform.getGlobalTransform(), getRenderWindow().getSize().x, getRenderWindow().getSize().y);
             };
         }
 

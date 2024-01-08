@@ -17,6 +17,7 @@
 #include "core/LuaScript.hpp"
 #include <audio/AudioFile.hpp>
 #include <graphics/Shader.hpp>
+#include <graphics/BitmapFont.hpp>
 #include <core/Resource.hpp>
 #include <cassert>
 #include <core/ResourceManager.hpp>
@@ -141,6 +142,10 @@ namespace rosa {
 
                     } else if (type == resource_type::resource_sound || type == resource_type::resource_music) {
                         auto new_resource = std::make_unique<AudioFile>( filename, uuid, path);
+                        new_resource->loadFromPhysFS();
+                        m_resources[uuid] = std::move(new_resource);
+                    } else if (type == resource_type::resource_font) {
+                        auto new_resource = std::make_unique<BitmapFont>(filename, uuid, path);
                         new_resource->loadFromPhysFS();
                         m_resources[uuid] = std::move(new_resource);
                     }

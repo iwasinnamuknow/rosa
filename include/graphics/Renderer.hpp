@@ -45,7 +45,7 @@ namespace rosa {
             auto submitForBatch(const Quad& quad) -> void;
             auto flushBatch() -> void;
 
-            auto submit(const Quad& quad, glm::mat4 transform) -> void;
+            auto submit(const Quad& quad, glm::mat4 transform, bool override_mvp = false) -> void;
 
             auto updateMvp(glm::mat4 projection) -> void;
             auto getStats() -> RendererStats;
