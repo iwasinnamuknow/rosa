@@ -74,7 +74,7 @@ namespace rosa {
                 float world_x = world_projection[3].x;
                 float world_y = world_projection[3].y;
 
-                m_quad_cache = m_font->print(m_text, world_x + 300, world_y, m_colour);
+                m_quad_cache = m_font->print(m_text, world_x, world_y, m_colour);
             }
 
             if (m_screen_space) {

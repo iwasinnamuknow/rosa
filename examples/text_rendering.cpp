@@ -49,6 +49,13 @@ class MyScene : public rosa::Scene {
             // Grab the window size
             auto window_size = getRenderWindow().getSize();
 
+            // Calculate a screen-centered position for the image
+            const auto position = glm::vec2(
+                    (static_cast<float>(window_size.x) / 2.F),
+                    (static_cast<float>(window_size.y) / 2.F)
+            );
+
+
             // Create a blank entity. It's not really blank, every entity has a TransformComponent
             // by default.
             auto& entity = createEntity();
@@ -63,10 +70,11 @@ class MyScene : public rosa::Scene {
             auto& text_comp = entity.addComponent<rosa::TextComponent>();
             text_comp.setFont(font_uuid);
             text_comp.setText("Test String");
+            text_comp.setColour(rosa::Colour(1.F, 0.F, 0.F, 1.F));
             text_comp.setScreenSpace(false);
 
             // Set the position
-            entity.getComponent<rosa::TransformComponent>().setPosition(100.F, 100.F);
+            entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
 
             auto& cam_entity = createEntity();
             auto& cam_comp = cam_entity.addComponent<rosa::CameraComponent>();
