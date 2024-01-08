@@ -163,6 +163,9 @@ namespace rosa {
             m_texture_count++;
         }
 
+        float pos_x = transform[3].x;
+        float pos_y = transform[3].y;
+
         std::array<Vertex, 4> vertices;
 
         vertices[0].position = glm::vec2(-(quad.size.x/2), -(quad.size.y/2));
@@ -189,7 +192,10 @@ namespace rosa {
 
         glm::mat4 mvp_tmp;
         if (override_mvp) {
-            mvp_tmp = transform;
+            glm::mat4 fake{0};
+            fake[3].x = quad.pos.x;
+            fake[3].y = quad.pos.y;
+            mvp_tmp = transform * fake;
         } else {
             mvp_tmp = m_mvp * transform;
         }
@@ -212,7 +218,7 @@ namespace rosa {
 
         glUseProgram(0);
 
-        m_texture_count = 1;
+        m_texture_count = 0;
 
         m_draw_calls++;
     }
@@ -225,10 +231,13 @@ namespace rosa {
         glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * (m_quad_draws * 4), m_vertex_buffer, GL_DYNAMIC_DRAW);
 
+        int i{0};
         for (auto texture_id : m_textures) {
             if (texture_id != 0) {
+                glActiveTexture(GL_TEXTURE0 + i);
                 glBindTexture(GL_TEXTURE_2D, texture_id);
                 m_texture_binds++;
+                i++;
             }
         }
 
@@ -239,7 +248,7 @@ namespace rosa {
         glUseProgram(0);
 
         m_index_count = 0;
-        m_texture_count = 1;
+        m_texture_count = 0;
         m_vertex_buffer_ptr = m_vertex_buffer;
 
         m_draw_calls++;

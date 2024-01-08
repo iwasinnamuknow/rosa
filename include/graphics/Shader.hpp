@@ -30,7 +30,7 @@ namespace rosa {
     };
 
     constexpr auto default_vertex_shader = std::string_view(R"(
-#version 400 core
+#version 420 core
 
 layout (location = 0) in vec2 inPosition;
 layout (location = 1) in vec2 inUV;
@@ -53,7 +53,7 @@ void main()
 )");
 
     constexpr auto default_fragment_shader = std::string_view(R"(
-#version 400 core
+#version 420 core
 
 in vec4 passColor;
 in vec2 UV;
@@ -61,7 +61,7 @@ in float texture;
 
 out vec4 color;
 
-uniform sampler2D textureSamplers[32];
+layout(binding=0) uniform sampler2D textureSamplers[32];
 
 void main()
 {

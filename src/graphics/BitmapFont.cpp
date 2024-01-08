@@ -57,11 +57,8 @@ namespace rosa {
         }
 
         // Grab the rest of the header
-        int image_x{};
-        int image_y{};
-
-        memcpy(&image_x,&data[2],sizeof(int));
-        memcpy(&image_y,&data[6],sizeof(int));
+        memcpy(&m_image_x,&data[2],sizeof(int));
+        memcpy(&m_image_y,&data[6],sizeof(int));
         memcpy(&m_cell_x,&data[10],sizeof(int));
         memcpy(&m_cell_y,&data[14],sizeof(int));
 
@@ -69,15 +66,15 @@ namespace rosa {
         m_base_char = data[19];
 
         // Check filesize
-        auto expected_length = static_cast<std::int64_t>((bf_map_data_offset) + ((image_x * image_y) * (bpp / 8)));
+        auto expected_length = static_cast<std::int64_t>((bf_map_data_offset) + ((m_image_x * m_image_y) * (bpp / 8)));
         if(length != expected_length) {
             return false;
         }
 
         // Calculate font params
-        m_row_pitch = static_cast<float>(image_x) / static_cast<float>(m_cell_x);
-        m_col_factor = static_cast<float>(m_cell_x) / static_cast<float>(image_x);
-        m_row_factor = static_cast<float>(m_cell_y) / static_cast<float>(image_y);
+        m_row_pitch = static_cast<float>(m_image_x) / static_cast<float>(m_cell_x);
+        m_col_factor = static_cast<float>(m_cell_x) / static_cast<float>(m_image_y);
+        m_row_factor = static_cast<float>(m_cell_y) / static_cast<float>(m_image_y);
         m_y_offset = m_cell_y;
 
         // Determine blending options based on BPP
@@ -101,13 +98,13 @@ namespace rosa {
         }
 
         std::vector<char> image_data;
-        image_data.resize((image_x * image_y) * (bpp * 8));
+        image_data.resize((m_image_x * m_image_y) * (bpp * 8));
 
         // Grab char widths
         memcpy(m_widths.data(), &data[bf_width_data_offset],256);
 
         // Grab image data
-        memcpy(image_data.data(), &data[bf_map_data_offset] , (image_x * image_y) * (bpp / 8));
+        memcpy(image_data.data(), &data[bf_map_data_offset] , (m_image_x * m_image_y) * (bpp / 8));
 
         // Create Texture
         glGenTextures(1,&m_texture_id);
@@ -123,15 +120,15 @@ namespace rosa {
         switch(m_render_style)
         {
             case BFG_RS_ALPHA:
-                glTexImage2D(GL_TEXTURE_2D,0,GL_RED,image_x,image_y,0,GL_RED,GL_UNSIGNED_BYTE,image_data.data());
+                glTexImage2D(GL_TEXTURE_2D,0,GL_RED,m_image_x,m_image_y,0,GL_RED,GL_UNSIGNED_BYTE,image_data.data());
                 break;
 
             case BFG_RS_RGB:
-                glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,image_x,image_y,0,GL_RGB,GL_UNSIGNED_BYTE,image_data.data());
+                glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,m_image_x,m_image_y,0,GL_RGB,GL_UNSIGNED_BYTE,image_data.data());
                 break;
 
             case BFG_RS_RGBA:
-                glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,image_x,image_y,0,GL_RGBA,GL_UNSIGNED_BYTE,image_data.data());
+                glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,m_image_x,m_image_y,0,GL_RGBA,GL_UNSIGNED_BYTE,image_data.data());
                 break;
         }
 
@@ -221,11 +218,11 @@ namespace rosa {
 
             new_quad.texture_id = m_texture_id;
 
-            new_quad.texture_rect_size.x = static_cast<float>(m_cell_x);
-            new_quad.texture_rect_size.y = static_cast<float>(m_cell_y);
+            new_quad.texture_rect_size.x = static_cast<float>(m_cell_x) / static_cast<float>(m_image_x);
+            new_quad.texture_rect_size.y = static_cast<float>(m_cell_y) / static_cast<float>(m_image_y);
 
-            new_quad.texture_rect_pos.x = static_cast<float>(col) * m_col_factor;
-            new_quad.texture_rect_pos.y = static_cast<float>(row) * m_row_factor;
+            new_quad.texture_rect_pos.x = (static_cast<float>(col) * m_cell_x) / static_cast<float>(m_image_x);
+            new_quad.texture_rect_pos.y = (static_cast<float>(row) * m_cell_y) / static_cast<float>(m_image_y);
 
             quads.push_back(new_quad);
             m_cursor_x += m_widths.at(character);

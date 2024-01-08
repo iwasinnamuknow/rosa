@@ -54,6 +54,8 @@ namespace rosa {
         float m_col_factor{};
         int m_render_style{};
         bool m_invert_y_axis{false};
+        int m_image_x{0};
+        int m_image_y{0};
     };
 
 } // namespace rosa

@@ -67,7 +67,7 @@ namespace rosa {
             int m_index_count{0};
             std::array<uint32_t, max_index_count> m_indices;
 
-            uint32_t m_texture_count{1};
+            uint32_t m_texture_count{0};
             std::array<uint32_t, max_textures> m_textures;
 
             uint32_t m_empty_tex_id{0};
