@@ -26,11 +26,11 @@ static const auto dds_uuid = rosa::Uuid("f7055f226bfa1a3b4dbdb366dd18866d");
 static const auto script_uuid = rosa::Uuid("cd20c8a2b6be9553c36377680bbca51c");
 
 // Create a class to represent our scene
-class MyScene : public rosa::Scene {
+class LuaColouredImage : public rosa::Scene {
     public:
 
         // Pass default params to the base class constructor
-        explicit MyScene(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {}
+        explicit LuaColouredImage(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {}
 
         // Override the onLoad function so we can set up our scene. This will be called
         // any time the GameManager activates the scene.
@@ -81,7 +81,7 @@ TEST_CASE("Colour an image via lua script", "[lua]") {
     rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
 
     // Instantiate our scene from the class above and register it
-    game_mgr.addScene("simple_image", std::make_unique<MyScene>(game_mgr.getRenderWindow()));
+    game_mgr.addScene("simple_image", std::make_unique<LuaColouredImage>(game_mgr.getRenderWindow()));
 
     // Set the scene as active
     game_mgr.changeScene("simple_image");

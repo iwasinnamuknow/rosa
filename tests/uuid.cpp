@@ -30,9 +30,7 @@ TEST_CASE("Generate Uuid", "[uuid]") {
     
     rosa::Uuid random_uuid = rosa::Uuid::generate();
 
-    for (const auto& element : random_uuid.getData()) {
-        REQUIRE(element != 0x0);
-    }
+    REQUIRE(random_uuid != rosa::Uuid());
 }
 
 TEST_CASE("Parse Uuid from string", "[uuid]") {
