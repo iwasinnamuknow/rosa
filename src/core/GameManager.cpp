@@ -59,6 +59,12 @@ namespace rosa {
         spdlog::info("Rosa is up and running!");
     }
 
+    GameManager::~GameManager() {
+        ImGui_ImplGlfw_Shutdown();
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui::DestroyContext();
+    }
+
     auto GameManager::addScene(const std::string& key, std::unique_ptr<Scene> scene) -> bool {
         ZoneScopedN("Scenes:Add");
         auto [iterator, inserted] = m_scenes.insert_or_assign(key, std::move(scene));

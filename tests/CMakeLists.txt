@@ -13,29 +13,26 @@ if (NOT CMAKE_BUILD_TYPE)
 endif (NOT CMAKE_BUILD_TYPE)                                                                         
 
 set(TESTS 
-  uuid
-  resource-manager
-  scene
-  display_image
-  lua_rotating_image
-  lua_coloured_image
-  msaa
-  texture_filtering
+  uuid.cpp
+  resource-manager.cpp
+  scene.cpp
+  display_image.cpp
+  lua_rotating_image.cpp
+  lua_coloured_image.cpp
+  msaa.cpp
+  texture_filtering.cpp
 )
 
-foreach(TEST IN LISTS TESTS)
-    project(test_${TEST})
-    add_executable(${TEST} ${TEST}.cpp)                       
-    set_target_properties(${TEST} PROPERTIES OUTPUT_NAME test_${TEST})
-    target_include_directories(${TEST} PRIVATE "../include/")                                            
-    target_compile_features(${TEST} PRIVATE cxx_std_20)                                               
-    if (CMAKE_BUILD_TYPE MATCHES Debug)                                                                  
-        target_compile_options(${TEST} PRIVATE -Wall -Wextra -pedantic)                                 
-    else()                                                                                               
-        target_compile_options(${TEST} PRIVATE -O2)                                                     
-    endif (CMAKE_BUILD_TYPE MATCHES Debug)                                                               
-    target_link_libraries(${TEST} PRIVATE snitch::snitch rosa)
-endforeach()
+project(rosa_tests)
+add_executable(rosa_tests ${TESTS})                       
+target_include_directories(rosa_tests PRIVATE "../include/")                                            
+target_compile_features(rosa_tests PRIVATE cxx_std_20)                                               
+if (CMAKE_BUILD_TYPE MATCHES Debug)                                                                  
+    target_compile_options(rosa_tests PRIVATE -Wall -Wextra -pedantic)                                 
+else()                                                                                               
+    target_compile_options(rosa_tests PRIVATE -O2)                                                     
+endif (CMAKE_BUILD_TYPE MATCHES Debug)                                                               
+target_link_libraries(rosa_tests PRIVATE snitch::snitch rosa)
 
 # Copy reference images for gl tests
 set(REFERENCE_IMAGES
@@ -45,7 +42,7 @@ add_custom_target(copy_refs ALL
   COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/references/images/* ${CMAKE_CURRENT_BINARY_DIR}/references/
   DEPENDS ${REFERENCE_IMAGES}
 )
-ADD_DEPENDENCIES(copy_refs ${TESTS})
+ADD_DEPENDENCIES(copy_refs rosa_tests)
 
 # copy pak files for resource tests
 set(RESOURCE_PACKS
@@ -58,7 +55,7 @@ add_custom_target(copy_packs ALL
   COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/packs ${CMAKE_CURRENT_BINARY_DIR}/
   DEPENDS ${RESOURCE_PACKS}
 )
-ADD_DEPENDENCIES(copy_packs ${TESTS})
+ADD_DEPENDENCIES(copy_packs rosa_tests)
 
 
 file(GLOB_RECURSE ASSETS "references/assets/*")
@@ -72,4 +69,4 @@ ADD_CUSTOM_TARGET(
     pack_reference_assets ALL
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/references/base.pak
 )
-ADD_DEPENDENCIES(pack_reference_assets ${TESTS})
+ADD_DEPENDENCIES(pack_reference_assets rosa_tests)

@@ -25,11 +25,11 @@ static const auto dds_uuid = rosa::Uuid("f7055f226bfa1a3b4dbdb366dd18866d");
 static const auto filtered_uuid = rosa::Uuid("caa424cedb6aac0e78744734b1534f65");
 
 // Create a class to represent our scene
-class MyScene : public rosa::Scene {
+class FilterScene : public rosa::Scene {
     public:
 
         // Pass default params to the base class constructor
-        explicit MyScene(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {}
+        explicit FilterScene(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {}
 
         rosa::Uuid target_texture{};
 
@@ -82,7 +82,7 @@ TEST_CASE("Render a sprite with default NEAREST texture filtering", "[renderer]"
     rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
 
     // Instantiate our scene from the class above and register it
-    auto scene = std::make_unique<MyScene>(game_mgr.getRenderWindow());
+    auto scene = std::make_unique<FilterScene>(game_mgr.getRenderWindow());
     scene->target_texture = dds_uuid;
 
     game_mgr.addScene("simple_image", std::move(scene));
@@ -113,7 +113,7 @@ TEST_CASE("Render a sprite with LINEAR texture filtering", "[renderer]") {
     rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
 
     // Instantiate our scene from the class above and register it
-    auto scene = std::make_unique<MyScene>(game_mgr.getRenderWindow());
+    auto scene = std::make_unique<FilterScene>(game_mgr.getRenderWindow());
     scene->target_texture = filtered_uuid;
 
     game_mgr.addScene("simple_image", std::move(scene));

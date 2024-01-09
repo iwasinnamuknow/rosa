@@ -19,16 +19,17 @@
 #include <core/GameManager.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <graphics/ImageComparator.hpp>
+#include <core/Entity.hpp>
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
 static const auto dds_uuid = rosa::Uuid("f7055f226bfa1a3b4dbdb366dd18866d");
 
 // Create a class to represent our scene
-class MyScene : public rosa::Scene {
+class DisplayImage : public rosa::Scene {
     public:
 
         // Pass default params to the base class constructor
-        explicit MyScene(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {}
+        explicit DisplayImage(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {}
 
         // Override the onLoad function so we can set up our scene. This will be called
         // any time the GameManager activates the scene.
@@ -72,7 +73,7 @@ TEST_CASE("Displays a simple 2d image on a quad", "[gl]") {
     rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
 
     // Instantiate our scene from the class above and register it
-    game_mgr.addScene("simple_image", std::make_unique<MyScene>(game_mgr.getRenderWindow()));
+    game_mgr.addScene("simple_image", std::make_unique<DisplayImage>(game_mgr.getRenderWindow()));
 
     // Set the scene as active
     game_mgr.changeScene("simple_image");
