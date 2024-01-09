@@ -46,7 +46,7 @@ namespace rosa {
              */
             explicit GameManager(int window_width, int window_height, const std::string& window_title = "rosa window", int msaa = 0, bool window_hidden = false);
             
-            ~GameManager() = default;
+            ~GameManager();
 
             GameManager(GameManager const &) = delete;
             auto operator=(GameManager const &) -> GameManager & = delete;
