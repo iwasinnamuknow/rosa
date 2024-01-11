@@ -38,7 +38,7 @@ class FilterScene : public rosa::Scene {
         auto onLoad() -> void override {
 
             // Get our texture via uuid so we can get some details
-            auto texture = rosa::ResourceManager::instance().getAsset<rosa::Texture>(target_texture);
+            auto texture = rosa::ResourceManager::getInstance().getAsset<rosa::Texture>(target_texture);
 
             // Like the size
             auto texture_size = texture.getSize();
@@ -79,7 +79,7 @@ TEST_CASE("Render a sprite with default NEAREST texture filtering", "[renderer]"
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600, "MSAA Image", 1, true);
 
-    rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
+    rosa::ResourceManager::getInstance().registerAssetPack("references/base.pak", "");
 
     // Instantiate our scene from the class above and register it
     auto scene = std::make_unique<FilterScene>(game_mgr.getRenderWindow());
@@ -110,7 +110,7 @@ TEST_CASE("Render a sprite with LINEAR texture filtering", "[renderer]") {
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600, "MSAA Image", 1, true);
 
-    rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
+    rosa::ResourceManager::getInstance().registerAssetPack("references/base.pak", "");
 
     // Instantiate our scene from the class above and register it
     auto scene = std::make_unique<FilterScene>(game_mgr.getRenderWindow());

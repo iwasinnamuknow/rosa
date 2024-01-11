@@ -383,7 +383,7 @@ namespace rosa {
         ZoneScopedN("LuaScriptComponent:setScript");
 
         try {
-            const auto& script = ResourceManager::instance().getAsset<LuaScript>(uuid);
+            const auto& script = ResourceManager::getInstance().getAsset<LuaScript>(uuid);
 
             auto& entity = m_scene->getEntity(m_scene->m_entity_to_uuid.at(m_entity));
 

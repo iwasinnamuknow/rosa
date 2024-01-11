@@ -180,9 +180,21 @@ namespace rosa {
         }
     }
 
-    auto ResourceManager::instance() -> ResourceManager& {
-        static ResourceManager s_instance;
-        return s_instance;
+    auto ResourceManager::getInstance() -> ResourceManager& {
+        if (!s_instance) {
+            s_instance = std::make_unique<ResourceManager>();
+        }
+
+        return *s_instance;
     }
+
+    auto ResourceManager::shutdown() -> void {
+        if (s_instance) {
+            s_instance.release();
+            s_instance.reset();
+        }
+    }
+
+    std::unique_ptr<ResourceManager> ResourceManager::s_instance{nullptr};
 
 } // namespace rosa

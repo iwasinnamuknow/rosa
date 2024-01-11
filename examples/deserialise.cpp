@@ -42,7 +42,7 @@ auto main() -> int {
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600);
 
-    rosa::ResourceManager::instance().registerAssetPack("base.pak", "");
+    rosa::ResourceManager::getInstance().registerAssetPack("base.pak", "");
 
     // Create the scene based on our example above
     auto scene = std::make_unique<DeserialiseScene>(game_mgr.getRenderWindow());

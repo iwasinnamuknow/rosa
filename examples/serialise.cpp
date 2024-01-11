@@ -43,7 +43,7 @@ class SerialiseScene : public rosa::Scene {
         auto onLoad() -> void override {
 
             // Get our texture via uuid so we can get some details
-            auto texture = rosa::ResourceManager::instance().getAsset<rosa::Texture>(dds_uuid);
+            auto texture = rosa::ResourceManager::getInstance().getAsset<rosa::Texture>(dds_uuid);
 
             // Like the size
             auto texture_size = texture.getSize();
@@ -103,7 +103,7 @@ auto main() -> int {
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600);
 
-    rosa::ResourceManager::instance().registerAssetPack("base.pak", "");
+    rosa::ResourceManager::getInstance().registerAssetPack("base.pak", "");
 
     // Instantiate our scene from the class above and register it
     game_mgr.addScene("serialise", std::make_unique<SerialiseScene>(game_mgr.getRenderWindow()));

@@ -37,10 +37,8 @@ namespace rosa {
 
     class Renderer {
         public:
-            static auto getInstance() -> Renderer& {
-                static Renderer s_instance;
-                return s_instance;
-            }
+            static auto getInstance() -> Renderer&;
+            static auto shutdown() -> void;
 
             auto submitForBatch(const Quad& quad) -> void;
             auto flushBatch() -> void;
@@ -54,9 +52,10 @@ namespace rosa {
             auto setShader(ShaderType type, Shader* shader) -> void;
             auto linkShaders() -> void;
 
-        private:
             Renderer();
             ~Renderer();
+
+        private:
 
             Vertex* m_vertex_buffer;
             Vertex* m_vertex_buffer_ptr;
@@ -84,6 +83,8 @@ namespace rosa {
 
             glm::mat4 m_mvp{0.F};
             int m_mvp_id;
+
+            static std::unique_ptr<Renderer> s_instance;
     };
 
 } // namespace rosa

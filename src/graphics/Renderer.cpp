@@ -341,4 +341,21 @@ namespace rosa {
         }
     }
 
+    std::unique_ptr<Renderer> Renderer::s_instance{nullptr};
+
+    auto Renderer::getInstance() -> Renderer & {
+        if (!s_instance) {
+            s_instance = std::make_unique<Renderer>();
+        }
+
+        return *s_instance;
+    }
+
+    auto Renderer::shutdown() -> void {
+        if (s_instance) {
+            s_instance.release();
+            s_instance.reset();
+        }
+    }
+
 } // namespace rosa

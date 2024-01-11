@@ -37,7 +37,7 @@ class LuaColouredImage : public rosa::Scene {
         auto onLoad() -> void override {
 
             // Get our texture via uuid so we can get some details
-            auto texture = rosa::ResourceManager::instance().getAsset<rosa::Texture>(dds_uuid);
+            auto texture = rosa::ResourceManager::getInstance().getAsset<rosa::Texture>(dds_uuid);
 
             // Like the size
             auto texture_size = texture.getSize();
@@ -78,7 +78,7 @@ TEST_CASE("Colour an image via lua script", "[lua]") {
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600, "Lua Colour Image", 0, true);
 
-    rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
+    rosa::ResourceManager::getInstance().registerAssetPack("references/base.pak", "");
 
     // Instantiate our scene from the class above and register it
     game_mgr.addScene("simple_image", std::make_unique<LuaColouredImage>(game_mgr.getRenderWindow()));
