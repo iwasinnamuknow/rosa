@@ -19,7 +19,7 @@
 #include <core/components/SpriteComponent.hpp>
 
 // Define the uuid for the image asset we'll use. See assets/manifest.yaml
-static const auto dds_uuid = rosa::Uuid("f7055f22-6bfa-1a3b-4dbd-b366dd18866d");
+static constexpr auto dds_uuid = rosa::Uuid("f7055f22-6bfa-1a3b-4dbd-b366dd18866d");
 
 // Create a class to represent our scene
 class MyScene : public rosa::Scene {
