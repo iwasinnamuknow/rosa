@@ -20,11 +20,12 @@
 #include <core/components/CameraComponent.hpp>
 #include <core/components/LuaScriptComponent.hpp>
 #include <core/Entity.hpp>
+#include <core/Uuid.hpp>
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
-static const auto font_uuid = rosa::Uuid("286d945e-7fd9-4444-a95e-3faa3e541536");
-static const auto cam_script_uuid = rosa::Uuid("739c0f32872ee2647fa957ebaa40c420");
-static const auto dds_uuid = rosa::Uuid("f7055f226bfa1a3b4dbdb366dd18866d");
+static constexpr auto font_uuid =       rosa::Uuid("286d945e-7fd9-4444-a95e-3faa3e541536");
+static constexpr auto cam_script_uuid = rosa::Uuid("739c0f32-872e-e264-7fa9-57ebaa40c420");
+static constexpr auto dds_uuid =        rosa::Uuid("f7055f22-6bfa-1a3b-4dbd-b366dd18866d");
 
 // Create a class to represent our scene
 class MyScene : public rosa::Scene {
@@ -38,10 +39,10 @@ class MyScene : public rosa::Scene {
         auto onLoad() -> void override {
 
             // Get our texture via uuid so we can get some details
-            auto font = rosa::ResourceManager::instance().getAsset<rosa::BitmapFont>(font_uuid);
+            auto font = rosa::ResourceManager::getInstance().getAsset<rosa::BitmapFont>(font_uuid);
 
             // Get our texture via uuid so we can get some details
-            auto texture = rosa::ResourceManager::instance().getAsset<rosa::Texture>(dds_uuid);
+            auto texture = rosa::ResourceManager::getInstance().getAsset<rosa::Texture>(dds_uuid);
 
             // Like the size
             auto texture_size = texture.getSize();
@@ -90,7 +91,7 @@ auto main() -> int {
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600);
 
-    rosa::ResourceManager::instance().registerAssetPack("base.pak", "");
+    rosa::ResourceManager::getInstance().registerAssetPack("base.pak", "");
 
     // Instantiate our scene from the class above and register it
     game_mgr.addScene("simple_image", std::make_unique<MyScene>(game_mgr.getRenderWindow()));

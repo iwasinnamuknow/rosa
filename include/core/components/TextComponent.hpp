@@ -55,7 +55,7 @@ namespace rosa {
         }
 
         auto setFont(Uuid uuid) -> void {
-            m_font = &ResourceManager::instance().getAsset<BitmapFont>(uuid);
+            m_font = &ResourceManager::getInstance().getAsset<BitmapFont>(uuid);
             m_font_uuid = uuid;
         }
 
