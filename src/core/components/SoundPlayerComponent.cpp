@@ -78,7 +78,12 @@ namespace rosa {
         return AudioManager::instance().checkHandle(m_handle);
     }
 
+    auto SoundPlayerComponent::getVolume() const -> float {
+        return m_volume;
+    }
 
-
+    auto SoundPlayerComponent::getDefaultVolume() const -> float {
+        return m_default_volume;
+    }
 
 } // namespace rosa

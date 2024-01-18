@@ -21,7 +21,7 @@ namespace rosa {
         m_enabled = enable;
     }
 
-    auto CameraComponent::getEnabled() -> bool {
+    auto CameraComponent::getEnabled() const -> bool {
         return m_enabled;
     }
 

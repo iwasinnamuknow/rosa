@@ -13,6 +13,8 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#pragma once
+
 #include <glm/vec2.hpp>
 
 namespace rosa {
@@ -22,7 +24,7 @@ namespace rosa {
             CameraComponent() = default;
             
             auto setEnabled(bool enable) -> void;
-            auto getEnabled() -> bool;
+            auto getEnabled() const -> bool;
 
         private:
             bool m_enabled{false};

@@ -54,7 +54,7 @@ namespace rosa {
         AudioManager::instance().setVoiceVolume(m_handle, volume);
     }
 
-    auto MusicPlayerComponent::getPosition() -> double {
+    auto MusicPlayerComponent::getPosition() const -> double {
         return AudioManager::instance().getVoicePosition(m_handle);
     }
 
@@ -66,13 +66,20 @@ namespace rosa {
         AudioManager::instance().setVoicePause(m_handle, pause);
     }
 
-    auto MusicPlayerComponent::getPause() -> bool {
+    auto MusicPlayerComponent::getPause() const -> bool {
         return AudioManager::instance().getVoicePause(m_handle);
     }
 
-    auto MusicPlayerComponent::isPlaying() -> bool {
+    auto MusicPlayerComponent::isPlaying() const -> bool {
         return AudioManager::instance().checkHandle(m_handle);
     }
 
+    auto MusicPlayerComponent::getDefaultVolume() const -> float {
+        return m_default_volume;
+    }
+
+    auto MusicPlayerComponent::getVolume() const -> float {
+        return m_volume;
+    }
 
 } // namespace rosa

@@ -33,6 +33,7 @@
 #include <filesystem>
 #include <fmt/format.h>
 #include <yaml-cpp/yaml.h>
+#include <core/SerialiserTypes.hpp>
 
 #if (_WIN32)
 #include <stdlib.h>
@@ -59,24 +60,6 @@ auto get_exe_dir() -> std::string {
     std::string directory{exePath};
 
     return directory.substr(0, directory.find_last_of("\\/"));
-}
-
-namespace YAML {
-    template<>
-    struct convert<rosa::Uuid> {
-        static auto decode(const Node& node, rosa::Uuid& rhs) -> bool {
-            rhs = node.as<std::string>();
-            return true;
-        }
-    };
-
-    template<>
-    struct convert<rosa::TextureFilterMode> {
-        static auto decode(const Node& node, rosa::TextureFilterMode& rhs) -> bool {
-            rhs = static_cast<rosa::TextureFilterMode>(node.as<int>());
-            return true;
-        }
-    };
 }
 
 namespace rosa {

@@ -33,12 +33,14 @@ namespace rosa {
         auto stop() -> void;
 
         auto setDefaultVolume(float volume) -> void;
+        auto getDefaultVolume() const -> float;
 
         auto getLength() -> double;
 
         auto setLooping(bool loop) -> void;
 
         auto setVolume(float volume) -> void;
+        auto getVolume() const -> float;
 
         auto getPosition() const -> double;
         auto setPosition(double position) -> void;

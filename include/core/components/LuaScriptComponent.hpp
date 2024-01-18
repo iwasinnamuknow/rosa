@@ -36,11 +36,14 @@ namespace rosa {
 
             LuaScriptComponent(Scene* scene, entt::entity entity);
             auto setScript(Uuid uuid, bool deserialised = false) -> bool;
+            auto getScript() const -> Uuid;
             auto setData(const std::string& key, sol::table& table) -> void;
 
             auto setValue(const std::string& key, int value) -> void;
             auto setValue(const std::string& key, float value) -> void;
             auto setValue(const std::string& key, std::string value) -> void;
+
+            auto getTable(const std::string& table) const -> sol::table;
 
         private:
             sol::state m_state;

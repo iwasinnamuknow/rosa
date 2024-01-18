@@ -458,4 +458,12 @@ namespace rosa {
         m_state.set(key, value);
     }
 
+    auto LuaScriptComponent::getScript() const -> Uuid {
+        return m_uuid;
+    }
+
+    auto LuaScriptComponent::getTable(const std::string &table) const -> sol::table {
+        return m_state[table];
+    }
+
 } // namespace rosa

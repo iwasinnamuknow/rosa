@@ -64,7 +64,7 @@ namespace rosa {
         return m_batched;
     }
 
-    auto Sprite::getTexture() -> Texture &
+    auto Sprite::getTexture() const -> Texture &
     {
         return *m_texture;
     }

@@ -36,10 +36,6 @@ namespace rosa {
 
         private:
             auto serialise_entity(YAML::Emitter& out, Entity& entity) -> void;
-            auto lua_t_to_yaml(YAML::Emitter& out, sol::table& table) -> void;
-            auto lua_node_from_yaml(const YAML::Node& node) -> sol::table;
-            auto deserialise_map(const YAML::Node& node) -> sol::table;
-            auto deserialise_sequence(const YAML::Node& node) -> sol::table;
 
             Scene& m_scene;
 

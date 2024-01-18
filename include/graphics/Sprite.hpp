@@ -40,7 +40,7 @@ namespace rosa {
 
             auto getSize() -> glm::vec2;
 
-            auto getTexture() -> Texture&;
+            auto getTexture() const -> Texture&;
             auto setTexture(Uuid uuid) -> void;
 
             auto setBatched(bool batched) -> void;
