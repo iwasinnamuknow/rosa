@@ -53,9 +53,9 @@ namespace rosa {
         void unbind();                                  // unbind fbo
         void update();                                  // copy multi-sample to single-sample and generate mipmaps
 
-        void blitColorTo(FrameBuffer& fb);              // blit color to another FrameBuffer instance
+        //void blitColorTo(FrameBuffer& fb);              // blit color to another FrameBuffer instance
         void blitColorTo(GLuint fboId, int x=0, int y=0, int w=0, int h=0); // copy color buffer using FBO ID
-        void blitDepthTo(FrameBuffer& fb);              // blit depth to another FrameBuffer instance
+        //void blitDepthTo(FrameBuffer& fb);              // blit depth to another FrameBuffer instance
         void blitDepthTo(GLuint fboId, int x=0, int y=0, int w=0, int h=0); // copy depth buffer using FBO ID
 
         void copyColorBuffer();                         // copy color to array
