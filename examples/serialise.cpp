@@ -22,11 +22,11 @@
 #include <core/components/LuaScriptComponent.hpp>
 #include <core/SceneSerialiser.hpp>
 
-// Define the uuid for the image asset we'll use. See assets/assets.lst
-static const auto dds_uuid = rosa::Uuid("f7055f226bfa1a3b4dbdb366dd18866d");
-static const auto bell_uuid = rosa::Uuid("60f200640c132e9435cd404c011c00a2");
-static const auto music_uuid = rosa::Uuid("a3c890ea0f97d3ed32de55ba88c8dc63");
-static const auto script_uuid = rosa::Uuid("9046e8fecb017adf1029c79e71961173");
+// Define the uuid for the image asset we'll use. See assets/manifest.yaml
+static constexpr auto dds_uuid    = rosa::Uuid("f7055f22-6bfa-1a3b-4dbd-b366dd18866d");
+static constexpr auto bell_uuid   = rosa::Uuid("60f20064-0c13-2e94-35cd-404c011c00a2");
+static constexpr auto music_uuid  = rosa::Uuid("a3c890ea-0f97-d3ed-32de-55ba88c8dc63");
+static constexpr auto script_uuid = rosa::Uuid("9046e8fe-cb01-7adf-1029-c79e71961173");
 
 // NativeScript test class
 #include "NSCTest.hpp"
@@ -43,7 +43,7 @@ class SerialiseScene : public rosa::Scene {
         auto onLoad() -> void override {
 
             // Get our texture via uuid so we can get some details
-            auto texture = rosa::ResourceManager::instance().getAsset<rosa::Texture>(dds_uuid);
+            auto texture = rosa::ResourceManager::getInstance().getAsset<rosa::Texture>(dds_uuid);
 
             // Like the size
             auto texture_size = texture.getSize();
@@ -103,7 +103,7 @@ auto main() -> int {
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600);
 
-    rosa::ResourceManager::instance().registerAssetPack("base.pak", "");
+    rosa::ResourceManager::getInstance().registerAssetPack("base.pak", "");
 
     // Instantiate our scene from the class above and register it
     game_mgr.addScene("serialise", std::make_unique<SerialiseScene>(game_mgr.getRenderWindow()));

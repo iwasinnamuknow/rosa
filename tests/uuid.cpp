@@ -47,7 +47,7 @@ TEST_CASE("Parse Uuid from string without dashes", "[uuid]") {
 
 TEST_CASE("Copy Uuid by constructor", "[uuid]") {
 
-    rosa::Uuid uuid_string("ab80206ed1734beb5fc0639fc9c08526");
+    rosa::Uuid uuid_string("ab80206e-d173-4beb-5fc0-639fc9c08526");
     rosa::Uuid copied_uuid(uuid_string);
 
     REQUIRE(copied_uuid.toString() == "ab80206e-d173-4beb-5fc0-639fc9c08526");
@@ -55,7 +55,7 @@ TEST_CASE("Copy Uuid by constructor", "[uuid]") {
 
 TEST_CASE("Copy Uuid by assignment", "[uuid]") {
 
-    rosa::Uuid uuid_string("ab80206ed1734beb5fc0639fc9c08526");
+    rosa::Uuid uuid_string("ab80206e-d173-4beb-5fc0-639fc9c08526");
     rosa::Uuid copied_uuid = uuid_string;
 
     REQUIRE( copied_uuid.toString() == "ab80206e-d173-4beb-5fc0-639fc9c08526" );
@@ -63,7 +63,7 @@ TEST_CASE("Copy Uuid by assignment", "[uuid]") {
 
 TEST_CASE("Explicit cast Uuid to std::string", "[uuid]") {
 
-    rosa::Uuid uuid("ab80206ed1734beb5fc0639fc9c08526");
+    rosa::Uuid uuid("ab80206e-d173-4beb-5fc0-639fc9c08526");
     std::string str = static_cast<std::string>(uuid);
 
     REQUIRE( str == "ab80206e-d173-4beb-5fc0-639fc9c08526" );

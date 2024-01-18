@@ -28,7 +28,7 @@ auto main(int argc, char* argv[]) -> int {
 
     for (int i = 0; i < num_uuids; i++) {
         auto uuid = rosa::Uuid::generate();
-        std::cout << static_cast<std::string>(uuid) << "\n";
+        std::cout << uuid << "\n";
     }
 
     return 0;

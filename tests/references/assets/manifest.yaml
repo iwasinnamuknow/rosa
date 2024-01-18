@@ -2,16 +2,16 @@
 assets:
   - type: 0
     path: test.dds
-    uuid: f7055f226bfa1a3b4dbdb366dd18866d
+    uuid: f7055f22-6bfa-1a3b-4dbd-b366dd18866d
   - type: 4
     path: rotate.lua
-    uuid: 9046e8fecb017adf1029c79e71961173
+    uuid: 9046e8fe-cb01-7adf-1029-c79e71961173
   - type: 4
     path: colour.lua
-    uuid: cd20c8a2b6be9553c36377680bbca51c
+    uuid: cd20c8a2-b6be-9553-c363-77680bbca51c
   - type: 0
     path: test.dds
-    uuid: caa424cedb6aac0e78744734b1534f65
+    uuid: caa424ce-db6a-ac0e-7874-4734b1534f65
     filtering:
       minify: 0x2601
       magnify: 0x2601

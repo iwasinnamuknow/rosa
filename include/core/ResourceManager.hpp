@@ -102,12 +102,15 @@ namespace rosa {
              * 
              * @return ResourceManager& A reference to the singleton object.
              */
-            static auto instance() -> ResourceManager&;
-        private:
+            static auto getInstance() -> ResourceManager&;
+            static auto shutdown() -> void;
+
             ResourceManager() = default;
             ~ResourceManager() = default;
+        private:
 
             std::unordered_map<Uuid, std::unique_ptr<Resource>> m_resources;
+            static std::unique_ptr<ResourceManager> s_instance;
     };
 
 } // namespace rosa

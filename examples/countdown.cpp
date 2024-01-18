@@ -21,7 +21,7 @@
 
 using namespace std::literals;
 
-static const auto script_uuid = rosa::Uuid("f611c6e368360333978ccfadd31a5bfa");
+static constexpr auto script_uuid = rosa::Uuid("f611c6e3-6836-0333-978c-cfadd31a5bfa");
 
 static int countdown_start{1200};
 
@@ -66,7 +66,7 @@ auto main(int argc, char* argv[]) -> int {
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600, "Coundown Timer");
 
-    rosa::ResourceManager::instance().registerAssetPack("base.pak", "");
+    rosa::ResourceManager::getInstance().registerAssetPack("base.pak", "");
 
     // Instantiate our scene from the class above and register it
     game_mgr.addScene("countdown", std::make_unique<CountdownScene>(game_mgr.getRenderWindow()));

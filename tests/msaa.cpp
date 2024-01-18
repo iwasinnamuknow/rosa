@@ -21,7 +21,7 @@
 #include <graphics/ImageComparator.hpp>
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
-static const auto dds_uuid = rosa::Uuid("f7055f226bfa1a3b4dbdb366dd18866d");
+static constexpr auto dds_uuid = rosa::Uuid("f7055f22-6bfa-1a3b-4dbd-b366dd18866d");
 
 // Create a class to represent our scene
 class MSAAScene : public rosa::Scene {
@@ -35,7 +35,7 @@ class MSAAScene : public rosa::Scene {
         auto onLoad() -> void override {
 
             // Get our texture via uuid so we can get some details
-            auto texture = rosa::ResourceManager::instance().getAsset<rosa::Texture>(dds_uuid);
+            auto texture = rosa::ResourceManager::getInstance().getAsset<rosa::Texture>(dds_uuid);
 
             // Like the size
             auto texture_size = texture.getSize();
@@ -76,7 +76,7 @@ TEST_CASE("Render a sprite with 8x MSAA enabled", "[renderer]") {
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600, "MSAA Image", 8, true);
 
-    rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
+    rosa::ResourceManager::getInstance().registerAssetPack("references/base.pak", "");
 
     // Instantiate our scene from the class above and register it
     game_mgr.addScene("simple_image", std::make_unique<MSAAScene>(game_mgr.getRenderWindow()));
@@ -104,7 +104,7 @@ TEST_CASE("Render a sprite with 16x MSAA enabled", "[renderer]") {
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600, "MSAA Image", 16, true);
 
-    rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
+    rosa::ResourceManager::getInstance().registerAssetPack("references/base.pak", "");
 
     // Instantiate our scene from the class above and register it
     game_mgr.addScene("simple_image", std::make_unique<MSAAScene>(game_mgr.getRenderWindow()));
@@ -132,7 +132,7 @@ TEST_CASE("Render a sprite with 32x MSAA enabled", "[renderer]") {
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600, "MSAA Image", 32, true);
 
-    rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
+    rosa::ResourceManager::getInstance().registerAssetPack("references/base.pak", "");
 
     // Instantiate our scene from the class above and register it
     game_mgr.addScene("simple_image", std::make_unique<MSAAScene>(game_mgr.getRenderWindow()));

@@ -18,8 +18,8 @@
 #include <core/GameManager.hpp>
 #include <core/components/SpriteComponent.hpp>
 
-// Define the uuid for the image asset we'll use. See assets/assets.lst
-static const auto dds_uuid = rosa::Uuid("f7055f226bfa1a3b4dbdb366dd18866d");
+// Define the uuid for the image asset we'll use. See assets/manifest.yaml
+static const auto dds_uuid = rosa::Uuid("f7055f22-6bfa-1a3b-4dbd-b366dd18866d");
 
 // Create a class to represent our scene
 class MyScene : public rosa::Scene {
@@ -33,7 +33,7 @@ class MyScene : public rosa::Scene {
         auto onLoad() -> void override {
 
             // Get our texture via uuid so we can get some details
-            auto texture = rosa::ResourceManager::instance().getAsset<rosa::Texture>(dds_uuid);
+            auto texture = rosa::ResourceManager::getInstance().getAsset<rosa::Texture>(dds_uuid);
 
             // Like the size
             auto texture_size = texture.getSize();
@@ -67,7 +67,7 @@ auto main() -> int {
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600);
 
-    rosa::ResourceManager::instance().registerAssetPack("base.pak", "");
+    rosa::ResourceManager::getInstance().registerAssetPack("base.pak", "");
 
     // Instantiate our scene from the class above and register it
     game_mgr.addScene("simple_image", std::make_unique<MyScene>(game_mgr.getRenderWindow()));

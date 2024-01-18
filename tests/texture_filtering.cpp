@@ -21,8 +21,8 @@
 #include <graphics/ImageComparator.hpp>
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
-static const auto dds_uuid = rosa::Uuid("f7055f226bfa1a3b4dbdb366dd18866d");
-static const auto filtered_uuid = rosa::Uuid("caa424cedb6aac0e78744734b1534f65");
+static constexpr auto dds_uuid =      rosa::Uuid("f7055f22-6bfa-1a3b-4dbd-b366dd18866d");
+static constexpr auto filtered_uuid = rosa::Uuid("caa424ce-db6a-ac0e-7874-4734b1534f65");
 
 // Create a class to represent our scene
 class FilterScene : public rosa::Scene {
@@ -38,7 +38,7 @@ class FilterScene : public rosa::Scene {
         auto onLoad() -> void override {
 
             // Get our texture via uuid so we can get some details
-            auto texture = rosa::ResourceManager::instance().getAsset<rosa::Texture>(target_texture);
+            auto texture = rosa::ResourceManager::getInstance().getAsset<rosa::Texture>(target_texture);
 
             // Like the size
             auto texture_size = texture.getSize();
@@ -79,7 +79,7 @@ TEST_CASE("Render a sprite with default NEAREST texture filtering", "[renderer]"
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600, "MSAA Image", 1, true);
 
-    rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
+    rosa::ResourceManager::getInstance().registerAssetPack("references/base.pak", "");
 
     // Instantiate our scene from the class above and register it
     auto scene = std::make_unique<FilterScene>(game_mgr.getRenderWindow());
@@ -110,7 +110,7 @@ TEST_CASE("Render a sprite with LINEAR texture filtering", "[renderer]") {
     // Grab the GameManager
     auto game_mgr = rosa::GameManager(800, 600, "MSAA Image", 1, true);
 
-    rosa::ResourceManager::instance().registerAssetPack("references/base.pak", "");
+    rosa::ResourceManager::getInstance().registerAssetPack("references/base.pak", "");
 
     // Instantiate our scene from the class above and register it
     auto scene = std::make_unique<FilterScene>(game_mgr.getRenderWindow());

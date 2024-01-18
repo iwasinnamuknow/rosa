@@ -13,18 +13,16 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include "core/Scene.hpp"
-#include <graphics/Colour.hpp>
 #include <core/GameManager.hpp>
-#include <cstddef>
+#include <core/Scene.hpp>
 #include <memory>
 #include <chrono>
-#include <ratio>
 #include <core/EventManager.hpp>
 #include <spdlog/spdlog.h>
 #include <core/SceneSerialiser.hpp>
 #include <tracy/Tracy.hpp>
 #include <tracy/TracyOpenGL.hpp>
+#include <graphics/Renderer.hpp>
 
 namespace rosa {
 
@@ -41,7 +39,7 @@ namespace rosa {
             m_render_window.init(window_width, window_height, window_title, msaa, window_hidden);
 
             spdlog::info("Initialising resource management");
-            [[maybe_unused]]auto& res = ResourceManager::instance();
+            [[maybe_unused]]auto& res = ResourceManager::getInstance();
         
         } catch(Exception& e) {
             spdlog::critical(e.what());
@@ -60,9 +58,12 @@ namespace rosa {
     }
 
     GameManager::~GameManager() {
+        spdlog::info("Rosa is shutting down");
         ImGui_ImplGlfw_Shutdown();
         ImGui_ImplOpenGL3_Shutdown();
         ImGui::DestroyContext();
+        Renderer::shutdown();
+        ResourceManager::shutdown();
     }
 
     auto GameManager::addScene(const std::string& key, std::unique_ptr<Scene> scene) -> bool {
