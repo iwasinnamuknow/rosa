@@ -21,8 +21,8 @@
 #include <graphics/ImageComparator.hpp>
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
-static const auto dds_uuid = rosa::Uuid("f7055f226bfa1a3b4dbdb366dd18866d");
-static const auto filtered_uuid = rosa::Uuid("caa424cedb6aac0e78744734b1534f65");
+static constexpr auto dds_uuid =      rosa::Uuid("f7055f22-6bfa-1a3b-4dbd-b366dd18866d");
+static constexpr auto filtered_uuid = rosa::Uuid("caa424ce-db6a-ac0e-7874-4734b1534f65");
 
 // Create a class to represent our scene
 class FilterScene : public rosa::Scene {

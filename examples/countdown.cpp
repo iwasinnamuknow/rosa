@@ -21,7 +21,7 @@
 
 using namespace std::literals;
 
-static const auto script_uuid = rosa::Uuid("f611c6e368360333978ccfadd31a5bfa");
+static constexpr auto script_uuid = rosa::Uuid("f611c6e3-6836-0333-978c-cfadd31a5bfa");
 
 static int countdown_start{1200};
 

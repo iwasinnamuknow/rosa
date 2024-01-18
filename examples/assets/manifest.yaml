@@ -2,31 +2,28 @@
 assets: 
     - type: 4
       path: test.lua
-      uuid: 9046e8fecb017adf1029c79e71961173
+      uuid: 9046e8fe-cb01-7adf-1029-c79e71961173
     - type: 0
       path: test.dds
-      uuid: f7055f226bfa1a3b4dbdb366dd18866d
+      uuid: f7055f22-6bfa-1a3b-4dbd-b366dd18866d
       filtering:
         minify: 0x2601
         magnify: 0x2601
     - type: 0
       path: digits.dds
-      uuid: 409b5f8440600a2e922704056ac17ffb
+      uuid: 409b5f84-4060-0a2e-9227-04056ac17ffb
     - type: 1
       path: alarm.ogg
-      uuid: 471851408a1b9d463606402ed23bcf83
+      uuid: 47185140-8a1b-9d46-3606-402ed23bcf83
     - type: 1
       path: music.ogg
-      uuid: a3c890ea0f97d3ed32de55ba88c8dc63
+      uuid: a3c890ea-0f97-d3ed-32de-55ba88c8dc63
     - type: 1
       path: bell.ogg
-      uuid: 60f200640c132e9435cd404c011c00a2
-    - type: 1
-      path: bell.ogg
-      uuid: 60f200640c132e9435cd404c011c00a2
+      uuid: 60f20064-0c13-2e94-35cd-404c011c00a2
     - type: 4
       path: countdown.lua
-      uuid: f611c6e368360333978ccfadd31a5bfa
+      uuid: f611c6e3-6836-0333-978c-cfadd31a5bfa
     - type: 4
       path: camera_test.lua
-      uuid: 739c0f32872ee2647fa957ebaa40c420
+      uuid: 739c0f32-872e-e264-7fa9-57ebaa40c420

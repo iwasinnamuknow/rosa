@@ -18,7 +18,7 @@
 #include "core/GameManager.hpp"
 #include <core/SceneSerialiser.hpp>
 
-// Define the uuid for the image asset we'll use. See assets/assets.lst
+// Define the uuid for the image asset we'll use. See assets/manifest.yaml
 const char* yaml_path{ "serialise.yaml" };
 
 // NativeScript test class

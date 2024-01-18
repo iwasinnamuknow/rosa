@@ -1,6 +1,6 @@
 
-digits_uuid = Uuid.new("409b5f8440600a2e922704056ac17ffb")
-alarm_uuid  = Uuid.new("471851408a1b9d463606402ed23bcf83")
+digits_uuid = Uuid.new("409b5f84-4060-0a2e-9227-04056ac17ffb")
+alarm_uuid  = Uuid.new("47185140-8a1b-9d46-3606-402ed23bcf83")
 
 char_width = 64
 char_height = 128

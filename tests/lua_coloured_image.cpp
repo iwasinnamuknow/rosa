@@ -22,8 +22,8 @@
 #include <graphics/ImageComparator.hpp>
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
-static const auto dds_uuid = rosa::Uuid("f7055f226bfa1a3b4dbdb366dd18866d");
-static const auto script_uuid = rosa::Uuid("cd20c8a2b6be9553c36377680bbca51c");
+static constexpr auto dds_uuid    = rosa::Uuid("f7055f22-6bfa-1a3b-4dbd-b366dd18866d");
+static constexpr auto script_uuid = rosa::Uuid("cd20c8a2-b6be-9553-c363-77680bbca51c");
 
 // Create a class to represent our scene
 class LuaColouredImage : public rosa::Scene {
