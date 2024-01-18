@@ -9,7 +9,7 @@
  *  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License along with bbai. If not,
+ *  You should have received a copy of the GNU General Public License along with rosa. If not,
  *  see <https://www.gnu.org/licenses/>.
  */
 
@@ -64,7 +64,7 @@ namespace rosa {
         return m_batched;
     }
 
-    auto Sprite::getTexture() -> Texture &
+    auto Sprite::getTexture() const -> Texture &
     {
         return *m_texture;
     }

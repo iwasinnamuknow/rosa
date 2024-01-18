@@ -9,9 +9,11 @@
  *  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License along with bbai. If not,
+ *  You should have received a copy of the GNU General Public License along with rosa. If not,
  *  see <https://www.gnu.org/licenses/>.
  */
+
+#pragma once
 
 #include <glm/vec2.hpp>
 
@@ -22,7 +24,7 @@ namespace rosa {
             CameraComponent() = default;
             
             auto setEnabled(bool enable) -> void;
-            auto getEnabled() -> bool;
+            auto getEnabled() const -> bool;
 
         private:
             bool m_enabled{false};

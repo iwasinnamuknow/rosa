@@ -46,7 +46,7 @@ public:
 
 protected:
     // Provide serialisation, yea you have to manually deal with yaml
-    auto serialise() -> YAML::Node override {
+    auto serialise() const -> YAML::Node override {
 
         YAML::Node res;
 
@@ -71,7 +71,7 @@ protected:
         onLoad();
     }
 
-    auto getName() -> std::string override {
+    auto getName() const -> std::string override {
         return {"NSCTest"};
     }
 

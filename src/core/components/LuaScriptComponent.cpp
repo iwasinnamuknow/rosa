@@ -9,7 +9,7 @@
  *  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License along with bbai. If not,
+ *  You should have received a copy of the GNU General Public License along with rosa. If not,
  *  see <https://www.gnu.org/licenses/>.
  */
 
@@ -456,6 +456,14 @@ namespace rosa {
     
     auto LuaScriptComponent::setValue(const std::string& key, std::string value) -> void {
         m_state.set(key, value);
+    }
+
+    auto LuaScriptComponent::getScript() const -> Uuid {
+        return m_uuid;
+    }
+
+    auto LuaScriptComponent::getTable(const std::string &table) const -> sol::table {
+        return m_state[table];
     }
 
 } // namespace rosa

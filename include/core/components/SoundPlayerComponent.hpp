@@ -9,7 +9,7 @@
  *  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License along with bbai. If not,
+ *  You should have received a copy of the GNU General Public License along with rosa. If not,
  *  see <https://www.gnu.org/licenses/>.
  */
 
@@ -33,12 +33,14 @@ namespace rosa {
         auto stop() -> void;
 
         auto setDefaultVolume(float volume) -> void;
+        auto getDefaultVolume() const -> float;
 
         auto getLength() -> double;
 
         auto setLooping(bool loop) -> void;
 
         auto setVolume(float volume) -> void;
+        auto getVolume() const -> float;
 
         auto getPosition() const -> double;
         auto setPosition(double position) -> void;

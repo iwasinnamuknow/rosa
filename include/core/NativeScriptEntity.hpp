@@ -9,7 +9,7 @@
  *  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License along with bbai. If not,
+ *  You should have received a copy of the GNU General Public License along with rosa. If not,
  *  see <https://www.gnu.org/licenses/>.
  */
 
@@ -63,9 +63,11 @@ namespace rosa {
             }
 
         protected:
-            virtual auto serialise() -> YAML::Node{ return {}; }
+            virtual auto serialise() const -> YAML::Node{ return {}; }
             virtual auto deserialise(YAML::Node node) -> void{}
-            virtual auto getName() -> std::string{ return{}; }
+            virtual auto getName() const -> std::string{ return{}; }
+
+            friend auto operator<<(YAML::Emitter& out, const NativeScriptEntity& component) -> YAML::Emitter&;
             
         private:
             std::reference_wrapper<Entity> m_entity;

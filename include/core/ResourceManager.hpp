@@ -11,7 +11,7 @@
  * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License along with
- * bbai. If not, see <https://www.gnu.org/licenses/>.
+ * rosa. If not, see <https://www.gnu.org/licenses/>.
  */
 
 #pragma once
