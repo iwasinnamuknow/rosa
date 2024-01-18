@@ -19,7 +19,7 @@
 namespace rosa {
 
     auto AudioFile::loadFromPhysFS() -> bool {
-        const auto& name = getName();
+        const auto &name = getName();
         if (PHYSFS_exists(name.c_str()) != 0) {
             m_file_ptr = PHYSFS_openRead(name.c_str());
             return true;
@@ -35,23 +35,23 @@ namespace rosa {
     auto AudioFile::eof() -> int {
         return PHYSFS_eof(m_file_ptr);
     }
-    
-    auto AudioFile::read(unsigned char* dest, unsigned int bytes) -> unsigned int {
+
+    auto AudioFile::read(unsigned char *dest, unsigned int bytes) -> unsigned int {
         return PHYSFS_readBytes(m_file_ptr, dest, bytes);
     }
-    
+
     auto AudioFile::length() -> unsigned int {
         return PHYSFS_fileLength(m_file_ptr);
     }
-    
+
     auto AudioFile::seek(int offset) -> void {
         PHYSFS_seek(m_file_ptr, offset);
     }
-    
+
     auto AudioFile::pos() -> unsigned int {
         return PHYSFS_tell(m_file_ptr);
     }
-    
+
     auto AudioFile::closeHandles() -> void {
         PHYSFS_close(m_file_ptr);
     }

@@ -27,12 +27,12 @@ namespace rosa {
         m_engine->deinit();
     }
 
-    auto AudioManager::instance() -> AudioManager& {
+    auto AudioManager::instance() -> AudioManager & {
         static AudioManager s_instance;
         return s_instance;
     }
 
-    auto AudioManager::play(SoLoud::AudioSource& source) -> unsigned int {
+    auto AudioManager::play(SoLoud::AudioSource &source) -> unsigned int {
         return m_engine->play(source);
     }
 
@@ -44,12 +44,16 @@ namespace rosa {
         m_engine->setVolume(handle, volume);
     }
 
-    auto AudioManager::getVoiceVolume(unsigned int handle) -> float {
+    auto AudioManager::getVoiceVolume(unsigned int handle) const -> float {
         return m_engine->getVolume(handle);
     }
 
-    auto AudioManager::setGlobalVolumne(float volume) -> void {
+    auto AudioManager::setGlobalVolume(float volume) -> void {
         m_engine->setGlobalVolume(volume);
+    }
+
+    auto AudioManager::getGlobalVolume() const -> float {
+        return m_engine->getGlobalVolume();
     }
 
     auto AudioManager::createBus(std::string name) -> void {
@@ -59,17 +63,23 @@ namespace rosa {
         m_busses.insert({std::move(name), std::move(bus)});
     }
 
-    auto AudioManager::removeBus(const std::string& name) -> void {
+    auto AudioManager::removeBus(const std::string &name) -> void {
         m_engine->stop(m_busses.at(name).handle);
         m_busses.erase(name);
     }
 
-    auto AudioManager::playOnBus(SoLoud::AudioSource& source, std::string bus_name) -> unsigned int{
+    auto AudioManager::playOnBus(SoLoud::AudioSource &source, std::string bus_name) -> unsigned int {
         return m_busses.at(bus_name).play(source);
     }
 
-    auto AudioManager::setBusVolume(float volume, const std::string& bus_name) -> void {
-        m_busses.at(bus_name).setVolume(volume);
+    auto AudioManager::setBusVolume(float volume, const std::string &bus_name) -> void {
+        auto &bus = m_busses.at(bus_name);
+        bus.setVolume(volume);
+        bus.volume = volume;
+    }
+
+    auto AudioManager::getBusVolume(const std::string &bus_name) -> float {
+        return m_busses.at(bus_name).volume;
     }
 
     auto AudioManager::getVoicePosition(unsigned int handle) -> double {

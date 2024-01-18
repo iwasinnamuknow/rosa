@@ -24,38 +24,130 @@
 
 namespace rosa {
 
+    /**
+     * \brief Global manager for all audio playback
+     */
     class AudioManager {
-        public:
-            static auto instance() -> AudioManager&;
+    public:
+        /**
+         * \brief Get the global instance
+         */
+        static auto instance() -> AudioManager &;
 
-            auto play(SoLoud::AudioSource& source) -> unsigned int;
-            auto stop(unsigned int handle) -> void;
+        /**
+         * \brief Play an audio source
+         * \param source audio data
+         * \return a handle for further operations
+         */
+        auto play(SoLoud::AudioSource &source) -> unsigned int;
 
-            auto setVoiceVolume(unsigned int handle, float volume) -> void;
-            auto getVoiceVolume(unsigned int handle) -> float;
+        /**
+         * \brief Stop playing an audio source
+         * \param handle the handle provided by play()
+         */
+        auto stop(unsigned int handle) -> void;
 
-            auto setGlobalVolumne(float volume) -> void;
+        /**
+         * \brief Set the volume of a particular voice
+         * \param handle the handle provided by play()
+         * \param volume the volume to set from 0.0 to 1.0
+         */
+        auto setVoiceVolume(unsigned int handle, float volume) -> void;
 
-            auto createBus(std::string name) -> void;
-            auto removeBus(const std::string& name) -> void;
+        /**
+         * \brief Get the volume of a particular voice
+         * \param handle the handle provided by play()
+         * \return the volume of the voice
+         */
+        auto getVoiceVolume(unsigned int handle) const -> float;
 
-            auto playOnBus(SoLoud::AudioSource& source, std::string bus_name) -> unsigned int;
-            auto setBusVolume(float volume, const std::string& bus_name) -> void;
+        /**
+         * \brief Set the global volume
+         * \param volume the volume to set from 0.0 to 1.0
+         */
+        auto setGlobalVolume(float volume) -> void;
 
-            auto getVoicePosition(unsigned int handle) -> double;
-            auto setVoicePosition(unsigned int handle, double position) -> void;
+        /**
+         * \brief Get the global volume
+         * \return the global volume
+         */
+        auto getGlobalVolume() const -> float;
 
-            auto setVoicePause(unsigned int handle, bool pause) -> void;
-            auto getVoicePause(unsigned int handle) -> bool;
+        /**
+         * \brief Create a bus to route voices
+         * \param name a string name for future access
+         */
+        auto createBus(std::string name) -> void;
 
-            auto checkHandle(unsigned int handle) -> bool;
-        private:
-            AudioManager();
-            ~AudioManager();
+        /**
+         * \brief Destroy a bus
+         * \param name string name
+         */
+        auto removeBus(const std::string &name) -> void;
 
-            std::unique_ptr<SoLoud::Soloud> m_engine;
+        /**
+         * \brief Play an audio source on a bus
+         * \param source audio data
+         * \param bus_name the string name of a created bus
+         * \return a handle for further operations
+         */
+        auto playOnBus(SoLoud::AudioSource &source, std::string bus_name) -> unsigned int;
 
-            std::unordered_map<std::string, AudioBus> m_busses;
+        /**
+         * \brief Set the volume of a bus
+         * \param volume the volume to set from 0.0 to 1.0
+         * \param bus_name the string name of a created bus
+         */
+        auto setBusVolume(float volume, const std::string &bus_name) -> void;
+
+        /**
+         * \brief Get the volume of a bus
+         * \param bus_name the string name of a created bus
+         * \return the bus volume
+         */
+        auto getBusVolume(const std::string &bus_name) -> float;
+
+        /**
+         * \brief Get the position of the playhead for a voice
+         * \param handle the handle provided by play()
+         * \return the position of the playhead in seconds
+         */
+        auto getVoicePosition(unsigned int handle) -> double;
+
+        /**
+         * \brief Set the position of the playhead for a voice
+         * \param handle the handle provided by play()
+         * \param position the position of the playhead in seconds
+         */
+        auto setVoicePosition(unsigned int handle, double position) -> void;
+
+        /**
+         * \brief Set the pause state of a playing voice
+         * \param handle the handle provided by play()
+         * \param pause pause boolean
+         */
+        auto setVoicePause(unsigned int handle, bool pause) -> void;
+
+        /**
+         * \brief Get the pause state of a playing voice
+         * \param handle the handle provided by play()
+         * \return paused or unpaused
+         */
+        auto getVoicePause(unsigned int handle) -> bool;
+
+        /**
+         * \brief Check if the specified handle is a valid voice
+         * \param handle the handle provided by play()
+         * \return valid or invalid
+         */
+        auto checkHandle(unsigned int handle) -> bool;
+    private:
+        AudioManager();
+        ~AudioManager();
+
+        std::unique_ptr<SoLoud::Soloud> m_engine;
+
+        std::unordered_map<std::string, AudioBus> m_busses;
     };
 
 } // namespace rosa
