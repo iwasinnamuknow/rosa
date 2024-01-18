@@ -26,22 +26,23 @@
 
 namespace rosa {
 
-    GameManager::GameManager(int window_width, int window_height, const std::string& window_title, int msaa, bool window_hidden) {
+    GameManager::GameManager(int window_width, int window_height, const std::string &window_title, int msaa,
+                             bool window_hidden) {
 
-        #if (DEBUG)
+#if (DEBUG)
         spdlog::set_level(spdlog::level::debug);
-        #else
+#else
         spdlog::set_level(spdlog::level::info);
-        #endif
+#endif
 
         try {
             spdlog::info("Setting up OpenGL context");
             m_render_window.init(window_width, window_height, window_title, msaa, window_hidden);
 
             spdlog::info("Initialising resource management");
-            [[maybe_unused]]auto& res = ResourceManager::getInstance();
-        
-        } catch(Exception& e) {
+            [[maybe_unused]]auto &res = ResourceManager::getInstance();
+
+        } catch (Exception &e) {
             spdlog::critical(e.what());
             abort();
         }
@@ -53,7 +54,6 @@ namespace rosa {
         ImGui_ImplGlfw_InitForOpenGL(m_render_window.getGlWindowPtr(), true);
         ImGui_ImplOpenGL3_Init("#version 150");
 
-        m_initialised = true;
         spdlog::info("Rosa is up and running!");
     }
 
@@ -66,13 +66,13 @@ namespace rosa {
         ResourceManager::shutdown();
     }
 
-    auto GameManager::addScene(const std::string& key, std::unique_ptr<Scene> scene) -> bool {
+    auto GameManager::addScene(const std::string &key, std::unique_ptr<Scene> scene) -> bool {
         ZoneScopedN("Scenes:Add");
         auto [iterator, inserted] = m_scenes.insert_or_assign(key, std::move(scene));
         return inserted;
     }
 
-    auto GameManager::run(int frames) -> void {
+    auto GameManager::run(std::uint64_t frames) -> void {
 
         m_frame_count = 0;
 
@@ -135,10 +135,9 @@ namespace rosa {
 
             auto size = m_render_window.getSize();
             assert(m_render_window.getFrameBuffer().getWidth() == size.x);
-            m_render_window.getFrameBuffer().blitColorTo(0, 0, 0, size.x, size.y);
-            m_render_window.getFrameBuffer().blitDepthTo(0, 0, 0, size.x, size.y);
-        
-            //ImGui::SFML::Render(m_render_window);
+            m_render_window.getFrameBuffer().blitColorTo(0, 0, 0, static_cast<int>(size.x), static_cast<int>(size.y));
+            m_render_window.getFrameBuffer().blitDepthTo(0, 0, 0, static_cast<int>(size.x), static_cast<int>(size.y));
+
             m_render_window.display(m_current_scene->m_active_camera_pos);
 
             FrameMark(nullptr);
@@ -149,13 +148,13 @@ namespace rosa {
         }
     }
 
-    auto GameManager::changeScene(const std::string& key) -> bool {
+    auto GameManager::changeScene(const std::string &key) -> bool {
         ZoneScopedN("Scenes:Change");
         if (auto search = m_scenes.find(key); search != m_scenes.end()) {
             if (m_current_scene != nullptr) {
                 m_current_scene->onUnload();
             }
-            
+
             m_current_scene = search->second.get();
             m_current_scene->onLoad();
             return true;
@@ -164,7 +163,7 @@ namespace rosa {
         return false;
     }
 
-    auto GameManager::unpackScene(const std::string& key, const std::string& path) -> bool {
+    auto GameManager::unpackScene(const std::string &key, const std::string &path) -> bool {
         ZoneScopedN("Scenes:Unpack");
         auto scene = std::make_unique<Scene>(getRenderWindow());
         auto serialiser = SceneSerialiser(*scene.get());

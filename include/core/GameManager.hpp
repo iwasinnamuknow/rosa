@@ -36,103 +36,103 @@ namespace rosa {
      *  This is available as a singleton because I'm bad and have dependency issues.
      */
     class GameManager {
-        public:
+    public:
 
-            /**
-             * @brief Construct a new Game Manager with the desired window size
-             * 
-             * @param window_width in pixels
-             * @param window_height in pixels
-             */
-            explicit GameManager(int window_width, int window_height, const std::string& window_title = "rosa window", int msaa = 0, bool window_hidden = false);
-            
-            ~GameManager();
+        /**
+         * @brief Construct a new Game Manager with the desired window size
+         *
+         * @param window_width in pixels
+         * @param window_height in pixels
+         */
+        explicit GameManager(int window_width, int window_height, const std::string &window_title = "rosa window",
+                             int msaa = 0, bool window_hidden = false);
 
-            GameManager(GameManager const &) = delete;
-            auto operator=(GameManager const &) -> GameManager & = delete;
-            GameManager(GameManager const &&) = delete;
-            auto operator=(GameManager const &&) -> GameManager & = delete;
+        ~GameManager();
 
-            /**
-             * @brief Main initialisation and game loop.
-             *
-             *  Responsible for polling events and calling into the current scenes'
-             *  update and render handlers.
-             *
-             *  Also handles ImGUI setup/rendering.
-             * 
-             *  @param int stop after n frames, zero to disable
-             */
-            virtual auto run(int frames = 0) -> void;
+        GameManager(GameManager const &) = delete;
+        auto operator=(GameManager const &) -> GameManager & = delete;
+        GameManager(GameManager const &&) = delete;
+        auto operator=(GameManager const &&) -> GameManager & = delete;
 
-            /**
-             * @brief Change the currently active scene
-             * 
-             * @param key the name of the scene to activate
-             * @return true if the scene was found
-             * @return false if the scene was not found
-             */
-            auto changeScene(const std::string& key) -> bool;
+        /**
+         * @brief Main initialisation and game loop.
+         *
+         *  Responsible for polling events and calling into the current scenes'
+         *  update and render handlers.
+         *
+         *  Also handles ImGUI setup/rendering.
+         *
+         *  @param int stop after n frames, zero to disable
+         */
+        auto run(std::uint64_t frames = 0) -> void;
 
-            /**
-             * @brief Add a scene to the pool
-             * 
-             * @param key the name of the new scene
-             * @param scene a unique pointer to the new scene
-             * @return true the scene was inserted
-             * @return false a scene by the same name already existed
-             */
-            auto addScene(const std::string& key, std::unique_ptr<Scene> scene) -> bool;
+        /**
+         * @brief Change the currently active scene
+         *
+         * @param key the name of the scene to activate
+         * @return true if the scene was found
+         * @return false if the scene was not found
+         */
+        auto changeScene(const std::string &key) -> bool;
 
-            /**
-             * @brief Load a previously serialised scene
-             * 
-             * @param key the name of the new scene
-             * @param path yaml file containing scene
-             * @return true the scene was unpacked
-             * @return false the scene couldn't be unpacked or the name already exists
-             */
-            auto unpackScene(const std::string& key, const std::string& path) -> bool;
+        /**
+         * @brief Add a scene to the pool
+         *
+         * @param key the name of the new scene
+         * @param scene a unique pointer to the new scene
+         * @return true the scene was inserted
+         * @return false a scene by the same name already existed
+         */
+        auto addScene(const std::string &key, std::unique_ptr<Scene> scene) -> bool;
 
-            /**
-             * @brief Get the current scene
-             *
-             * @return Scene* An observer pointer to the scene
-             */
-            auto getCurrentScene() -> Scene* {
-                return m_current_scene;
-            }
+        /**
+         * @brief Load a previously serialised scene
+         *
+         * @param key the name of the new scene
+         * @param path yaml file containing scene
+         * @return true the scene was unpacked
+         * @return false the scene couldn't be unpacked or the name already exists
+         */
+        auto unpackScene(const std::string &key, const std::string &path) -> bool;
 
-            /**
-             * @brief Get the render window
-             * 
-             * @return RenderWindow& reference to the render window
-             */
-            auto getRenderWindow() -> RenderWindow* {
-                return &m_render_window;
-            }
+        /**
+         * @brief Get the current scene
+         *
+         * @return Scene* An observer pointer to the scene
+         */
+        auto getCurrentScene() -> Scene * {
+            return m_current_scene;
+        }
 
-            /**
-             * @brief Set the colour used to clear the screen each frame
-             * 
-             * @param colour rgb(a) values for the clear colour
-             */
-            auto setClearColour(Colour colour) -> void {
-                m_clear_colour = colour;
-            }
+        /**
+         * @brief Get the render window
+         *
+         * @return RenderWindow& reference to the render window
+         */
+        auto getRenderWindow() -> RenderWindow * {
+            return &m_render_window;
+        }
 
-        private:
+        /**
+         * @brief Set the colour used to clear the screen each frame
+         *
+         * @param colour rgb(a) values for the clear colour
+         */
+        auto setClearColour(Colour colour) -> void {
+            m_clear_colour = colour;
+        }
 
-            std::chrono::time_point<std::chrono::system_clock> m_time; /**< used to calculate the frame delta time */
+    private:
 
-            std::unordered_map<std::string, std::unique_ptr<Scene>> m_scenes{}; /**< collection of all the registered scenes */
-            Scene* m_current_scene{nullptr};
-            RenderWindow m_render_window{};
+        std::chrono::time_point<std::chrono::system_clock> m_time; /**< used to calculate the frame delta time */
 
-            Colour m_clear_colour{0,0,0,1};
+        std::unordered_map<std::string, std::unique_ptr<Scene>> m_scenes{}; /**< collection of all the registered scenes */
+        Scene *m_current_scene{nullptr};
+        RenderWindow m_render_window{};
 
-            bool m_initialised{false};
-            long long m_frame_count{0};
+        Colour m_clear_colour{0, 0, 0, 1};
+
+        std::uint64_t m_frame_count{0};
     };
 
 } // namespace rosa
