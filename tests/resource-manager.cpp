@@ -19,21 +19,21 @@
 TEST_CASE("Fails to load a non-existent asset pack", "[resource-manager]") {
 
     auto& rm = rosa::ResourceManager::getInstance();
-    
+
     REQUIRE_THROWS_AS(rm.registerAssetPack("nonexistent.pak", ""), rosa::MissingPackException);
 }
 
 TEST_CASE("Fails to load an asset pack with no manifest", "[resource-manager]") {
 
     auto& rm = rosa::ResourceManager::getInstance();
-    
+
     REQUIRE_THROWS_AS(rm.registerAssetPack("packs/nomanifest.pak", ""), rosa::MissingManifestException);
 }
 
 TEST_CASE("Fails to load an asset pack with missing assets", "[resource-manager]") {
 
     auto& rm = rosa::ResourceManager::getInstance();
-    
+
     REQUIRE_THROWS_AS(rm.registerAssetPack("packs/missingfile.pak", ""), rosa::ResourceNotFoundException);
     REQUIRE_NOTHROW(rm.unregisterAssetPack("packs/missingfile.pak"));
 }
@@ -53,7 +53,7 @@ TEST_CASE("Retrieve a texture from the example pack and verify size", "[resource
 TEST_CASE("Fails to load a texture with a missing DDS header", "[resource-manager]") {
 
     auto& rm = rosa::ResourceManager::getInstance();
-    
+
     REQUIRE_THROWS_AS(rm.registerAssetPack("packs/notadds.pak", ""), rosa::MalformedDDSException);
     REQUIRE_NOTHROW(rm.unregisterAssetPack("packs/notadds.pak"));
 }
@@ -61,7 +61,7 @@ TEST_CASE("Fails to load a texture with a missing DDS header", "[resource-manage
 TEST_CASE("Fails to load a texture from an empty file", "[resource-manager]") {
 
     auto& rm = rosa::ResourceManager::getInstance();
-    
+
     REQUIRE_THROWS_AS(rm.registerAssetPack("packs/emptydds.pak", ""), rosa::MalformedDDSException);
     REQUIRE_NOTHROW(rm.unregisterAssetPack("packs/emptydds.pak"));
 }
@@ -69,7 +69,7 @@ TEST_CASE("Fails to load a texture from an empty file", "[resource-manager]") {
 TEST_CASE("Fails to unload a non-existent pack", "[resource-manager]") {
 
     auto& rm = rosa::ResourceManager::getInstance();
-    
+
     REQUIRE_NOTHROW(rm.registerAssetPack("../examples/base.pak", ""));
     REQUIRE_THROWS_AS(rm.unregisterAssetPack("base.pak"), rosa::UnmountFailedException);
 

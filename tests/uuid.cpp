@@ -21,13 +21,13 @@ TEST_CASE("Empty Uuid is all zeros", "[uuid]") {
 
     rosa::Uuid empty_uuid{};
 
-    for (const auto& element : empty_uuid.getData()) {
+    for (const auto& element: empty_uuid.getData()) {
         REQUIRE(element == 0x0);
     }
 }
 
 TEST_CASE("Generate Uuid", "[uuid]") {
-    
+
     rosa::Uuid random_uuid = rosa::Uuid::generate();
 
     REQUIRE(random_uuid != rosa::Uuid());
@@ -36,13 +36,13 @@ TEST_CASE("Generate Uuid", "[uuid]") {
 TEST_CASE("Parse Uuid from string", "[uuid]") {
 
     rosa::Uuid uuid_string("ab80206e-d173-4beb-5fc0-639fc9c08526");
-    REQUIRE( uuid_string.toString() == "ab80206e-d173-4beb-5fc0-639fc9c08526" );
+    REQUIRE(uuid_string.toString() == "ab80206e-d173-4beb-5fc0-639fc9c08526");
 }
 
 TEST_CASE("Parse Uuid from string without dashes", "[uuid]") {
 
     rosa::Uuid uuid_string("ab80206ed1734beb5fc0639fc9c08526");
-    REQUIRE( uuid_string.toString() == "ab80206e-d173-4beb-5fc0-639fc9c08526" );
+    REQUIRE(uuid_string.toString() == "ab80206e-d173-4beb-5fc0-639fc9c08526");
 }
 
 TEST_CASE("Copy Uuid by constructor", "[uuid]") {
@@ -58,7 +58,7 @@ TEST_CASE("Copy Uuid by assignment", "[uuid]") {
     rosa::Uuid uuid_string("ab80206e-d173-4beb-5fc0-639fc9c08526");
     rosa::Uuid copied_uuid = uuid_string;
 
-    REQUIRE( copied_uuid.toString() == "ab80206e-d173-4beb-5fc0-639fc9c08526" );
+    REQUIRE(copied_uuid.toString() == "ab80206e-d173-4beb-5fc0-639fc9c08526");
 }
 
 TEST_CASE("Explicit cast Uuid to std::string", "[uuid]") {
@@ -66,7 +66,7 @@ TEST_CASE("Explicit cast Uuid to std::string", "[uuid]") {
     rosa::Uuid uuid("ab80206e-d173-4beb-5fc0-639fc9c08526");
     std::string str = static_cast<std::string>(uuid);
 
-    REQUIRE( str == "ab80206e-d173-4beb-5fc0-639fc9c08526" );
+    REQUIRE(str == "ab80206e-d173-4beb-5fc0-639fc9c08526");
 }
 
 TEST_CASE("Uuid as hash key", "[uuid]") {
@@ -79,5 +79,5 @@ TEST_CASE("Uuid as hash key", "[uuid]") {
     map[uuid_1] = 1;
     map[uuid_2] = 2;
 
-    REQUIRE ( map.size() == 2 && map.at(uuid_1) == 1);
+    REQUIRE (map.size() == 2 && map.at(uuid_1) == 1);
 }

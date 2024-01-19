@@ -31,7 +31,7 @@ class DisplayImage : public rosa::Scene {
 public:
 
     // Pass default params to the base class constructor
-    explicit DisplayImage(rosa::RenderWindow *render_window) : rosa::Scene(render_window) {}
+    explicit DisplayImage(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {}
 
     // Override the onLoad function, so we can set up our scene. This will be called
     // any time the GameManager activates the scene.
@@ -48,7 +48,7 @@ public:
 
         // Create a blank entity. It's not really blank, every entity has a TransformComponent
         // by default.
-        auto &entity = createEntity();
+        auto& entity = createEntity();
 
         // Add a SpriteComponent to it.
         entity.addComponent<rosa::SpriteComponent>();

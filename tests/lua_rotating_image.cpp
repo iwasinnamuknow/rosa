@@ -32,7 +32,7 @@ class LuaRotatingImage : public rosa::Scene {
 public:
 
     // Pass default params to the base class constructor
-    explicit LuaRotatingImage(rosa::RenderWindow *render_window) : rosa::Scene(render_window) {}
+    explicit LuaRotatingImage(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {}
 
     // Override the onLoad function so we can set up our scene. This will be called
     // any time the GameManager activates the scene.
@@ -49,7 +49,7 @@ public:
 
         // Create a blank entity. It's not really blank, every entity has a TransformComponent
         // by default.
-        auto &entity = createEntity();
+        auto& entity = createEntity();
 
         // Add a SpriteComponent to it.
         entity.addComponent<rosa::SpriteComponent>();
@@ -61,7 +61,7 @@ public:
         entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
 
         // Creat the lua script component and load our script
-        auto &script_comp = entity.addComponent<rosa::LuaScriptComponent>(this, entity);
+        auto& script_comp = entity.addComponent<rosa::LuaScriptComponent>(this, entity);
         script_comp.setScript(script_uuid);
     }
 };

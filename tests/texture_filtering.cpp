@@ -31,7 +31,7 @@ class FilterScene : public rosa::Scene {
 public:
 
     // Pass default params to the base class constructor
-    explicit FilterScene(rosa::RenderWindow *render_window) : rosa::Scene(render_window) {}
+    explicit FilterScene(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {}
 
     rosa::Uuid target_texture{};
 
@@ -50,7 +50,7 @@ public:
 
         // Create a blank entity. It's not really blank, every entity has a TransformComponent
         // by default.
-        auto &entity = createEntity();
+        auto& entity = createEntity();
 
         // Add a SpriteComponent to it.
         entity.addComponent<rosa::SpriteComponent>();
