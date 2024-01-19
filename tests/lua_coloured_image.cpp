@@ -84,7 +84,7 @@ TEST_CASE("Colour an image via lua script", "[lua]") {
 
     // Read current framebuffer and compare to the reference image
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
-    std::vector<unsigned char> pixels = game_mgr.getRenderWindow()->readFrame();
+    auto pixels = game_mgr.getRenderWindow()->readFrame();
     std::vector<unsigned char> ref2_pixels = rosa::ImageComparator::readPNG("references/lua_coloured_image-2.png");
     REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref2_pixels) == true);
 

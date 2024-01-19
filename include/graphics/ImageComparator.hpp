@@ -22,7 +22,7 @@ namespace rosa {
     class ImageComparator {
         
         public:
-            static auto compareEqualityBasic(const std::vector<unsigned char>& lhs, const std::vector<unsigned char>& rhs) -> bool {
+        static auto compareEqualityBasic(std::span<const unsigned char> lhs, std::span<unsigned char> rhs) -> bool {
                 
                 if (lhs.size() != rhs.size()) {
                     return false;
@@ -31,7 +31,7 @@ namespace rosa {
                 auto size = lhs.size();
 
                 for (std::size_t index = 0; index < size; index++) {
-                    if (lhs.at(index) != rhs.at(index)) {
+                    if (lhs[index] != rhs[index]) {
                         return false;
                     }
                 }

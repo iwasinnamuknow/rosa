@@ -72,7 +72,7 @@ namespace rosa {
 
             auto isKeyDown(Key key) -> bool;
 
-            auto readFrame() -> std::vector<unsigned char>;
+        auto readFrame() -> std::span<const unsigned char>;
 
             auto getViewportSize() const -> glm::vec2;
 

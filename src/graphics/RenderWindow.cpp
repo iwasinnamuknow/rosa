@@ -255,14 +255,10 @@ namespace rosa {
         return glfwGetKey(m_wnd, key);
     }
 
-    auto RenderWindow::readFrame() -> std::vector<unsigned char> {
+    auto RenderWindow::readFrame() -> std::span<const unsigned char> {
+        auto buffer = m_framebuffer.getColorBuffer();
 
-        int size = m_wndSize[0] * m_wndSize[1] * 4 * sizeof(unsigned char);
-        const unsigned char* buffer = m_framebuffer.getColorBuffer();
-
-        std::vector<unsigned char> data{ buffer, buffer + size };
-
-        return data;
+        return buffer;
     }
 
     auto RenderWindow::getFrameBuffer() -> FrameBuffer& {

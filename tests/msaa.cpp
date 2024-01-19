@@ -81,7 +81,7 @@ TEST_CASE("Render a sprite with 8x MSAA enabled", "[renderer]") {
 
     // Read current framebuffer and compare to the reference image
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
-    std::vector<unsigned char> pixels = game_mgr.getRenderWindow()->readFrame();
+    auto pixels = game_mgr.getRenderWindow()->readFrame();
     std::vector<unsigned char> ref3_pixels = rosa::ImageComparator::readPNG("references/msaa8.png");
     REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref3_pixels) == true);
 }
@@ -104,7 +104,7 @@ TEST_CASE("Render a sprite with 16x MSAA enabled", "[renderer]") {
 
     // Read current framebuffer and compare to the reference image
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
-    std::vector<unsigned char> pixels = game_mgr.getRenderWindow()->readFrame();
+    auto pixels = game_mgr.getRenderWindow()->readFrame();
     std::vector<unsigned char> ref3_pixels = rosa::ImageComparator::readPNG("references/msaa16.png");
     REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref3_pixels) == true);
 }
@@ -127,7 +127,7 @@ TEST_CASE("Render a sprite with 32x MSAA enabled", "[renderer]") {
 
     // Read current framebuffer and compare to the reference image
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
-    std::vector<unsigned char> pixels = game_mgr.getRenderWindow()->readFrame();
+    auto pixels = game_mgr.getRenderWindow()->readFrame();
     std::vector<unsigned char> ref3_pixels = rosa::ImageComparator::readPNG("references/msaa32.png");
     REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref3_pixels) == true);
 }
