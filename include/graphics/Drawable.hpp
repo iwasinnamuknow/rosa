@@ -23,21 +23,51 @@
 
 namespace rosa {
 
+    /**
+     * \brief Base class that all drawable types inherit from
+     */
     class Drawable {
-        public:
-            friend class RenderWindow;
-            Drawable() {
-                
-            }
-            virtual ~Drawable() = default;
-            virtual auto draw(glm::mat4 transform) -> void{}
+    public:
+        /**
+         * \brief Default constructor
+         */
+        Drawable() = default;
 
-        protected:
-            friend class RenderWindow;
+        /**
+         * \brief Copy constructor
+         */
+        Drawable(const Drawable &) = default;
 
-            //Quad m_quad;
+        /**
+         * \brief Move constructor
+         */
+        Drawable(Drawable &&) = default;
 
-            
+        /**
+         * \brief Copy assignment
+         * \return a copy of the drawable
+         */
+        auto operator=(const Drawable &) -> Drawable & = default;
+
+        /**
+         * \brief Move assignment
+         * \return the moved drawable
+         */
+        auto operator=(Drawable &&) -> Drawable & = default;
+
+        /**
+         * \brief Virtual default destructor
+         */
+        virtual ~Drawable() = default;
+
+        /**
+         * \brief Virtual function for draw operations
+         * \param transform the transform of the drawable
+         */
+        virtual auto draw(glm::mat4 /*transform*/) -> void {}
+
+    protected:
+        friend class RenderWindow;
     };
 
 } // namespace rosa
