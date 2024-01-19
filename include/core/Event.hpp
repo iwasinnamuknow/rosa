@@ -13,6 +13,8 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+/*! \file */
+
 #pragma once
 
 #include <core/input/Keyboard.hpp>
@@ -20,6 +22,9 @@
 
 namespace rosa {
 
+    /**
+     * \brief Associates an identifier with each of the main input types
+     */
     enum EventType {
         EventKeyboard,
         EventMouse,
@@ -27,17 +32,27 @@ namespace rosa {
         EventClose
     };
 
+    /**
+     * \brief When the window is resized, we pass the new size on as event information
+     */
     struct ResizeEvent {
-        glm::vec2 size;
+        glm::vec2 size; ///< Size of the window after resizing
     };
 
+    /**
+     * \brief Container for event information
+     *
+     * The member union will contain information for the relevant event.
+     * Check the EventType to determine what information to access.
+     */
     struct Event {
-        EventType type;
+        EventType type; ///< Denotes the type of event
 
+        /** This union will contain information for a single event type **/
         union {
-            MouseEvent mouse;
-            KeyboardEvent keyboard;
-            ResizeEvent resize;
+            MouseEvent mouse;       ///< Mouse event information
+            KeyboardEvent keyboard; ///< Keyboard event information
+            ResizeEvent resize;     ///< Window resize information
         };
     };
 

@@ -13,21 +13,28 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+/*! \file */
+
 #pragma once
 
 #include <graphics/gl.hpp>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <imgui.h>
 
 namespace rosa {
 
+    /**
+     * \brief Associates an identifier with each of the key events
+     */
     enum KeyboardEventType {
-        KeyPressed,
-        KeyReleased,
-        KeyRepeated
+        KeyPressed,     ///< A key was pressed down
+        KeyReleased,    ///< A key was released
+        KeyRepeated     ///< A key was held down and repeated
     };
 
+    /**
+     * \brief Associates an identifier with each key
+     */
     enum Key {
         KeySpace        = GLFW_KEY_SPACE,
         KeyApostrophe   = GLFW_KEY_APOSTROPHE,
@@ -149,21 +156,28 @@ namespace rosa {
         KeyMenu         = GLFW_KEY_MENU
     };
 
+    /**
+     * \brief Associates an identifier with the various keyboard modifiers
+     */
     enum KeyboardModifier {
-        ModifierKeyNone     = 0,
-        ModifierKeyShift    = GLFW_MOD_SHIFT,
-        ModifierKeyControl  = GLFW_MOD_CONTROL,
-        ModifierKeyAlt      = GLFW_MOD_ALT,
-        ModifierSuper       = GLFW_MOD_SUPER,
-        ModifierCapsLock    = GLFW_MOD_CAPS_LOCK,
-        ModifierNumLock     = GLFW_MOD_NUM_LOCK
+        ModifierKeyNone = 0,                    ///< No modifiers were applied
+        ModifierKeyShift = GLFW_MOD_SHIFT,       ///< The shift key was held down
+        ModifierKeyControl = GLFW_MOD_CONTROL,     ///< The control key was held down
+        ModifierKeyAlt = GLFW_MOD_ALT,         ///< The alt key was held down
+        ModifierKeySuper = GLFW_MOD_SUPER,       ///< The super (windows) key was held down
+        ModifierCapsLock = GLFW_MOD_CAPS_LOCK,   ///< Caps lock was active
+        ModifierNumLock = GLFW_MOD_NUM_LOCK     ///< Num lock was active
     };
 
+    /**
+     * \brief Contains information about the keyboard event
+     */
     struct KeyboardEvent {
+        /** The type of keyboard event **/
         KeyboardEventType type;
 
-        Key key;
-        KeyboardModifier modifiers{ModifierKeyNone};
+        Key key;    ///< The relevant key
+        KeyboardModifier modifiers{ModifierKeyNone}; ///< Any modifiers that were active
     };
 
 } // namespace rosa
