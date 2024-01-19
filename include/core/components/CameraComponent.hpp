@@ -19,11 +19,31 @@
 
 namespace rosa {
 
+    /**
+     * \brief Component to represent a camera viewpoint
+     *
+     * This component doesn't do anything clever, it merely indicates to the scene
+     * that the parent entity transform will be used as the viewpoint if the camera
+     * is enabled.
+     */
     class CameraComponent {
         public:
             CameraComponent() = default;
-            
+
+        /**
+         * \brief Set enable state of the camera
+         * \param enable true for enable, false for disable
+         *
+         * When using multiple cameras, it is up to the user to disable a camera
+         * when enabling another. If multiple cameras are enabled, the last processed
+         * will be used.
+         */
             auto setEnabled(bool enable) -> void;
+
+        /**
+         * \brief Get the enable state of the camera
+         * \return true for enabled, false for disabled
+         */
             auto getEnabled() const -> bool;
 
         private:
