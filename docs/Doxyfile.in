@@ -4,7 +4,8 @@ STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@ \
 INPUT                  = @PROJECT_SOURCE_DIR@
 EXCLUDE_PATTERNS       = */vendor/* \
                          */build/* \
-                         */testbed/* \
+                         */tests/* \
+                         */examples/* \
                          */doxygen-awesome-css/docs/* \
                          */doxygen-awesome-css/*.md \
                          */doxygen-awesome-css/include/* 
