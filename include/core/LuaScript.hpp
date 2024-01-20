@@ -22,16 +22,30 @@
 
 namespace rosa {
 
+    /**
+     * \brief A single script asset
+     *
+     * This Resource type allows a Lua script to be loaded from assets. Very simply it holds the text
+     * of a script and supplies it when required for loading.
+     */
     class LuaScript : public ::rosa::Resource {
-        public:
-            LuaScript(std::string name, Uuid uuid, std::string pack) : rosa::Resource(std::move(name), uuid, std::move(pack)) {}
+    public:
+        LuaScript(std::string name, Uuid uuid, std::string pack) : rosa::Resource(std::move(name), uuid, std::move(pack)) {
+        }
 
-            auto loadFromPhysFS() -> bool override;
+        /**
+         * \brief Load the script text from the asset pack
+         */
+        auto loadFromPhysFS() -> bool override;
 
-            auto getContent() const -> const std::string&;
+        /**
+         * \brief Get the script text
+         * \return string containing the script
+         */
+        auto getContent() const -> const std::string&;
 
-        private:
-            std::string m_content;
+    private:
+        std::string m_content;
     };
 
 } // namespace rosa
