@@ -15,8 +15,8 @@
 
 #pragma once
 
-#include <string>
 #include <core/Uuid.hpp>
+#include <string>
 
 namespace rosa {
 
@@ -33,32 +33,41 @@ namespace rosa {
     };
 
     class Resource {
-        public:
-            Resource(std::string name, Uuid uuid, std::string pack) : m_name(std::move(name)), m_uuid(uuid), m_pack(std::move(pack)) {}
-            virtual ~Resource() = default;
+    public:
+        Resource(std::string name, Uuid uuid, std::string pack)
+            : m_name(std::move(name)), m_uuid(uuid), m_pack(std::move(pack)) {}
 
-            auto getName() -> const std::string& {
-                return m_name;
-            }
+        virtual ~Resource() = default;
 
-            auto getUUID() -> const Uuid& {
-                return m_uuid;
-            }
+        Resource(const Resource&)                    = delete;
+        auto operator=(const Resource&) -> Resource& = delete;
 
-            auto getPack() -> const std::string& {
-                return m_pack;
-            }
+        Resource(Resource&&)                    = delete;
+        auto operator=(Resource&&) -> Resource& = delete;
 
-        private:
-            std::string m_name{};
-            Uuid m_uuid{};
+        auto getName() -> const std::string& {
+            return m_name;
+        }
 
-            virtual auto loadFromPhysFS() -> bool = 0;
-            virtual auto closeHandles() -> void {}
+        auto getUUID() -> const Uuid& {
+            return m_uuid;
+        }
 
-            std::string m_pack{};
+        auto getPack() -> const std::string& {
+            return m_pack;
+        }
 
-            friend class ResourceManager;
+    private:
+        std::string m_name{};
+        Uuid        m_uuid{};
+
+        virtual auto loadFromPhysFS() -> void = 0;
+        virtual auto closeHandles() -> void {
+        }
+
+        std::string m_pack{};
+
+        friend class ResourceManager;
     };
 
-} // namespace rosa
+}// namespace rosa

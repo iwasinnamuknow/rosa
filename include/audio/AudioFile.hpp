@@ -15,10 +15,10 @@
 
 #pragma once
 
-#include <core/Uuid.hpp>
 #include <core/Resource.hpp>
-#include <soloud/include/soloud_file.h>
+#include <core/Uuid.hpp>
 #include <physfs.h>
+#include <soloud/include/soloud_file.h>
 
 namespace rosa {
 
@@ -38,15 +38,15 @@ namespace rosa {
          * \param uuid asset uuid
          * \param pack additional pack path for submounts
          */
-        AudioFile(std::string name, Uuid uuid, std::string pack) : Resource(std::move(name), uuid, std::move(pack)) {}
-
-        ~AudioFile() override;
+        AudioFile(std::string name, Uuid uuid, std::string pack)
+            : Resource(std::move(name), uuid, std::move(pack)) {
+        }
 
         /**
          * \brief Load audio data from asset pack
          * \return loading success or failure
          */
-        auto loadFromPhysFS() -> bool override;
+        auto loadFromPhysFS() -> void override;
 
         /**
          * \brief Check if the audio read head is at the end of the file
@@ -60,7 +60,7 @@ namespace rosa {
          * \param bytes number of bytes to read
          * \return number of bytes read
          */
-        auto read(unsigned char *dest, unsigned int bytes) -> unsigned int override;
+        auto read(unsigned char* dest, unsigned int bytes) -> unsigned int override;
 
         /**
          * \brief Get the size of the file object
@@ -85,8 +85,16 @@ namespace rosa {
          */
         auto closeHandles() -> void override;
 
+        ~AudioFile() override;
+
+        AudioFile(const AudioFile&)                    = delete;
+        auto operator=(const AudioFile&) -> AudioFile& = delete;
+
+        AudioFile(AudioFile&&)                    = delete;
+        auto operator=(AudioFile&&) -> AudioFile& = delete;
+
     private:
-        PHYSFS_File *m_file_ptr{nullptr};
+        PHYSFS_File* m_file_ptr{nullptr};
     };
 
-} // namespace rosa
+}// namespace rosa

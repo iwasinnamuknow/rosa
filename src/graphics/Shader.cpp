@@ -18,21 +18,18 @@
 
 namespace rosa {
 
-    auto Shader::loadFromPhysFS() -> bool {
+    auto Shader::loadFromPhysFS() -> void {
 
         const auto& name = getName();
 
         if (PHYSFS_exists(name.c_str()) == 0) {
-            spdlog::error("Couldn't load asset: {}", name);
-            return false;
+            throw ResourceNotFoundException(fmt::format("Couldn't find shader {}", name));
         }
 
-        PHYSFS_file* myfile = PHYSFS_openRead(name.c_str());
+        PHYSFS_file* file = PHYSFS_openRead(name.c_str());
 
-        int length_read = PHYSFS_readBytes(myfile, m_content.data(), PHYSFS_fileLength(myfile));
-        assert(length_read == PHYSFS_fileLength(myfile));
-
-        return true;
+        std::int64_t length_read = PHYSFS_readBytes(file, m_content.data(), static_cast<std::uint64_t>(PHYSFS_fileLength(file)));
+        assert(length_read == PHYSFS_fileLength(file));
     }
 
-} // namespace rosa
+}// namespace rosa

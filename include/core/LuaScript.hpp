@@ -15,10 +15,10 @@
 
 #pragma once
 
-#include <core/Uuid.hpp>
 #include <core/Resource.hpp>
-#include <string>
+#include <core/Uuid.hpp>
 #include <physfs.h>
+#include <string>
 
 namespace rosa {
 
@@ -30,13 +30,14 @@ namespace rosa {
      */
     class LuaScript : public ::rosa::Resource {
     public:
-        LuaScript(std::string name, Uuid uuid, std::string pack) : rosa::Resource(std::move(name), uuid, std::move(pack)) {
+        LuaScript(std::string name, Uuid uuid, std::string pack)
+            : rosa::Resource(std::move(name), uuid, std::move(pack)) {
         }
 
         /**
          * \brief Load the script text from the asset pack
          */
-        auto loadFromPhysFS() -> bool override;
+        auto loadFromPhysFS() -> void override;
 
         /**
          * \brief Get the script text
@@ -48,4 +49,4 @@ namespace rosa {
         std::string m_content;
     };
 
-} // namespace rosa
+}// namespace rosa

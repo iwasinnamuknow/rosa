@@ -15,17 +15,17 @@
 
 #pragma once
 
-#include <graphics/gl.hpp>
 #include <GLFW/glfw3.h>
+#include <core/Resource.hpp>
+#include <core/Uuid.hpp>
+#include <graphics/gl.hpp>
 #include <spdlog/spdlog.h>
 #include <string_view>
-#include <core/Uuid.hpp>
-#include <core/Resource.hpp>
 
 namespace rosa {
 
     enum ShaderType {
-        VertexShader = GL_VERTEX_SHADER,
+        VertexShader   = GL_VERTEX_SHADER,
         FragmentShader = GL_FRAGMENT_SHADER
     };
 
@@ -71,29 +71,29 @@ void main()
 )");
 
     class Shader : public ::rosa::Resource {
-        public:
-            explicit Shader(const std::string& name, Uuid uuid, std::string pack, ShaderType type = VertexShader) : Resource(std::move(name), uuid, std::move(pack)), m_type(type) {
-                if (m_type == VertexShader) {
-                    m_content = default_vertex_shader;
-                } else if (m_type == FragmentShader) {
-                    m_content = default_fragment_shader;
-                }
+    public:
+        explicit Shader(std::string name, Uuid uuid, std::string pack, ShaderType type = VertexShader)
+            : Resource(std::move(name), uuid, std::move(pack)), m_type(type) {
+            if (m_type == VertexShader) {
+                m_content = default_vertex_shader;
+            } else if (m_type == FragmentShader) {
+                m_content = default_fragment_shader;
             }
+        }
 
-            auto getType() const -> ShaderType {
-                return m_type;
-            }
+        auto getType() const -> ShaderType {
+            return m_type;
+        }
 
-            auto loadFromPhysFS() -> bool override;
+        auto loadFromPhysFS() -> void override;
 
-            auto getSource() const -> const std::string& {
-                return m_content;
-            }
+        auto getSource() const -> const std::string& {
+            return m_content;
+        }
 
-        private:
-            ShaderType m_type;
-            std::string m_content;
-            unsigned int m_shader_id;
+    private:
+        ShaderType  m_type;
+        std::string m_content;
     };
 
-} // namespace rosa
+}// namespace rosa

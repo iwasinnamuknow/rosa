@@ -13,9 +13,9 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include <GLFW/glfw3.h>
 #include <graphics/Texture.hpp>
 #include <graphics/gl.hpp>
-#include <GLFW/glfw3.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,7 +26,7 @@
 #include <spdlog/spdlog.h>
 
 namespace rosa {
-    auto Texture::loadFromPhysFS() -> bool {
+    auto Texture::loadFromPhysFS() -> void {
 
         const auto& name = getName();
 
@@ -34,67 +34,69 @@ namespace rosa {
             throw ResourceNotFoundException(fmt::format("Couldn't locate resource {}", name));
         }
 
-        PHYSFS_file* myfile = PHYSFS_openRead(name.c_str());
-        //char *buffer = new char[PHYSFS_fileLength(myfile)];
-        //int length_read = PHYSFS_readBytes (myfile, buffer, PHYSFS_fileLength(myfile));
-        //assert(length_read == PHYSFS_fileLength(myfile));
+        PHYSFS_file* file = PHYSFS_openRead(name.c_str());
 
-        auto length = PHYSFS_fileLength(myfile);
+        auto length = PHYSFS_fileLength(file);
         if (length < 128) {
-            PHYSFS_close(myfile);
+            PHYSFS_close(file);
             throw MalformedDDSException("Too small to be a DDS");
         }
 
         // Check for DDS header
-        char filecode[4];
-        PHYSFS_readBytes(myfile, filecode, 4);
-        if (strncmp(filecode, "DDS ", 4) != 0) {
-            PHYSFS_close(myfile);
+        std::array<char, 4> file_code{};
+        PHYSFS_readBytes(file, file_code.data(), 4);
+        if (strncmp(file_code.data(), "DDS ", 4) != 0) {
+            PHYSFS_close(file);
             throw MalformedDDSException("Missing DDS header");
         }
 
         // get the surface desc
-        unsigned char header[124];
-        PHYSFS_readBytes(myfile, header, 124);
+        std::array<unsigned char, 124> header{};
+        PHYSFS_readBytes(file, header.data(), 124);
 
         // Decode header
-        unsigned int height      = *(unsigned int*)&(header[8 ]);
-        unsigned int width         = *(unsigned int*)&(header[12]);
-        unsigned int linearSize     = *(unsigned int*)&(header[16]);
-        unsigned int mipMapCount = *(unsigned int*)&(header[24]);
-        unsigned int fourCC      = *(unsigned int*)&(header[80]);
-        m_size = glm::vec2(width, height);
+        unsigned int height{0};
+        unsigned int width{0};
+        unsigned int linear_size{0};
+        unsigned int mip_map_count{0};
+        unsigned int four_cc{0};
 
-        unsigned char * buffer;
-        unsigned int bufsize;
+        // clang-format off
+        std::memcpy(&height,        &header[8],  sizeof(unsigned int));
+        std::memcpy(&width,         &header[12], sizeof(unsigned int));
+        std::memcpy(&linear_size,   &header[16], sizeof(unsigned int));
+        std::memcpy(&mip_map_count, &header[24], sizeof(unsigned int));
+        std::memcpy(&four_cc,       &header[80], sizeof(unsigned int));
+        // clang-format on
+
+        m_size = glm::vec2(width, height);
+        std::vector<unsigned char> buffer;
 
         /* how big is it going to be including all mipmaps? */
-        bufsize = mipMapCount > 1 ? linearSize * 2 : linearSize;
+        unsigned int buf_size{mip_map_count > 1 ? linear_size * 2 : linear_size};
 
         // Read the remainder
-        buffer = (unsigned char*)malloc(bufsize * sizeof(unsigned char));
-        PHYSFS_readBytes(myfile, buffer, bufsize);
+        buffer.resize(buf_size);
+        PHYSFS_readBytes(file, buffer.data(), buf_size);
 
         // Close up physfs stream
-        PHYSFS_close(myfile);
+        PHYSFS_close(file);
 
         // Process DDS
-        unsigned int format;
-        switch(fourCC)
-        {
-        case FOURCC_DXT1:
-            format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-            break;
-        case FOURCC_DXT3:
-            format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-            break;
-        case FOURCC_DXT5:
-            format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-            break;
-        default:
-            free(buffer);
-            throw MalformedDDSException("Could not determine DDS texture compression");
-            return false;
+        unsigned int format{0};
+        switch (four_cc) {
+            case FOURCC_DXT1:
+                format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+                break;
+            case FOURCC_DXT3:
+                format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+                break;
+            case FOURCC_DXT5:
+                format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+                break;
+            default:
+                throw MalformedDDSException("Could not determine DDS texture compression");
+                break;
         }
 
         if (glfwGetCurrentContext() != nullptr) {
@@ -109,24 +111,26 @@ namespace rosa {
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-            unsigned int blockSize = (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 8 : 16;
-            unsigned int offset = 0;
+            unsigned int block_size = (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 8 : 16;
+            unsigned int offset     = 0;
 
             /* load the mipmaps */
-            for (unsigned int level = 0; level < mipMapCount && (width || height); ++level)
-            {
-                unsigned int size = ((width+3)/4)*((height+3)/4)*blockSize;
-                glCompressedTexImage2D(GL_TEXTURE_2D, level, format, width, height, 
-                    0, size, buffer + offset);
+            for (unsigned int level = 0; level < mip_map_count && (width > 0 || height > 0); ++level) {
+                auto size = ((width + 3) / 4) * ((height + 3) / 4) * block_size;
+                glCompressedTexImage2D(
+                        GL_TEXTURE_2D,
+                        static_cast<GLint>(level),
+                        format,
+                        static_cast<GLsizei>(width),
+                        static_cast<GLsizei>(height),
+                        0, static_cast<GLsizei>(size),
+                        buffer.data() + offset);
 
                 offset += size;
-                width  /= 2;
+                width /= 2;
                 height /= 2;
             }
         }
-
-        free(buffer); 
-        return true;
     }
 
-} // namespace rosa
+}// namespace rosa

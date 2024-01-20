@@ -18,14 +18,13 @@
 
 namespace rosa {
 
-    auto AudioFile::loadFromPhysFS() -> bool {
-        const auto &name = getName();
-        if (PHYSFS_exists(name.c_str()) != 0) {
-            m_file_ptr = PHYSFS_openRead(name.c_str());
-            return true;
+    auto AudioFile::loadFromPhysFS() -> void {
+        const auto& name = getName();
+        if (PHYSFS_exists(name.c_str()) == 0) {
+            throw ResourceNotFoundException(fmt::format("Couldn't find audio file {}", name));
         }
 
-        return false;
+        m_file_ptr = PHYSFS_openRead(name.c_str());
     }
 
     AudioFile::~AudioFile() {
@@ -36,7 +35,7 @@ namespace rosa {
         return PHYSFS_eof(m_file_ptr);
     }
 
-    auto AudioFile::read(unsigned char *dest, unsigned int bytes) -> unsigned int {
+    auto AudioFile::read(unsigned char* dest, unsigned int bytes) -> unsigned int {
         return PHYSFS_readBytes(m_file_ptr, dest, bytes);
     }
 
@@ -45,7 +44,7 @@ namespace rosa {
     }
 
     auto AudioFile::seek(int offset) -> void {
-        PHYSFS_seek(m_file_ptr, offset);
+        PHYSFS_seek(m_file_ptr, static_cast<std::uint64_t>(offset));
     }
 
     auto AudioFile::pos() -> unsigned int {
@@ -56,4 +55,4 @@ namespace rosa {
         PHYSFS_close(m_file_ptr);
     }
 
-} // namespace rosa
+}// namespace rosa

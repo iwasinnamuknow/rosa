@@ -17,29 +17,28 @@
 
 namespace rosa {
 
-    auto LuaScript::loadFromPhysFS() -> bool {
+    auto LuaScript::loadFromPhysFS() -> void {
 
         const auto& name = getName();
 
-        if (PHYSFS_exists(name.c_str()) != 0) {
-            PHYSFS_file* myfile = PHYSFS_openRead(name.c_str());
-            std::string buffer{};
-            buffer.resize(PHYSFS_fileLength(myfile));
-            std::int64_t length_read = PHYSFS_readBytes(myfile, buffer.data(), static_cast<std::uint64_t>(PHYSFS_fileLength(myfile)));
-            assert(length_read == PHYSFS_fileLength(myfile));
-            PHYSFS_close(myfile);
-
-            m_content = buffer;
-        } else {
-            spdlog::critical("Couldn't load script: {}", static_cast<std::string>(getUUID()));
-            return false;
+        if (PHYSFS_exists(name.c_str()) == 0) {
+            throw ResourceNotFoundException(fmt::format("Couldn't find script {}", name));
         }
 
-        return true;
+        PHYSFS_file* file = PHYSFS_openRead(name.c_str());
+
+        std::string buffer{};
+        buffer.resize(static_cast<std::uint64_t>(PHYSFS_fileLength(file)));
+
+        std::int64_t length_read = PHYSFS_readBytes(file, buffer.data(), static_cast<std::uint64_t>(PHYSFS_fileLength(file)));
+        assert(length_read == PHYSFS_fileLength(file));
+
+        PHYSFS_close(file);
+        m_content = buffer;
     }
 
     auto LuaScript::getContent() const -> const std::string& {
         return m_content;
     }
 
-} // namespace rosa
+}// namespace rosa
