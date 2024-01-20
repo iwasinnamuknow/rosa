@@ -415,7 +415,7 @@ namespace rosa {
                 m_on_delete_function = m_state["onDelete"];
                 m_on_update_function = m_state["onUpdate"];
                 m_on_input_function = m_state["onInput"];
-                m_on_load_function = m_state["onLoad"];
+                m_on_load_function  = m_state["onLoad"];
 
                 m_uuid = uuid;
 
@@ -423,22 +423,32 @@ namespace rosa {
 
                 // logger
                 auto log_table = m_state["log"].get_or_create<sol::table>();
-                log_table.set_function("error", [](const std::string& message) {
-                    spdlog::error(message);
-                });
-                log_table.set_function("warning", [](const std::string& message) {
-                    spdlog::warn(message);
-                });
-                log_table.set_function("info", [](const std::string& message) {
-                    spdlog::info(message);
-                });
-                log_table.set_function("debug", [](const std::string& message) {
-                    spdlog::debug(message);
-                });
+                log_table.set_function(
+                        "error", [](const std::string& message) {
+                            spdlog::error(message);
+                        }
+                );
+                log_table.set_function(
+                        "warning", [](const std::string& message) {
+                            spdlog::warn(message);
+                        }
+                );
+                log_table.set_function(
+                        "info", [](const std::string& message) {
+                            spdlog::info(message);
+                        }
+                );
+                log_table.set_function(
+                        "debug", [](const std::string& message) {
+                            spdlog::debug(message);
+                        }
+                );
 
-                m_state.set_function("isKeyDown", [this](Key key) {
-                    return m_scene->getRenderWindow().isKeyDown(key);
-                });
+                m_state.set_function(
+                        "isKeyDown", [this](Key key) {
+                            return m_scene->getRenderWindow().isKeyDown(key);
+                        }
+                );
 
                 // Transform component
                 m_state["entity"] = &entity;

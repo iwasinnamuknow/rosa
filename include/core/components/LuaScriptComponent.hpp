@@ -30,6 +30,7 @@
 namespace rosa {
 
     class Scene;
+
     class SceneSerialiser;
 
     /**
@@ -44,7 +45,7 @@ namespace rosa {
          * \param scene parent scene
          * \param entity parent entity
          */
-            LuaScriptComponent(Scene* scene, entt::entity entity);
+        LuaScriptComponent(Scene* scene, entt::entity entity);
 
         /**
          * \brief Load a script
@@ -56,63 +57,64 @@ namespace rosa {
          * \param deserialised true if this entity is being deserialised
          * \return true if loading was successful
          */
-            auto setScript(Uuid uuid, bool deserialised = false) -> bool;
+        auto setScript(Uuid uuid, bool deserialised = false) -> bool;
 
         /**
          * \brief Get the loaded script
          * \return asset Uuid
          */
-            auto getScript() const -> Uuid;
+        auto getScript() const -> Uuid;
 
         /**
          * \brief Assign an entire Lua table
          * \param key Lua object key
          * \param table source table
          */
-            auto setData(const std::string& key, sol::table& table) -> void;
+        auto setData(const std::string& key, sol::table& table) -> void;
 
         /**
          * \brief Assign an integer value
          * \param key Lua object key
          * \param value source integer
          */
-            auto setValue(const std::string& key, int value) -> void;
+        auto setValue(const std::string& key, int value) -> void;
 
         /**
          * \brief Assign a float value
          * \param key Lua object key
          * \param value source float
          */
-            auto setValue(const std::string& key, float value) -> void;
+        auto setValue(const std::string& key, float value) -> void;
 
         /**
          * \brief Assign a string value
          * \param key Lua object key
          * \param value source string
          */
-            auto setValue(const std::string& key, std::string value) -> void;
+        auto setValue(const std::string& key, std::string value) -> void;
 
         /**
          * \brief Retrieve a Lua table
          * \param table Lua object key
          * \return A Lua table
          */
-            auto getTable(const std::string& table) const -> sol::table;
+        auto getTable(const std::string& table) const -> sol::table;
 
-        private:
-            sol::state m_state;
-            sol::protected_function m_on_create_function;
-            sol::protected_function m_on_load_function;
-            sol::protected_function m_on_delete_function;
-            sol::protected_function m_on_update_function;
-            sol::protected_function m_on_input_function;
-            Uuid m_uuid;
+    private:
+        sol::state              m_state;
+        sol::protected_function m_on_create_function;
+        sol::protected_function m_on_load_function;
+        sol::protected_function m_on_delete_function;
+        sol::protected_function m_on_update_function;
+        sol::protected_function m_on_input_function;
+        Uuid                    m_uuid;
 
-            entt::entity m_entity;
-            Scene* m_scene;
+        entt::entity m_entity;
+        Scene* m_scene;
 
-            friend class Scene;
-            friend class SceneSerialiser;
+        friend class Scene;
+
+        friend class SceneSerialiser;
     };
 
 } // namespace rosa
