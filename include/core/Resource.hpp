@@ -22,14 +22,14 @@ namespace rosa {
 
     class ResourceManager;
 
-    enum resource_type {
-        resource_texture         = 0,
-        resource_sound           = 1,
-        resource_music           = 2,
-        resource_font            = 3,
-        resource_script          = 4,
-        resource_vertex_shader   = 5,
-        resource_fragment_shader = 6
+    enum ResourceType {
+        ResourceTexture        = 0,
+        ResourceSound          = 1,
+        ResourceMusic          = 2,
+        ResourceFont           = 3,
+        ResourceScript         = 4,
+        ResourceVertexShader   = 5,
+        ResourceFragmentShader = 6
     };
 
     class Resource {

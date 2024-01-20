@@ -100,10 +100,10 @@ namespace rosa {
 
         for (const auto& assets: manifest["assets"]) {
             auto uuid     = assets["uuid"].as<Uuid>();
-            auto type     = static_cast<resource_type>(assets["type"].as<int>());
+            auto type     = static_cast<ResourceType>(assets["type"].as<int>());
             auto filename = assets["path"].as<std::string>();
 
-            if (type == resource_type::resource_texture) {
+            if (type == ResourceType::ResourceTexture) {
                 TextureFilterParams params;
                 if (assets["filtering"]) {
                     if (assets["filtering"]["minify"]) {
@@ -118,22 +118,22 @@ namespace rosa {
                 new_resource->loadFromPhysFS();
                 m_resources[uuid] = std::move(new_resource);
 
-            } else if (type == resource_type::resource_vertex_shader) {
+            } else if (type == ResourceType::ResourceVertexShader) {
                 auto new_resource = std::make_unique<Shader>(filename, uuid, path, ShaderType::VertexShader);
                 new_resource->loadFromPhysFS();
                 m_resources[uuid] = std::move(new_resource);
 
-            } else if (type == resource_type::resource_fragment_shader) {
+            } else if (type == ResourceType::ResourceFragmentShader) {
                 auto new_resource = std::make_unique<Shader>(filename, uuid, path, ShaderType::FragmentShader);
                 new_resource->loadFromPhysFS();
                 m_resources[uuid] = std::move(new_resource);
 
-            } else if (type == resource_type::resource_script) {
+            } else if (type == ResourceType::ResourceScript) {
                 auto new_resource = std::make_unique<LuaScript>(filename, uuid, path);
                 new_resource->loadFromPhysFS();
                 m_resources[uuid] = std::move(new_resource);
 
-            } else if (type == resource_type::resource_sound || type == resource_type::resource_music) {
+            } else if (type == ResourceType::ResourceSound || type == ResourceType::ResourceMusic) {
                 auto new_resource = std::make_unique<AudioFile>(filename, uuid, path);
                 new_resource->loadFromPhysFS();
                 m_resources[uuid] = std::move(new_resource);
