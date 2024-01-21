@@ -110,7 +110,7 @@ namespace rosa {
          * \brief Get the colour buffer
          * \return an array pointer of colour data
          */
-        auto getColorBuffer() const -> std::span<const unsigned char> {
+        auto getColorBuffer() -> std::span<unsigned char> {
             return m_color_buffer;
         }
 
@@ -118,7 +118,7 @@ namespace rosa {
          * \brief Get the depth buffer
          * \return an array pointer of depth data
          */
-        auto getDepthBuffer() const -> std::span<const float> {
+        auto getDepthBuffer() -> std::span<float> {
             return m_depth_buffer;
         }
 

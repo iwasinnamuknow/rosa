@@ -37,7 +37,7 @@ namespace rosa {
          * \param rhs other image data
          * \return true if all pixels match, false otherwise
          */
-        static auto compareEqualityBasic(std::span<const unsigned char> lhs, std::span<unsigned char> rhs) -> bool {
+        static auto compareEqualityBasic(std::span<const unsigned char> lhs, std::span<const unsigned char> rhs) -> bool {
 
             // Images must be of equal size
             if (lhs.size() != rhs.size()) {
@@ -65,7 +65,7 @@ namespace rosa {
          * \param width image width
          * \param height image height
          */
-        static auto writePNG(const std::string& filename, std::span<unsigned char> image, unsigned width, unsigned height) -> void {
+        static auto writePNG(const std::string& filename, std::span<const unsigned char> image, unsigned width, unsigned height) -> void {
             //Encode the image
             unsigned error = lodepng::encode(filename, image.data(), width, height);
 
@@ -96,6 +96,55 @@ namespace rosa {
             return image;
         }
 
+        static auto writePNGDifferential(
+                const std::string&             filename,
+                std::span<const unsigned char> image_a,
+                std::span<const unsigned char> image_b,
+                unsigned                       width,
+                unsigned                       height) {
+
+            std::vector<unsigned char> result{};
+            result.reserve(image_a.size());
+
+            int         pixels_different{0};
+            std::size_t index{0};
+
+            while (index < image_a.size()) {
+                auto channel_red_a   = static_cast<float>(image_a[index] / 254.99);
+                auto channel_green_a = static_cast<float>(image_a[index + 1] / 254.99);
+                auto channel_blue_a  = static_cast<float>(image_a[index + 2] / 254.99);
+                auto channel_alpha_a = static_cast<float>(image_a[index + 3] / 254.99);
+                auto colour_a        = Colour(
+                        channel_red_a,
+                        channel_green_a,
+                        channel_blue_a,
+                        channel_alpha_a);
+
+                auto channel_red_b   = static_cast<float>(image_b[index] / 254.99);
+                auto channel_green_b = static_cast<float>(image_b[index + 1] / 254.99);
+                auto channel_blue_b  = static_cast<float>(image_b[index + 2] / 254.99);
+                auto channel_alpha_b = static_cast<float>(image_b[index + 3] / 254.99);
+                auto colour_b        = Colour(
+                        channel_red_b,
+                        channel_green_b,
+                        channel_blue_b,
+                        channel_alpha_b);
+
+                auto difference = colour_a - colour_b;
+                if (difference.zero()) {
+                    pixels_different++;
+                }
+
+                result.push_back(static_cast<std::uint8_t>(image_a[index]) - static_cast<std::uint8_t>(image_b[index]));
+                result.push_back(static_cast<std::uint8_t>(image_a[index + 1]) - static_cast<std::uint8_t>(image_b[index + 1]));
+                result.push_back(static_cast<std::uint8_t>(image_a[index + 2]) - static_cast<std::uint8_t>(image_b[index + 2]));
+                result.push_back(static_cast<std::uint8_t>(image_a[index + 3]) - static_cast<std::uint8_t>(image_b[index + 3]));
+
+                index += 4;
+            }
+
+            writePNG(filename, result, width, height);
+        }
     };
 
 } // namespace rosa

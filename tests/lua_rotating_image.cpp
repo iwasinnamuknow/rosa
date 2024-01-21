@@ -82,10 +82,13 @@ TEST_CASE("Rotate an image via lua script", "[lua]") {
     // Advance some frames
     game_mgr.run(3);
 
+    auto wnd_size = game_mgr.getRenderWindow()->getSize();
+
     // Read current framebuffer and compare to the reference image
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
     auto pixels = game_mgr.getRenderWindow()->readFrame();
     std::vector<unsigned char> ref3_pixels = rosa::ImageComparator::readPNG("references/lua_rotating_image-3.png");
+    rosa::ImageComparator::writePNGDifferential("lua_rotating_image-3.png", pixels, ref3_pixels, wnd_size.x, wnd_size.y);
     REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref3_pixels) == true);
 
     // Advance some more frames

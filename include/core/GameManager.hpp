@@ -57,13 +57,6 @@ namespace rosa {
                 bool window_hidden = false
         );
 
-        ~GameManager();
-
-        GameManager(GameManager const&) = delete;
-        auto operator=(GameManager const&) -> GameManager& = delete;
-        GameManager(GameManager const&&) = delete;
-        auto operator=(GameManager const&&) -> GameManager& = delete;
-
         /**
          * \brief Main initialisation and game loop.
          *
@@ -120,7 +113,7 @@ namespace rosa {
          * \return RenderWindow& reference to the render window
          */
         auto getRenderWindow() -> RenderWindow* {
-            return &m_render_window;
+            return m_render_window.get();
         }
 
         /**
@@ -132,13 +125,20 @@ namespace rosa {
             m_clear_colour = colour;
         }
 
+        ~GameManager();
+
+        GameManager(GameManager const&)                     = delete;
+        auto operator=(GameManager const&) -> GameManager&  = delete;
+        GameManager(GameManager const&&)                    = delete;
+        auto operator=(GameManager const&&) -> GameManager& = delete;
+
     private:
 
         std::chrono::time_point<std::chrono::system_clock> m_time; /**< used to calculate the frame delta time */
 
         std::unordered_map<std::string, std::unique_ptr<Scene>> m_scenes{}; /**< collection of all the registered scenes */
         Scene* m_current_scene{nullptr};
-        RenderWindow m_render_window{};
+        std::unique_ptr<RenderWindow>                           m_render_window{nullptr};
 
         Colour m_clear_colour{0, 0, 0, 1};
 

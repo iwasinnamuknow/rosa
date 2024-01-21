@@ -19,69 +19,71 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#include <fmt/format.h>
-#include <graphics/gl.hpp>
 #include <GLFW/glfw3.h>
 #include <array>
-#include <stdexcept>
-#include <vector>
+#include <core/input/Keyboard.hpp>
+#include <fmt/format.h>
+#include <graphics/FrameBuffer.hpp>
 #include <graphics/Sprite.hpp>
 #include <graphics/Texture.hpp>
-#include <core/input/Keyboard.hpp>
-#include <graphics/FrameBuffer.hpp>
+#include <graphics/gl.hpp>
+#include <stdexcept>
+#include <vector>
 
 namespace rosa {
 
-    class RenderWindow
-    {
-        private:
-
-            std::array<int, 2> m_wndPos         {0, 0};
-            std::array<int, 2> m_wndSize        {0, 0};
-            std::array<int, 2> m_vpSize         {0, 0};
-            bool                 m_updateViewport = true;
-            GLFWwindow *         m_wnd            = nullptr;
-            GLFWmonitor *        m_monitor        = nullptr;
-
-            void resize( int cx, int cy );
-
-            glm::mat4 m_projection;
-
-            FrameBuffer m_framebuffer;
-
-        public:
-            void init( int width, int height, std::string title = "OpenGL", int msaa = 0, bool window_hidden = false);
-            static void callback_resize(GLFWwindow* window, int cx, int cy);
-            //auto draw(Drawable& drawable, glm::mat4 transform) -> void;
-            auto isFullscreen() const -> bool;
-            auto setFullScreen(bool fullscreen) -> void;
-            auto clearColour(Colour colour) -> void;
-            auto isOpen() const -> bool;
-            auto display(glm::vec2 camera_pos) -> void;
-            auto getSize() const -> glm::vec2 {
-                return {m_wndSize[0], m_wndSize[1]};
-            }
-
-            auto getGlWindowPtr() -> GLFWwindow* {
-                return m_wnd;
-            }
-
-            auto close() -> void {
-                glfwSetWindowShouldClose(m_wnd, 1);
-            }
-
-            auto isKeyDown(Key key) -> bool;
-
-        auto readFrame() -> std::span<const unsigned char>;
-
-            auto getViewportSize() const -> glm::vec2;
-
-            auto getProjection() const -> glm::mat4;
-
-            auto getFrameBuffer() -> FrameBuffer&;
-
-            // TODO EVENTS
-            auto pollEvents() -> bool;
+    /**
+     * \brief An error occurred in the render context
+     */
+    class RenderException : public Exception {
+    public:
+        explicit RenderException(const std::string& msg)
+            : Exception(msg) {
+        }
     };
 
-} // namespace rosa
+    class RenderWindow {
+    public:
+        RenderWindow(int width, int height, const std::string& title = "OpenGL", int msaa = 0, bool window_hidden = false);
+        static void callbackResize(GLFWwindow* window, int changed_x, int changed_y);
+        auto        isFullscreen() const -> bool;
+        auto        setFullScreen(bool fullscreen) -> void;
+        auto        clearColour(Colour colour) -> void;
+        auto        isOpen() const -> bool;
+        auto        display(glm::vec2 camera_pos) -> void;
+
+        auto getSize() const -> glm::vec2 {
+            return {m_wnd_size[0], m_wnd_size[1]};
+        }
+
+        auto getGlWindowPtr() -> GLFWwindow* {
+            return m_wnd;
+        }
+
+        auto close() -> void {
+            glfwSetWindowShouldClose(m_wnd, 1);
+        }
+
+        auto isKeyDown(Key key) -> bool;
+        auto readFrame() -> std::span<unsigned char>;
+        auto getViewportSize() const -> glm::vec2;
+        auto getProjection() const -> glm::mat4;
+        auto getFrameBuffer() -> FrameBuffer&;
+        auto pollEvents() -> bool;
+
+    private:
+        std::array<int, 2> m_wnd_pos{0, 0};
+        std::array<int, 2> m_wnd_size{0, 0};
+        std::array<int, 2> m_vp_size{0, 0};
+        bool               m_update_viewport = true;
+        GLFWwindow*        m_wnd             = nullptr;
+        GLFWmonitor*       m_monitor         = nullptr;
+
+        void resize(int change_x, int change_y);
+
+        glm::mat4 m_projection{};
+
+        FrameBuffer m_framebuffer;
+    };
+
+}// namespace rosa

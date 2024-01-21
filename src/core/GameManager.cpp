@@ -36,8 +36,7 @@ namespace rosa {
 #endif
 
         try {
-            spdlog::info("Setting up OpenGL context");
-            m_render_window.init(window_width, window_height, window_title, msaa, window_hidden);
+            m_render_window = std::make_unique<RenderWindow>(window_width, window_height, window_title, msaa, window_hidden);
 
             spdlog::info("Initialising resource management");
             [[maybe_unused]]auto &res = ResourceManager::getInstance();
@@ -51,7 +50,7 @@ namespace rosa {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGui::StyleColorsDark();
-        ImGui_ImplGlfw_InitForOpenGL(m_render_window.getGlWindowPtr(), true);
+        ImGui_ImplGlfw_InitForOpenGL(m_render_window->getGlWindowPtr(), true);
         ImGui_ImplOpenGL3_Init("#version 150");
 
         spdlog::info("Rosa is up and running!");
@@ -76,7 +75,7 @@ namespace rosa {
 
         m_frame_count = 0;
 
-        while (m_render_window.isOpen()) {
+        while (m_render_window->isOpen()) {
 
             if (frames > 0 && m_frame_count >= frames) {
                 break;
@@ -91,13 +90,13 @@ namespace rosa {
 
             {
                 ZoneScopedNC("Events", 0xFEEF99);
-                EventManager::getInstance().pollEvents(m_render_window);
+                EventManager::getInstance().pollEvents(*m_render_window);
 
                 while (EventManager::getInstance().hasEvents()) {
 
                     auto event = EventManager::getInstance().popEvent();
                     if (event.type == EventType::EventClose) {
-                        m_render_window.close();
+                        m_render_window->close();
                     } else {
                         m_current_scene->input(event);
                     }
@@ -119,8 +118,8 @@ namespace rosa {
             {
                 ZoneScopedNC("Render", 0xFF0000);
 
-                m_render_window.getFrameBuffer().bind();
-                m_render_window.clearColour(m_clear_colour);
+                m_render_window->getFrameBuffer().bind();
+                m_render_window->clearColour(m_clear_colour);
                 m_current_scene->render();
 
                 {
@@ -129,16 +128,16 @@ namespace rosa {
                     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
                 }
 
-                m_render_window.getFrameBuffer().update();
-                m_render_window.getFrameBuffer().unbind();
+                m_render_window->getFrameBuffer().update();
+                m_render_window->getFrameBuffer().unbind();
             }
 
-            auto size = m_render_window.getSize();
-            assert(m_render_window.getFrameBuffer().getWidth() == size.x);
-            m_render_window.getFrameBuffer().blitColorTo(0, 0, 0, static_cast<int>(size.x), static_cast<int>(size.y));
-            m_render_window.getFrameBuffer().blitDepthTo(0, 0, 0, static_cast<int>(size.x), static_cast<int>(size.y));
+            auto size = m_render_window->getSize();
+            assert(m_render_window->getFrameBuffer().getWidth() == size.x);
+            m_render_window->getFrameBuffer().blitColorTo(0, 0, 0, static_cast<int>(size.x), static_cast<int>(size.y));
+            m_render_window->getFrameBuffer().blitDepthTo(0, 0, 0, static_cast<int>(size.x), static_cast<int>(size.y));
 
-            m_render_window.display(m_current_scene->m_active_camera_pos);
+            m_render_window->display(m_current_scene->m_active_camera_pos);
 
             FrameMark(nullptr);
 
