@@ -30,18 +30,10 @@ namespace rosa {
      */
     class LuaScript : public ::rosa::Resource {
     public:
-        LuaScript(std::string name, Uuid uuid, std::string pack)
-            : rosa::Resource(std::move(name), uuid, std::move(pack)) {
-        }
-
-        /**
-         * \brief Load the script text from the asset pack
-         */
-        auto loadFromPhysFS() -> void override;
+        LuaScript(const std::string& name, Uuid uuid, const std::string& pack);
 
         /**
          * \brief Get the script text
-         * \return string containing the script
          */
         auto getContent() const -> const std::string&;
 

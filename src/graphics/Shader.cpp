@@ -18,9 +18,18 @@
 
 namespace rosa {
 
-    auto Shader::loadFromPhysFS() -> void {
+    Shader::Shader(const std::string& name, Uuid uuid, const std::string& pack, ShaderType type)
+        : Resource(name, uuid, pack), m_type(type) {
 
-        const auto& name = getName();
+        if (m_type == VertexShader) {
+            m_content = default_vertex_shader;
+        } else if (m_type == FragmentShader) {
+            m_content = default_fragment_shader;
+        }
+
+        if (name == "default") {
+            return;
+        }
 
         if (PHYSFS_exists(name.c_str()) == 0) {
             throw ResourceNotFoundException(fmt::format("Couldn't find shader {}", name));

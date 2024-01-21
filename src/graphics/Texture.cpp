@@ -17,18 +17,26 @@
 #include <graphics/Texture.hpp>
 #include <graphics/gl.hpp>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstring>
 
 #include <physfs.h>
-
 #include <spdlog/spdlog.h>
 
-namespace rosa {
-    auto Texture::loadFromPhysFS() -> void {
+#define FOURCC_DXT1 0x31545844// Equivalent to "DXT1" in ASCII
+#define FOURCC_DXT3 0x33545844// Equivalent to "DXT3" in ASCII
+#define FOURCC_DXT5 0x35545844// Equivalent to "DXT5" in ASCII
 
-        const auto& name = getName();
+#ifndef GL_EXT_texture_compression_s3tc
+#define GL_EXT_texture_compression_s3tc 1
+#define GL_COMPRESSED_RGB_S3TC_DXT1_EXT 0x83F0
+#define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT 0x83F1
+#define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT 0x83F2
+#define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT 0x83F3
+#endif
+
+namespace rosa {
+    Texture::Texture(const std::string& name, Uuid uuid, const std::string& pack, TextureFilterParams filter_params)
+        : rosa::Resource(name, uuid, pack), m_filter_params(filter_params) {
 
         if (PHYSFS_exists(name.c_str()) == 0) {
             throw ResourceNotFoundException(fmt::format("Couldn't locate resource {}", name));

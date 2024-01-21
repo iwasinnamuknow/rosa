@@ -38,15 +38,7 @@ namespace rosa {
          * \param uuid asset uuid
          * \param pack additional pack path for submounts
          */
-        AudioFile(std::string name, Uuid uuid, std::string pack)
-            : Resource(std::move(name), uuid, std::move(pack)) {
-        }
-
-        /**
-         * \brief Load audio data from asset pack
-         * \return loading success or failure
-         */
-        auto loadFromPhysFS() -> void override;
+        AudioFile(const std::string& name, Uuid uuid, const std::string& pack);
 
         /**
          * \brief Check if the audio read head is at the end of the file

@@ -17,9 +17,8 @@
 
 namespace rosa {
 
-    auto LuaScript::loadFromPhysFS() -> void {
-
-        const auto& name = getName();
+    LuaScript::LuaScript(const std::string& name, Uuid uuid, const std::string& pack)
+        : rosa::Resource(name, uuid, pack) {
 
         if (PHYSFS_exists(name.c_str()) == 0) {
             throw ResourceNotFoundException(fmt::format("Couldn't find script {}", name));

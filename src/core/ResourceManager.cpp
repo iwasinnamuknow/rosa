@@ -26,38 +26,34 @@
 #include <filesystem>
 #include <fmt/format.h>
 #include <graphics/Shader.hpp>
-#include <memory>
-#include <optional>
 #include <physfs.h>
-#include <spdlog/spdlog.h>
-#include <sstream>
 #include <string>
-#include <utility>
-#include <yaml-cpp/yaml.h>
 
 #if (_WIN32)
 #include <stdlib.h>
 #elif (__linux__)
-#include <climits>
 #include <unistd.h>
 #endif
 
 auto get_exe_dir() -> std::string {
 #if (_WIN32)
-    char* exePath;
+    char* exe_path;
     if (_get_pgmptr(&exePath) != 0) {
         return {};
     }
-#elif (__linux__)
-    char    exePath[PATH_MAX];
-    ssize_t len = ::readlink("/proc/self/exe", exePath, sizeof(exePath));
-    if (len == -1 || len == sizeof(exePath)) {
-        len = 0;
-    }
-    exePath[len] = '\0';
-#endif
 
-    std::string directory{exePath};
+    std::string directory{exe_path};
+#elif (__linux__)
+    std::uint64_t     path_max{256};
+    std::vector<char> exe_path(path_max, 0);
+    ssize_t           len = ::readlink("/proc/self/exe", exe_path.data(), /*max_length=*/path_max);
+
+    if (len == -1 && len < static_cast<ssize_t>(path_max)) {
+        return {};
+    }
+
+    std::string directory(exe_path.begin(), exe_path.end());
+#endif
 
     return directory.substr(0, directory.find_last_of("\\/"));
 }
@@ -66,6 +62,8 @@ namespace rosa {
 
     auto ResourceManager::registerAssetPack(const std::string& path, const std::string& mount_point) -> void {
         ZoneScopedN("Assets:MountAssetPack");
+
+        spdlog::debug("ResourceManager: registering asset pack {} to /{}", path, mount_point);
 
         auto exe_dir = get_exe_dir().append("/").append(path);
 
@@ -77,7 +75,7 @@ namespace rosa {
 
         // Attempt to read assets.lst
         if (PHYSFS_exists("manifest.yaml") == 0) {
-            // doesn't exist..
+            // doesn't exist...
             PHYSFS_unmount(exe_dir.c_str());
             throw MissingManifestException(fmt::format("Couldn't find asset manifest inside {}", path));
         }
@@ -98,46 +96,8 @@ namespace rosa {
             throw MalformedManifestException(fmt::format("Asset manifest is malformed: {}", path));
         }
 
-        for (const auto& assets: manifest["assets"]) {
-            auto uuid     = assets["uuid"].as<Uuid>();
-            auto type     = static_cast<ResourceType>(assets["type"].as<int>());
-            auto filename = assets["path"].as<std::string>();
-
-            if (type == ResourceType::ResourceTexture) {
-                TextureFilterParams params;
-                if (assets["filtering"]) {
-                    if (assets["filtering"]["minify"]) {
-                        params.minify = assets["filtering"]["minify"].as<TextureFilterMode>();
-                    }
-
-                    if (assets["filtering"]["magnify"]) {
-                        params.magnify = assets["filtering"]["magnify"].as<TextureFilterMode>();
-                    }
-                }
-                auto new_resource = std::make_unique<Texture>(filename, uuid, path, params);
-                new_resource->loadFromPhysFS();
-                m_resources[uuid] = std::move(new_resource);
-
-            } else if (type == ResourceType::ResourceVertexShader) {
-                auto new_resource = std::make_unique<Shader>(filename, uuid, path, ShaderType::VertexShader);
-                new_resource->loadFromPhysFS();
-                m_resources[uuid] = std::move(new_resource);
-
-            } else if (type == ResourceType::ResourceFragmentShader) {
-                auto new_resource = std::make_unique<Shader>(filename, uuid, path, ShaderType::FragmentShader);
-                new_resource->loadFromPhysFS();
-                m_resources[uuid] = std::move(new_resource);
-
-            } else if (type == ResourceType::ResourceScript) {
-                auto new_resource = std::make_unique<LuaScript>(filename, uuid, path);
-                new_resource->loadFromPhysFS();
-                m_resources[uuid] = std::move(new_resource);
-
-            } else if (type == ResourceType::ResourceSound || type == ResourceType::ResourceMusic) {
-                auto new_resource = std::make_unique<AudioFile>(filename, uuid, path);
-                new_resource->loadFromPhysFS();
-                m_resources[uuid] = std::move(new_resource);
-            }
+        for (const auto& asset: manifest["assets"]) {
+            load_resource(path, asset);
         }
     }
 
@@ -148,8 +108,8 @@ namespace rosa {
         auto real_path = get_exe_dir().append("/").append(path);
 
         for (auto it = m_resources.cbegin(); it != m_resources.cend();) {
-            if (it->second.get()->getPack() == path) {
-                it->second.get()->closeHandles();
+            if (it->second->getPack() == path) {
+                it->second->closeHandles();
                 m_resources.erase(it++);
             } else {
                 ++it;
@@ -161,7 +121,9 @@ namespace rosa {
 
             if (error == PHYSFS_ERR_FILES_STILL_OPEN) {
                 throw UnmountFailedException("Files are still open");
-            } else if (error == PHYSFS_ERR_NOT_MOUNTED) {
+            }
+
+            if (error == PHYSFS_ERR_NOT_MOUNTED) {
                 throw UnmountFailedException("Pack not mounted");
             }
         }
@@ -177,11 +139,56 @@ namespace rosa {
 
     auto ResourceManager::shutdown() -> void {
         if (s_instance) {
-            s_instance.release();
+            //s_instance.release();
             s_instance.reset();
         }
     }
 
     std::unique_ptr<ResourceManager> ResourceManager::s_instance{nullptr};
+
+    auto ResourceManager::load_resource(const std::string& path, const YAML::Node& node) -> void {
+        auto uuid     = node["uuid"].as<Uuid>();
+        auto type     = static_cast<ResourceType>(node["type"].as<int>());
+        auto filename = node["path"].as<std::string>();
+
+        switch (type) {
+            case ResourceType::ResourceTexture: {
+                TextureFilterParams params;
+                if (node["filtering"]) {
+                    if (node["filtering"]["minify"]) {
+                        params.minify = node["filtering"]["minify"].as<TextureFilterMode>();
+                    }
+
+                    if (node["filtering"]["magnify"]) {
+                        params.magnify = node["filtering"]["magnify"].as<TextureFilterMode>();
+                    }
+                }
+
+                spdlog::debug(
+                        "ResourceManager: Loading texture {} from /{} (filter min: {:#x}, filter mag: {:#x})",
+                        uuid.toString(), filename, static_cast<int>(params.minify), static_cast<int>(params.magnify));
+                m_resources[uuid] = std::make_unique<Texture>(filename, uuid, path, params);
+            } break;
+            case ResourceType::ResourceVertexShader:
+                spdlog::debug("ResourceManager: Loading vertex shader {} from /{}", uuid.toString(), filename);
+                m_resources[uuid] = std::make_unique<Shader>(filename, uuid, path, ShaderType::VertexShader);
+                break;
+            case ResourceType::ResourceFragmentShader:
+                spdlog::debug("ResourceManager: Loading fragment shader {} from /{}", uuid.toString(), filename);
+                m_resources[uuid] = std::make_unique<Shader>(filename, uuid, path, ShaderType::FragmentShader);
+                break;
+            case ResourceType::ResourceScript:
+                spdlog::debug("ResourceManager: Loading lua script {} from /{}", uuid.toString(), filename);
+                m_resources[uuid] = std::make_unique<LuaScript>(filename, uuid, path);
+                break;
+            case ResourceType::ResourceSound:
+            case ResourceType::ResourceMusic:
+                spdlog::debug("ResourceManager: Loading audio track {} from /{}", uuid.toString(), filename);
+                m_resources[uuid] = std::make_unique<AudioFile>(filename, uuid, path);
+                break;
+            case ResourceType::ResourceFont:
+                break;
+        }
+    }
 
 }// namespace rosa

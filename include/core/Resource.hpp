@@ -13,6 +13,8 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+/*! \file */
+
 #pragma once
 
 #include <core/Uuid.hpp>
@@ -22,6 +24,11 @@ namespace rosa {
 
     class ResourceManager;
 
+    /**
+     * \brief Each asset will be assigned a type based on the asset manifest
+     *
+     * The type will affect how the asset is loaded and retrieved
+     */
     enum ResourceType {
         ResourceTexture        = 0,
         ResourceSound          = 1,
@@ -32,10 +39,40 @@ namespace rosa {
         ResourceFragmentShader = 6
     };
 
+    /**
+     * \brief Base type of any resource that can be loaded/used
+     */
     class Resource {
     public:
-        Resource(std::string name, Uuid uuid, std::string pack)
-            : m_name(std::move(name)), m_uuid(uuid), m_pack(std::move(pack)) {}
+        /**
+         * \brief Base constructor
+         * \param name Filename relative to the asset pack
+         * \param uuid Uuid of the asset
+         * \param pack Asset pack mount point
+         */
+        Resource(const std::string& name, Uuid uuid, const std::string& pack)
+            : m_name(name), m_uuid(uuid), m_pack(pack) {}
+
+        /**
+         * \brief Get the filename of the asset
+         */
+        auto getName() const -> const std::string& {
+            return m_name;
+        }
+
+        /**
+         * \brief Get the Uuid of the asset relative to the pack
+         */
+        auto getUUID() const -> Uuid {
+            return m_uuid;
+        }
+
+        /**
+         * \brief Get the mountpoint of the asset pack
+         */
+        auto getPack() const -> const std::string& {
+            return m_pack;
+        }
 
         virtual ~Resource() = default;
 
@@ -45,25 +82,11 @@ namespace rosa {
         Resource(Resource&&)                    = delete;
         auto operator=(Resource&&) -> Resource& = delete;
 
-        auto getName() -> const std::string& {
-            return m_name;
-        }
-
-        auto getUUID() -> const Uuid& {
-            return m_uuid;
-        }
-
-        auto getPack() -> const std::string& {
-            return m_pack;
-        }
-
     private:
         std::string m_name{};
         Uuid        m_uuid{};
 
-        virtual auto loadFromPhysFS() -> void = 0;
-        virtual auto closeHandles() -> void {
-        }
+        virtual auto closeHandles() -> void {}
 
         std::string m_pack{};
 

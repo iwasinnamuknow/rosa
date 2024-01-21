@@ -27,6 +27,7 @@
 #include <string>
 #include <tracy/Tracy.hpp>
 #include <unordered_map>
+#include <yaml-cpp/yaml.h>
 
 namespace rosa {
 
@@ -80,6 +81,13 @@ namespace rosa {
         }
     };
 
+    /**
+     * \brief An asset pack couldn't be unmounted
+     *
+     * Throw when:
+     *   * Files in the pack are still open
+     *   * The asset pack isn't mounted
+     */
     class UnmountFailedException : public Exception {
     public:
         explicit UnmountFailedException(const std::string& msg)
@@ -92,13 +100,18 @@ namespace rosa {
      * 
      *  It uses PhysFS as a backend, allowing for plain directories or compressed archives.
      *  It is implemented as a singleton class.
+     *
+     *  Once initialised, asset packs must be mounted with registerAssetPack() whereupon they asset
+     *  manifest is read and the assets are loaded into memory, performing any relevant initialisation.
+     *
+     *  Assets can then be retrieved in the engine by Uuid with getAsset()
      */
     class ResourceManager {
     public:
         /**
          * \brief Mounts an asset location into the search path
          *
-         *  Once successfully mounted, ResourceManager will attemp to load all assets.
+         *  Once successfully mounted, ResourceManager will attempt to load all assets in to memory.
          *
          * \param path On-disk path to the directory or archive, relative to the binary
          * \param mount_point A path to mount under, leave blank for the root path
@@ -115,20 +128,22 @@ namespace rosa {
         auto unregisterAssetPack(const std::string& path) -> void;
 
         /**
-         * \brief Get a loaded asset resource
+         * \brief Get an asset by Uuid
+         *
+         * Throws a ResourceNotFoundException if the asset doesn't exist.
          *
          * \tparam T The type of resource to acquire
          * \param uuid Unique identifier of the resource
          * \return A reference to the resource object
          */
         template<typename T>
-        auto getAsset(Uuid uuid) -> T& {
+        auto getAsset(Uuid uuid) const -> T& {
             ZoneScopedN("Assets:GetAsset");
             if (!m_resources.contains(uuid)) {
                 throw ResourceNotFoundException(fmt::format("Couldn't locate a resource {}", uuid.toString()));
             }
 
-            T& resource = *(dynamic_cast<T*>(m_resources[uuid].get()));
+            T& resource = *(dynamic_cast<T*>(m_resources.at(uuid).get()));
             return resource;
         }
 
@@ -138,7 +153,11 @@ namespace rosa {
          */
         static auto getInstance() -> ResourceManager&;
 
-
+        /**
+         * \brief Completely reset the ResourceManager instance
+         *
+         * Used to clean up between tests. Not used in regular operation.
+         */
         static auto shutdown() -> void;
 
         ResourceManager(ResourceManager const&)                     = delete;
@@ -152,6 +171,8 @@ namespace rosa {
     private:
         std::unordered_map<Uuid, std::unique_ptr<Resource>> m_resources;
         static std::unique_ptr<ResourceManager>             s_instance;
+
+        auto load_resource(const std::string& path, const YAML::Node& node) -> void;
     };
 
 }// namespace rosa
