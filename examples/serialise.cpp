@@ -42,12 +42,6 @@ public:
     // any time the GameManager activates the scene.
     auto onLoad() -> void override {
 
-        // Get our texture via uuid so we can get some details
-        auto texture = rosa::ResourceManager::getInstance().getAsset<rosa::Texture>(dds_uuid);
-
-        // Like the size
-        auto texture_size = texture.getSize();
-
         // Grab the window size
         auto window_size = getRenderWindow().getSize();
 
