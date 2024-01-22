@@ -44,7 +44,7 @@ namespace rosa {
 
     class RenderWindow {
     public:
-        RenderWindow(int width, int height, const std::string& title = "OpenGL", int msaa = 0, bool window_hidden = false);
+        RenderWindow(int width, int height, const std::string& title = "OpenGL", int msaa = 1, bool window_hidden = false);
         static void callbackResize(GLFWwindow* window, int changed_x, int changed_y);
         auto        isFullscreen() const -> bool;
         auto        setFullScreen(bool fullscreen) -> void;

@@ -92,17 +92,12 @@ namespace rosa {
         // validate multi sample count
         int max_msaa = 8;
         glGetIntegerv(GL_MAX_SAMPLES, &max_msaa);
-        if (msaa < 0) {
-            msaa = 0;
+        if (msaa < 1) {
+            msaa = 1;
         } else if (msaa > max_msaa) {
             msaa = max_msaa;
         } else if (msaa % 2 != 0) {
             msaa--;
-        }
-
-
-        if (msaa == 0) {
-            msaa += 1;
         }
 
         spdlog::debug("RenderWindow: Multisampling at {}x", msaa);
@@ -138,7 +133,7 @@ namespace rosa {
 
         m_projection = glm::ortho(0.F, static_cast<float>(width), static_cast<float>(height), 0.F);
 
-        if (msaa > 0) {
+        if (msaa > 1) {
             m_framebuffer.init(width, height, msaa);
         } else {
             m_framebuffer.init(width, height);
