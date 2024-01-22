@@ -322,12 +322,12 @@ namespace rosa {
         // print info of the colorbuffer attachable image
         for (int i = 0; i < colorBufferCount; ++i) {
             glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER,
-                                                  GL_COLOR_ATTACHMENT0 + i,
+                                                  GL_COLOR_ATTACHMENT0 + static_cast<unsigned int>(i),
                                                   GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE,
                                                   &objectType);
             if (objectType != GL_NONE) {
                 glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER,
-                                                      GL_COLOR_ATTACHMENT0 + i,
+                                                      GL_COLOR_ATTACHMENT0 + static_cast<unsigned int>(i),
                                                       GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME,
                                                       &objectId);
 
