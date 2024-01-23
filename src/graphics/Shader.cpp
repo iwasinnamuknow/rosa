@@ -18,21 +18,27 @@
 
 namespace rosa {
 
-    auto Shader::loadFromPhysFS() -> bool {
+    Shader::Shader(const std::string& name, Uuid uuid, const std::string& pack, ShaderType type)
+        : Resource(name, uuid, pack), m_type(type) {
 
-        const auto& name = getName();
-
-        if (PHYSFS_exists(name.c_str()) == 0) {
-            spdlog::error("Couldn't load asset: {}", name);
-            return false;
+        if (m_type == VertexShader) {
+            m_content = default_vertex_shader;
+        } else if (m_type == FragmentShader) {
+            m_content = default_fragment_shader;
         }
 
-        PHYSFS_file* myfile = PHYSFS_openRead(name.c_str());
+        if (name == "default") {
+            return;
+        }
 
-        int length_read = PHYSFS_readBytes(myfile, m_content.data(), PHYSFS_fileLength(myfile));
-        assert(length_read == PHYSFS_fileLength(myfile));
+        if (PHYSFS_exists(name.c_str()) == 0) {
+            throw ResourceNotFoundException(fmt::format("Couldn't find shader {}", name));
+        }
 
-        return true;
+        PHYSFS_file* file = PHYSFS_openRead(name.c_str());
+
+        std::int64_t length_read = PHYSFS_readBytes(file, m_content.data(), static_cast<std::uint64_t>(PHYSFS_fileLength(file)));
+        assert(length_read == PHYSFS_fileLength(file));
     }
 
-} // namespace rosa
+}// namespace rosa

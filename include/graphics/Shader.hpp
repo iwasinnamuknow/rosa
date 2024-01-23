@@ -13,22 +13,33 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+/*! \file */
+
 #pragma once
 
-#include <graphics/gl.hpp>
 #include <GLFW/glfw3.h>
+#include <core/Resource.hpp>
+#include <core/Uuid.hpp>
+#include <graphics/gl.hpp>
 #include <spdlog/spdlog.h>
 #include <string_view>
-#include <core/Uuid.hpp>
-#include <core/Resource.hpp>
 
 namespace rosa {
 
+    /**
+     * \brief Differentiates between OpenGL shader types
+     *
+     * In essence shaders are just strings of text until they are compiled
+     * so this enum is the only thing to differentiate shaders.
+     */
     enum ShaderType {
-        VertexShader = GL_VERTEX_SHADER,
+        VertexShader   = GL_VERTEX_SHADER,
         FragmentShader = GL_FRAGMENT_SHADER
     };
 
+    /**
+     * \brief The default vertex shader used if no other shader is provided
+     */
     constexpr auto default_vertex_shader = std::string_view(R"(
 #version 420 core
 
@@ -52,6 +63,9 @@ void main()
 }
 )");
 
+    /**
+     * \brief The default fragment shader if no other shader is provided
+     */
     constexpr auto default_fragment_shader = std::string_view(R"(
 #version 420 core
 
@@ -70,30 +84,40 @@ void main()
 }
 )");
 
+    /**
+     * \brief Used to handle OpenGL shader compilation and storage
+     *
+     * When constructed the shader will be retrieved from disk and stored in a string.
+     * This string can be provided to the Renderer and compiled/uploaded to the GPU
+     */
     class Shader : public ::rosa::Resource {
-        public:
-            explicit Shader(const std::string& name, Uuid uuid, std::string pack, ShaderType type = VertexShader) : Resource(std::move(name), uuid, std::move(pack)), m_type(type) {
-                if (m_type == VertexShader) {
-                    m_content = default_vertex_shader;
-                } else if (m_type == FragmentShader) {
-                    m_content = default_fragment_shader;
-                }
-            }
+    public:
+        /**
+         * \brief Construct a shader object
+         * \param name Filename relative to it's asset pack
+         * \param uuid Uuid to associate with the shader
+         * \param pack Mountpoint of the asset pack
+         * \param type ShaderType defaulting to VertexShader
+         */
+        explicit Shader(const std::string& name, Uuid uuid, const std::string& pack, ShaderType type = VertexShader);
 
-            auto getType() const -> ShaderType {
-                return m_type;
-            }
+        /**
+         * \brief Get the ShaderType of the asset
+         */
+        auto getType() const -> ShaderType {
+            return m_type;
+        }
 
-            auto loadFromPhysFS() -> bool override;
+        /**
+         * \brief Get the source of the shader as text
+         */
+        auto getSource() const -> const std::string& {
+            return m_content;
+        }
 
-            auto getSource() const -> const std::string& {
-                return m_content;
-            }
-
-        private:
-            ShaderType m_type;
-            std::string m_content;
-            unsigned int m_shader_id;
+    private:
+        ShaderType  m_type;
+        std::string m_content;
     };
 
-} // namespace rosa
+}// namespace rosa

@@ -21,9 +21,16 @@
 
 namespace rosa {
 
+    /**
+     * \brief Base class for exceptions
+     */
     class Exception : public std::runtime_error {
-        public:
-            explicit Exception(const std::string& msg) : std::runtime_error(msg) {}
+    public:
+        /**
+         * \brief Default constructor
+         * \param msg the error string
+         */
+        explicit Exception(const std::string& msg) : std::runtime_error(msg) {}
     };
 
 } // namespace rosa

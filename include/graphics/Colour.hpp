@@ -19,17 +19,54 @@
 
 namespace rosa {
 
+    /**
+     * \brief Simple colour representation
+     *
+     * All values range from 0.0 to 1.0
+     */
     struct Colour {
 
+        /**
+         * \brief Initialise a default colour
+         */
         Colour() = default;
-        Colour(float red, float green, float blue) : r(red), g(green), b(blue) {}
-        Colour(float red, float green, float blue, float alpha) : r(red), g(green), b(blue), a(alpha) {}
 
-        float r{1};
-        float g{1};
-        float b{1};
-        float a{1};
+        /**
+         * \brief Initialise a colour with three channels
+         * \param red red value
+         * \param green green value
+         * \param blue blue value
+         */
+        Colour(float red, float green, float blue)
+            : r(red), g(green), b(blue) {}
 
+        /**
+         * \brief Initialise a colour with four channels
+         * \param red red value
+         * \param green green value
+         * \param blue blue value
+         * \param alpha alpha value
+         */
+        Colour(float red, float green, float blue, float alpha)
+            : r(red), g(green), b(blue), a(alpha) {}
+
+        auto operator-(const Colour& other) const -> Colour {
+            return {
+                    std::clamp(r - other.r, 0.F, 1.F),
+                    std::clamp(g - other.g, 0.F, 1.F),
+                    std::clamp(b - other.b, 0.F, 1.F),
+                    std::clamp(a - other.a, 0.F, 1.F),
+            };
+        }
+
+        auto zero() const -> bool {
+            return (r == g == b == a == 0.F);
+        }
+
+        float r{1}; /**< red value   */
+        float g{1}; /**< green value */
+        float b{1}; /**< blue value  */
+        float a{1}; /**< alpha value */
     };
 
-} // namespace rosa
+}// namespace rosa

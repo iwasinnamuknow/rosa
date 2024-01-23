@@ -21,12 +21,16 @@
 
 namespace rosa {
 
+    /**
+     * \brief A component which handles the transform of an entity
+     *
+     * Every entity is created by default with a transform component. It is the
+     * interface by which the entity can be repositioned, scaled and rotated.
+     */
     struct TransformComponent {
         glm::vec3 position{0, 0, 0};
         glm::vec3 scale{1, 1, 1};
-        float rotation{0};
-
-        glm::mat4 mvp;
+        float     rotation{0};
         glm::mat4 parent_transform{1.F};
 
         auto getLocalTransform() const -> const glm::mat4;
@@ -56,9 +60,9 @@ namespace rosa {
             rotation = rot;
         }
 
-        auto getRotation() -> float {
+        auto getRotation() const -> float {
             return rotation;
         }
     };
 
-} // namespace rosa
+}// namespace rosa

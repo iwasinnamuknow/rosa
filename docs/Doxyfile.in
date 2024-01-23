@@ -4,7 +4,8 @@ STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@ \
 INPUT                  = @PROJECT_SOURCE_DIR@
 EXCLUDE_PATTERNS       = */vendor/* \
                          */build/* \
-                         */testbed/* \
+                         */tests/* \
+                         */examples/* \
                          */doxygen-awesome-css/docs/* \
                          */doxygen-awesome-css/*.md \
                          */doxygen-awesome-css/include/* 
@@ -17,3 +18,4 @@ FULL_SIDEBAR = NO
 HTML_EXTRA_STYLESHEET  = @PROJECT_SOURCE_DIR@/docs/doxygen-awesome-css/doxygen-awesome.css
 HTML_COLORSTYLE        = LIGHT # required with Doxygen >= 1.9.5
 USE_PDFLATEX           = NO
+PROJECT_LOGO           = @PROJECT_SOURCE_DIR@/examples/assets/rosa.png

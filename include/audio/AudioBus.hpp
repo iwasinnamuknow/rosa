@@ -19,9 +19,15 @@
 
 namespace rosa {
 
+    /**
+     * \brief An audio bus that can be used to route various audio streams
+     *
+     * Allows audio to be grouped together for volume fading etc.
+     */
     class AudioBus : public SoLoud::Bus {
         public:
-            unsigned int handle{0};
+        unsigned int handle{0}; /**< Bus handle */
+        float volume{1.F};      /**< Bus volume cached here as we can't retrieve it from the engine */
     };
 
 } // namespace rosa

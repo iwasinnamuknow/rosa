@@ -14,12 +14,9 @@
  */
 
 
-// Bring in everything
+// Rosa objects we'll need
 #include "core/GameManager.hpp"
 #include <core/SceneSerialiser.hpp>
-
-// Define the uuid for the image asset we'll use. See assets/manifest.yaml
-const char* yaml_path{ "serialise.yaml" };
 
 // NativeScript test class
 #include "NSCTest.hpp"
@@ -30,11 +27,6 @@ public:
 
     // Pass default params to the base class constructor
     explicit DeserialiseScene(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {}
-
-    // Override the onLoad function so we can set up our scene. This will be called
-    // any time the GameManager activates the scene.
-    auto onLoad() -> void override {
-    }
 };
 
 auto main() -> int {
@@ -53,7 +45,7 @@ auto main() -> int {
     serialiser->registerNSC("NSCTest", &NSCTest::factoryCreator);
 
     // Deserialise our saved file into the scene
-    serialiser->deserialiseFromYaml(yaml_path);
+    serialiser->deserialiseFromYaml("serialise.yaml");
 
     // Add the scene to the game manager
     game_mgr.addScene("deserialise_scene", std::move(scene));

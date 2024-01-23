@@ -15,23 +15,30 @@
 
 #pragma once
 
-#include <core/Uuid.hpp>
 #include <core/Resource.hpp>
-#include <string>
+#include <core/Uuid.hpp>
 #include <physfs.h>
+#include <string>
 
 namespace rosa {
 
+    /**
+     * \brief A single script asset
+     *
+     * This Resource type allows a Lua script to be loaded from assets. Very simply it holds the text
+     * of a script and supplies it when required for loading.
+     */
     class LuaScript : public ::rosa::Resource {
-        public:
-            LuaScript(std::string name, Uuid uuid, std::string pack) : rosa::Resource(std::move(name), uuid, std::move(pack)) {}
+    public:
+        LuaScript(const std::string& name, Uuid uuid, const std::string& pack);
 
-            auto loadFromPhysFS() -> bool override;
+        /**
+         * \brief Get the script text
+         */
+        auto getContent() const -> const std::string&;
 
-            auto getContent() const -> const std::string&;
-
-        private:
-            std::string m_content;
+    private:
+        std::string m_content;
     };
 
-} // namespace rosa
+}// namespace rosa

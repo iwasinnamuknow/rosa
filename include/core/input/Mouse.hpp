@@ -13,6 +13,8 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+/*! \file */
+
 #pragma once
 
 #include <graphics/gl.hpp>
@@ -21,25 +23,39 @@
 
 namespace rosa {
 
+    /**
+     * \brief Associates an identifier with the three primary mouse buttons
+     */
     enum MouseButton {
         MouseButtonLeft = GLFW_MOUSE_BUTTON_LEFT,
         MouseButtonRight = GLFW_MOUSE_BUTTON_RIGHT,
         MouseButtonMiddle = GLFW_MOUSE_BUTTON_MIDDLE
     };
 
+    /**
+     * \brief Denotes the type of mouse event
+     */
     enum MouseEventType {
-        MouseButtonPressed,
-        MouseButtonReleased,
-        MouseMoved,
-        MouseScrolled
+        MouseButtonPressed,     ///< A mouse button was pressed down
+        MouseButtonReleased,    ///< A mouse button was released
+        MouseMoved,             ///< The mouse cursor was moved
+        MouseScrolled           ///< The mouse wheel was scrolled
     };
 
+    /**
+     * \brief Contains information about the mouse event
+     *
+     * The union will contain information about the event, check the
+     * MouseEventType to determine what part of the union to access.
+     */
     struct MouseEvent {
+        /** The type of mouse event **/
         MouseEventType type;
 
+        /** This union will contain information for a single event type **/
         union {
-            MouseButton button;
-            glm::vec2 position;
+            MouseButton button; ///< Mouse button for MouseButtonPressed and MouseButtonReleased
+            glm::vec2 position; ///< Position for cursor movement
         };
     };
 

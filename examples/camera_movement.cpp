@@ -14,7 +14,7 @@
  */
 
 
-// Bring in everything
+// Rosa objects we'll need
 #include <core/GameManager.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <core/components/CameraComponent.hpp>
@@ -26,64 +26,58 @@ static constexpr auto cam_script_uuid = rosa::Uuid("739c0f32-872e-e264-7fa9-57eb
 
 // Create a class to represent our scene
 class MyScene : public rosa::Scene {
-    public:
+public:
 
-        // Pass default params to the base class constructor
-        explicit MyScene(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {}
+    // Pass default params to the base class constructor
+    explicit MyScene(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {
+        // Grab the window size
+        auto window_size = getRenderWindow().getSize();
 
-        // Override the onLoad function so we can set up our scene. This will be called
-        // any time the GameManager activates the scene.
-        auto onLoad() -> void override {
-
-            // Get our texture via uuid so we can get some details
-            auto texture = rosa::ResourceManager::getInstance().getAsset<rosa::Texture>(dds_uuid);
-
-            // Like the size
-            auto texture_size = texture.getSize();
-
-            // Grab the window size
-            auto window_size = getRenderWindow().getSize();
-
-            // Calculate a screen-centered position for the image
-            const auto position = glm::vec2(
+        // Calculate a screen-centered position for the image
+        const auto position = glm::vec2(
                 (static_cast<float>(window_size.x) / 2.F),
                 (static_cast<float>(window_size.y) / 2.F)
-            );
+        );
 
-            // Create a blank entity. It's not really blank, every entity has a TransformComponent
-            // by default.
-            auto& entity = createEntity();
+        // Create a blank entity. It's not really blank, every entity has a TransformComponent
+        // by default.
+        auto& entity = createEntity();
 
-            // Add a SpriteComponent to it.
-            entity.addComponent<rosa::SpriteComponent>();
+        // Add a SpriteComponent to it.
+        entity.addComponent<rosa::SpriteComponent>();
 
-            // Set the sprites texture. This is via uuid, not the object we obtained earlier.
-            entity.getComponent<rosa::SpriteComponent>().setTexture(dds_uuid);
+        // Set the sprites texture. This is via uuid, not the object we obtained earlier.
+        entity.getComponent<rosa::SpriteComponent>().setTexture(dds_uuid);
 
-            // Set the position to screen-center
-            entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
+        // Set the position to screen-center
+        entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
 
-            auto& cam_entity = createEntity();
-            auto& cam_comp = cam_entity.addComponent<rosa::CameraComponent>();
-            cam_comp.setEnabled(true);
+        // Create an entity for the camera
+        auto& cam_entity = createEntity();
 
-            auto& cam_script_comp = cam_entity.addComponent<rosa::LuaScriptComponent>(this, cam_entity);
-            cam_script_comp.setScript(cam_script_uuid);
-        }
+        // Add a camera component and enable it
+        auto& cam_comp = cam_entity.addComponent<rosa::CameraComponent>();
+        cam_comp.setEnabled(/*enable=*/true);
+
+        // Add movement script to camera entity
+        auto& cam_script_comp = cam_entity.addComponent<rosa::LuaScriptComponent>(this, cam_entity);
+        cam_script_comp.setScript(cam_script_uuid);
+    }
 };
 
+// Entrypoint
 auto main() -> int {
 
     // Grab the GameManager
-    auto game_mgr = rosa::GameManager(800, 600);
+    auto game_mgr = rosa::GameManager(800, 600, "Camera Movement");
 
     rosa::ResourceManager::getInstance().registerAssetPack("base.pak", "");
 
     // Instantiate our scene from the class above and register it
-    game_mgr.addScene("simple_image", std::make_unique<MyScene>(game_mgr.getRenderWindow()));
+    game_mgr.addScene("camera_movement", std::make_unique<MyScene>(game_mgr.getRenderWindow()));
 
     // Set the scene as active
-    game_mgr.changeScene("simple_image");
+    game_mgr.changeScene("camera_movement");
 
     // Away we go with our desired window size
     game_mgr.run();

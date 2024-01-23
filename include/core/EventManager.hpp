@@ -21,36 +21,67 @@
 
 namespace rosa {
 
+    /**
+     * \brief Global handler for events
+     *
+     * Events are pushed into a queue when generated. The GameManager will pass events onto Lua or
+     * NativeScript onInput.
+     */
     class EventManager {
-        public:
-            static auto getInstance() -> EventManager& {
-                static EventManager instance;
-                return instance;
-            }
-            
-            auto pushEvent(Event event) -> void {
-                m_events.push(event);
-            }
+    public:
+        EventManager(const EventManager&) = delete;
+        auto operator=(const EventManager&) -> EventManager& = delete;
 
-            auto popEvent() -> Event {
-                auto event = m_events.front();
-                m_events.pop();
-                return event;
-            }
+        EventManager(EventManager&&) = delete;
+        auto operator=(EventManager&&) -> EventManager& = delete;
 
-            auto hasEvents() -> bool {
-                return !m_events.empty();
-            }
+        /**
+         * \brief Get a reference to the global EventManager
+         */
+        static auto getInstance() -> EventManager& {
+            static EventManager instance;
+            return instance;
+        }
 
-            auto pollEvents(RenderWindow& window) -> void {
-                window.pollEvents();
-            }
+        /**
+         * \brief Push an event onto the queue
+         * \param event a new event
+         */
+        auto pushEvent(Event event) -> void {
+            m_events.push(event);
+        }
 
-        private:
-            EventManager() = default;
-            ~EventManager() = default;
+        /**
+         * \brief Pop the first event from the queue
+         * \return the first event
+         */
+        auto popEvent() -> Event {
+            auto event = m_events.front();
+            m_events.pop();
+            return event;
+        }
 
-            std::queue<Event> m_events{};
+        /**
+         * \brief Check whether the queue has events
+         * \return false if empty, true if not
+         */
+        auto hasEvents() -> bool {
+            return !m_events.empty();
+        }
+
+        /**
+         * \brief Tell the RenderWindow to poll for events
+         * \param window the render window
+         */
+        auto pollEvents(RenderWindow& window) -> void {
+            window.pollEvents();
+        }
+
+    private:
+        EventManager() = default;
+        ~EventManager() = default;
+
+        std::queue<Event> m_events{};
     };
 
 } // namespace rosa

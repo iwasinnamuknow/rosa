@@ -14,80 +14,81 @@
  */
 
 
-// Bring in everything
+// Snitch for testing
 #include <snitch/snitch.hpp>
+
+// Rosa objects we'll need
 #include <core/GameManager.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <graphics/ImageComparator.hpp>
 #include <core/Entity.hpp>
 
-// Define the uuid for the image asset we'll use. See assets/assets.lst
+// Define the uuid for the image asset we'll use. See assets/manifest.yaml
 static constexpr auto dds_uuid = rosa::Uuid("f7055f22-6bfa-1a3b-4dbd-b366dd18866d");
 
 // Create a class to represent our scene
 class DisplayImage : public rosa::Scene {
-    public:
+public:
 
-        // Pass default params to the base class constructor
-        explicit DisplayImage(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {}
+    // Pass default params to the base class constructor
+    explicit DisplayImage(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {}
 
-        // Override the onLoad function so we can set up our scene. This will be called
-        // any time the GameManager activates the scene.
-        auto onLoad() -> void override {
+    // Override the onLoad function, so we can set up our scene. This will be called
+    // any time the GameManager activates the scene.
+    auto onLoad() -> void override {
 
-            // Get our texture via uuid so we can get some details
-            auto texture = rosa::ResourceManager::getInstance().getAsset<rosa::Texture>(dds_uuid);
+        // Grab the window size
+        auto window_size = getRenderWindow().getSize();
 
-            // Like the size
-            auto texture_size = texture.getSize();
-
-            // Grab the window size
-            auto window_size = getRenderWindow().getSize();
-
-            // Calculate a screen-centered position for the image
-            const auto position = glm::vec2(
+        // Calculate a screen-centered position for the image
+        const auto position = glm::vec2(
                 (static_cast<float>(window_size.x) / 2.F),
                 (static_cast<float>(window_size.y) / 2.F)
-            );
+        );
 
-            // Create a blank entity. It's not really blank, every entity has a TransformComponent
-            // by default.
-            auto& entity = createEntity();
+        // Create a blank entity. It's not really blank, every entity has a TransformComponent
+        // by default.
+        auto& entity = createEntity();
 
-            // Add a SpriteComponent to it.
-            entity.addComponent<rosa::SpriteComponent>();
+        // Add a SpriteComponent to it.
+        entity.addComponent<rosa::SpriteComponent>();
 
-            // Set the sprites texture. This is via uuid, not the object we obtained earlier.
-            entity.getComponent<rosa::SpriteComponent>().setTexture(dds_uuid);
+        // Set the sprites texture. This is via uuid, not the object we obtained earlier.
+        entity.getComponent<rosa::SpriteComponent>().setTexture(dds_uuid);
 
-            // Set the position to screen-center
-            entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
-        }
+        // Set the position to screen-center
+        entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
+    }
 };
 
 TEST_CASE("Displays a simple 2d image on a quad", "[gl]") {
 
     // Grab the GameManager
-    auto game_mgr = rosa::GameManager(800, 600, "Display Image", 0, true);
+    auto game_mgr = rosa::GameManager(800, 600, "Display Image", 0, /*window_hidden=*/true);
 
     rosa::ResourceManager::getInstance().registerAssetPack("references/base.pak", "");
 
     // Instantiate our scene from the class above and register it
-    game_mgr.addScene("simple_image", std::make_unique<DisplayImage>(game_mgr.getRenderWindow()));
+    game_mgr.addScene("display_image", std::make_unique<DisplayImage>(game_mgr.getRenderWindow()));
 
     // Set the scene as active
-    game_mgr.changeScene("simple_image");
+    game_mgr.changeScene("display_image");
 
     // Away we go with our desired window size
     game_mgr.run(3);
 
-    auto size = game_mgr.getRenderWindow()->getSize();
-    
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
-    std::vector<unsigned char> pixels = game_mgr.getRenderWindow()->readFrame();
-    //rosa::ImageComparator::writePNG("display_image.png", pixels, size.x, size.y);
 
+    // Copy the framebuffer to a vector of pixel data
+    auto pixels = game_mgr.getRenderWindow()->readFrame();
+
+    // Save out a copy of the current framebuffer for debugging
+    [[maybe_unused]] auto size = game_mgr.getRenderWindow()->getSize();
+    // rosa::ImageComparator::writePNG("display_image.png", pixels, size.x, size.y);
+
+    // Load in the reference image
     std::vector<unsigned char> ref_pixels = rosa::ImageComparator::readPNG("references/display_image.png");
-    
+
+    // Reference image should match the current framebuffer
     REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref_pixels) == true);
 }
