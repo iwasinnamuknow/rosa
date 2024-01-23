@@ -189,6 +189,7 @@ namespace rosa {
                 m_resources[uuid] = std::make_unique<AudioFile>(filename, uuid, path);
                 break;
             case ResourceType::ResourceFont:
+                spdlog::debug("ResourceManager: Loading font {} from /{}", uuid.toString(), filename);
                 m_resources[uuid] = std::make_unique<BitmapFont>(filename, uuid, path);
                 break;
         }

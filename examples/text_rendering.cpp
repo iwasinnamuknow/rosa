@@ -9,7 +9,7 @@
  *  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License along with bbai. If not,
+ *  You should have received a copy of the GNU General Public License along with rosa. If not,
  *  see <https://www.gnu.org/licenses/>.
  */
 
@@ -37,16 +37,6 @@ class MyScene : public rosa::Scene {
         // Override the onLoad function so we can set up our scene. This will be called
         // any time the GameManager activates the scene.
         auto onLoad() -> void override {
-
-            // Get our texture via uuid so we can get some details
-            auto font = rosa::ResourceManager::getInstance().getAsset<rosa::BitmapFont>(font_uuid);
-
-            // Get our texture via uuid so we can get some details
-            auto texture = rosa::ResourceManager::getInstance().getAsset<rosa::Texture>(dds_uuid);
-
-            // Like the size
-            auto texture_size = texture.getSize();
-
             // Grab the window size
             auto window_size = getRenderWindow().getSize();
 
@@ -56,7 +46,6 @@ class MyScene : public rosa::Scene {
                     (static_cast<float>(window_size.y) / 2.F)
             );
 
-
             // Create a blank entity. It's not really blank, every entity has a TransformComponent
             // by default.
             auto& entity = createEntity();
@@ -64,10 +53,11 @@ class MyScene : public rosa::Scene {
             // Add a SpriteComponent to it.
             entity.addComponent<rosa::SpriteComponent>();
 
-            // Set the sprites texture. This is via uuid, not the object we obtained earlier.
+            // Set the sprites texture
             entity.getComponent<rosa::SpriteComponent>().setTexture(dds_uuid);
             entity.getComponent<rosa::SpriteComponent>().setBatched(true);
 
+            // Add a text component and set a string
             auto& text_comp = entity.addComponent<rosa::TextComponent>();
             text_comp.setFont(font_uuid);
             text_comp.setText("Test String");
@@ -77,10 +67,12 @@ class MyScene : public rosa::Scene {
             // Set the position
             entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
 
+            // Create an entity to hold the camera component
             auto& cam_entity = createEntity();
             auto& cam_comp = cam_entity.addComponent<rosa::CameraComponent>();
             cam_comp.setEnabled(true);
 
+            // Add a simple camera movement script
             auto& cam_script_comp = cam_entity.addComponent<rosa::LuaScriptComponent>(this, cam_entity);
             cam_script_comp.setScript(cam_script_uuid);
         }

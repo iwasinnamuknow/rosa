@@ -27,8 +27,7 @@ namespace rosa {
 
     class BitmapFont : public Resource {
     public:
-        BitmapFont(const std::string &name, const Uuid &uuid, const std::string &pack) : Resource(name, uuid, pack) {}
-        auto loadFromPhysFS() -> bool override;
+        BitmapFont(const std::string& name, const Uuid& uuid, const std::string& pack);
 
         auto print(const std::string& text, int pos_x, int pos_y, Colour colour = Colour{1.F, 1.F, 1.F}) -> std::vector<Quad>;
         auto getWidth(const std::string& text) -> int;
@@ -49,7 +48,7 @@ namespace rosa {
         int m_cursor_x{0};
         int m_cursor_y{0};
         char m_base_char{};
-        std::array<char, 256> m_widths{};
+        std::array<char, bf_max_string_length> m_widths{};
         float m_row_factor{};
         float m_col_factor{};
         int m_render_style{};
