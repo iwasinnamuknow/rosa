@@ -25,30 +25,89 @@
 
 namespace rosa {
 
+    /**
+     * \brief A component for playing audio streamed from disk
+     *
+     * This component is best used for long tracks, streaming the data from disk as
+     * needed rather than loading it into memory in entirety.
+     *
+     * For short or one-off sounds, maybe the SoundPlayerComponent is more suited.
+     */
     struct MusicPlayerComponent {
 
+        /**
+         * \brief Get the Uuid of the associated asset
+         */
         auto getAudio() const -> Uuid;
+
+        /**
+         * \brief Load an asset by Uuid
+         */
         auto setAudio(Uuid uuid) -> void;
 
+        /**
+         * \brief Play the audio track
+         */
         auto play() -> void;
+
+        /**
+         * \brief Stop the audio track
+         */
         auto stop() -> void;
 
+        /**
+         * \brief Set the default volume
+         */
         auto setDefaultVolume(float volume) -> void;
+
+        /**
+         * \brief Get the default volume
+         */
         auto getDefaultVolume() const -> float;
 
+        /**
+         * \brief Get the length of the audio track in seconds
+         */
         auto getLength() -> double;
 
+        /**
+         * \brief Set whether to loop the audio track
+         */
         auto setLooping(bool loop) -> void;
 
+        /**
+         * \brief Set the volume of a playing track
+         */
         auto setVolume(float volume) -> void;
+
+        /**
+         * \brief Get the volume of a playing track
+         */
         auto getVolume() const -> float;
 
+        /**
+         * \brief Get the position of the playhead in seconds
+         */
         auto getPosition() const -> double;
+
+        /**
+         * \brief Set the position of the playhead in seconds
+         */
         auto setPosition(double position) -> void;
 
+        /**
+         * \brief Pause or unpause a playing track
+         */
         auto setPause(bool pause) -> void;
+
+        /**
+         * \brief Get the pause state of a playing track
+         */
         auto getPause() const -> bool;
 
+        /**
+         * \brief Determine if a track is currently playing
+         */
         auto isPlaying() const -> bool;
 
         private:
