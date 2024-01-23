@@ -71,6 +71,7 @@ endif()
 
 if (CMAKE_BUILD_TYPE MATCHES Debug)
   list(GET PHYSFS_LIBRARY 3 FINAL_PHYSFS_LIB)
+  set(LINUX_LIBS gcov)
 else()
   list(GET PHYSFS_LIBRARY 1 FINAL_PHYSFS_LIB)
 endif()
@@ -92,6 +93,7 @@ set (GENERAL_LIBS
 # set (WINDOWS_LIBS)
 
 set (LINUX_LIBS
+        ${LINUX_LIBS}
   X11
 )
 
