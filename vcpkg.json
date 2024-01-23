@@ -31,13 +31,6 @@
       "version>=": "0.7.0#1"
     },
     {
-      "name": "stduuid",
-      "version>=": "1.2.2",
-      "features": [
-        "system-gen"
-      ]
-    },
-    {
       "name": "sol2",
       "version>=": "3.3.0"
     },

@@ -15,7 +15,6 @@ find_package(PhysFS REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
-find_package(stduuid CONFIG REQUIRED)
 find_package(sol2 CONFIG REQUIRED)
 find_package(Lua REQUIRED)
 find_package(lodepng CONFIG REQUIRED)
@@ -81,7 +80,6 @@ set (GENERAL_LIBS
   spdlog::spdlog_header_only
   fmt::fmt-header-only
   yaml-cpp
-  stduuid
   lua
   sol2
   ${OPENGL_SHIT}
