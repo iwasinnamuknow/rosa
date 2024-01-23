@@ -10,7 +10,6 @@ if (ROSA_PROFILE)
   add_definitions(-DTRACY_ENABLE)
 endif(ROSA_PROFILE)
 
-#set(Boost_USE_STATIC_LIBS        ON)
 find_package(PhysFS REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
@@ -18,9 +17,6 @@ find_package(yaml-cpp CONFIG REQUIRED)
 find_package(sol2 CONFIG REQUIRED)
 find_package(Lua REQUIRED)
 find_package(lodepng CONFIG REQUIRED)
-#find_package(thor REQUIRED)
-#find_package(entt)
-#find_package(Boost COMPONENTS di REQUIRED)
 
 #if (_WIN32)                                                                                          
 #  add_executable(rosa_exe WIN32 ${SOURCES})
@@ -56,13 +52,13 @@ target_include_directories(rosa SYSTEM PUBLIC
 
 if(WIN32)
   set(VCPKG_LIB ${_VCPKG_INSTALLED_DIR}/x64-windows-static-md/lib/)
-  set(OPENGL_SHIT
+  set(OPENGL_STUFF
     ${VCPKG_LIB}/glad.lib
     ${VCPKG_LIB}/glfw3.lib
   )
 else()
   set(VCPKG_LIB ${_VCPKG_INSTALLED_DIR}/x64-linux/lib/)
-  set(OPENGL_SHIT
+  set(OPENGL_STUFF
     ${VCPKG_LIB}/libglad.a
     ${VCPKG_LIB}/libglfw3.a
   )
@@ -82,7 +78,7 @@ set (GENERAL_LIBS
   yaml-cpp
   lua
   sol2
-  ${OPENGL_SHIT}
+        ${OPENGL_STUFF}
   imgui::imgui
   soloud
   lodepng
