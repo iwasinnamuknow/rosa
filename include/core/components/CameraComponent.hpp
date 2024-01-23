@@ -27,8 +27,8 @@ namespace rosa {
      * is enabled.
      */
     class CameraComponent {
-        public:
-            CameraComponent() = default;
+    public:
+        CameraComponent() = default;
 
         /**
          * \brief Set enable state of the camera
@@ -38,16 +38,16 @@ namespace rosa {
          * when enabling another. If multiple cameras are enabled, the last processed
          * will be used.
          */
-            auto setEnabled(bool enable) -> void;
+        auto setEnabled(bool enable) -> void;
 
         /**
          * \brief Get the enable state of the camera
          * \return true for enabled, false for disabled
          */
-            auto getEnabled() const -> bool;
+        auto getEnabled() const -> bool;
 
-        private:
-            bool m_enabled{false};
+    private:
+        bool m_enabled{false};
     };
 
-} // namespace rosa
+}// namespace rosa
