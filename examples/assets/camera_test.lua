@@ -10,11 +10,11 @@ function onUpdate(delta_time)
     pos = transform:getPosition()
 
     if (isKeyDown(EventKeyboardKey.KeyLeft)) then
-        pos.x = pos.x + (1 * delta_time)
+        pos.x = pos.x - (1 * delta_time)
     end
 
     if (isKeyDown(EventKeyboardKey.KeyRight)) then
-        pos.x = pos.x - (1 * delta_time)
+        pos.x = pos.x + (1 * delta_time)
     end
 
     if (isKeyDown(EventKeyboardKey.KeyUp)) then

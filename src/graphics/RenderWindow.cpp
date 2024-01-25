@@ -180,7 +180,7 @@ namespace rosa {
             glViewport(0, 0, m_vp_size[0], m_vp_size[1]);
         }
 
-        m_view_matrix       = glm::lookAt(glm::vec3(camera_pos.x, camera_pos.y, 1.F), glm::vec3(camera_pos.x, camera_pos.y, 0.F), glm::vec3(0.F, 1.F, 0.F));
+        m_view_matrix       = glm::lookAt(glm::vec3(camera_pos.x - 1, camera_pos.y - 1, 1.F), glm::vec3(camera_pos.x - 1, camera_pos.y - 1, 0.F), glm::vec3(0.F, 1.F, 0.F));
         m_projection_matrix = glm::ortho(0.F, static_cast<float>(m_vp_size[0]), static_cast<float>(m_vp_size[1]), 0.F);
 
         {
