@@ -175,6 +175,16 @@ namespace rosa {
             return static_cast<std::string>(*this);
         }
 
+        constexpr auto empty() const -> bool {
+            for (std::uint64_t index{0}; index < 16; index++) {
+                if (m_data[index] != 0) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
     private:
         // Array of bytes to hold the UUID value
         std::array<std::uint8_t, 16> m_data{0};
