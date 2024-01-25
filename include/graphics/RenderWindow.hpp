@@ -68,6 +68,7 @@ namespace rosa {
         auto readFrame() -> std::span<unsigned char>;
         auto getViewportSize() const -> glm::vec2;
         auto getProjection() const -> glm::mat4;
+        auto getView() const -> glm::mat4;
         auto getFrameBuffer() -> FrameBuffer&;
         auto pollEvents() -> bool;
 
@@ -81,7 +82,8 @@ namespace rosa {
 
         void resize(int change_x, int change_y);
 
-        glm::mat4 m_projection{};
+        glm::mat4 m_projection_matrix{};
+        glm::mat4 m_view_matrix{};
 
         FrameBuffer m_framebuffer;
     };

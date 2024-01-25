@@ -15,13 +15,14 @@
 
 #pragma once
 
-#include <core/Uuid.hpp>
 #include <core/ResourceManager.hpp>
+#include <core/Uuid.hpp>
+#include <glm/common.hpp>
+#include <glm/glm.hpp>
 #include <graphics/BitmapFont.hpp>
 #include <graphics/Quad.hpp>
 #include <graphics/Renderer.hpp>
-#include <glm/glm.hpp>
-#include <glm/common.hpp>
+#include <graphics/ShaderProgram.hpp>
 
 #include <string_view>
 #include <vector>
@@ -32,6 +33,10 @@ namespace rosa {
     class SceneSerialiser;
 
     struct TextComponent {
+
+        TextComponent() {
+            m_shader_program.compile();
+        }
 
         auto setText(const std::string& text) -> void {
             m_quad_cache.clear();
@@ -67,25 +72,19 @@ namespace rosa {
             return m_colour;
         }
 
-        auto render(glm::mat4 world_projection, int screen_width = 0, int screen_height = 0) -> void {
+        auto render(glm::mat4 transform) -> void {
 
             if (m_quad_cache.empty()) {
-
-                float world_x = world_projection[3].x;
-                float world_y = world_projection[3].y;
-
-                m_quad_cache = m_font->print(m_text, world_x, world_y, m_colour);
+                m_quad_cache = m_font->print(m_text, 0, 0, m_colour);
             }
 
-            if (m_screen_space) {
-                auto projection = glm::ortho(0, screen_width, screen_height, 0, -1, 1);
-                for (const auto &quad: m_quad_cache) {
-                    Renderer::getInstance().submit(quad, projection, m_screen_space);
-                }
-            } else {
-                for (const auto &quad: m_quad_cache) {
-                    Renderer::getInstance().submitForBatch(quad);
-                }
+            for (const auto& quad: m_quad_cache) {
+                Renderable renderable{
+                        quad,
+                        glm::translate(transform, glm::vec3(quad.pos.x, quad.pos.y, 0.F)),
+                        &m_shader_program,
+                        m_screen_space};
+                Renderer::getInstance().submit(renderable);
             }
         }
 
@@ -96,6 +95,8 @@ namespace rosa {
         bool m_screen_space{true};
         std::string m_text;
         Colour m_colour{1.F, 1.F, 1.F};
+
+        ShaderProgram m_shader_program{};
 
         friend class SceneSerialiser;
     };

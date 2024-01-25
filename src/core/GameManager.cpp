@@ -139,7 +139,9 @@ namespace rosa {
 
             m_render_window->display(m_current_scene->m_active_camera_pos);
 
+#ifdef ROSA_PROFILE
             FrameMark(nullptr);
+#endif
 
             TracyGpuCollect
 

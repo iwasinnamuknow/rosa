@@ -121,9 +121,9 @@ namespace rosa {
         if (PHYSFS_unmount(real_path.c_str()) == 0) {
             auto error = PHYSFS_getLastErrorCode();
 
-            if (error == PHYSFS_ERR_FILES_STILL_OPEN) {
-                throw UnmountFailedException("Files are still open");
-            }
+            //            if (error == PHYSFS_ERR_FILES_STILL_OPEN) {
+            //                throw UnmountFailedException("Files are still open");
+            //            }
 
             if (error == PHYSFS_ERR_NOT_MOUNTED) {
                 throw UnmountFailedException("Pack not mounted");

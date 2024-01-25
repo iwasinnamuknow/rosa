@@ -37,19 +37,21 @@ function onCreate()
         
         local child_uuid = child_entity:getUuid()
         character_order[child_uuid:to_string()] = counter
-        
 
-        child_transform:setPosition(total_width, 0);
+
         child_sprite:setTexture(digits_uuid);
 
         if (counter == 3 or counter == 6) then -- colons
             child_sprite:setTextureRect(characters[':'])
+            child_transform:setPosition(total_width - 20, 0);
             total_width = total_width + 20
         elseif (counter == 9) then -- period
             child_sprite:setTextureRect(characters['.'])
+            child_transform:setPosition(total_width - 20, 0);
             total_width = total_width + 20
         else -- digits
             child_sprite:setTextureRect(characters['0'])
+            child_transform:setPosition(total_width, 0);
             total_width = total_width + 64;
         end
 

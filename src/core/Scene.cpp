@@ -259,7 +259,7 @@ namespace rosa {
         {
             ZoneScopedN("Render:BatchRenderer:Setup");
             Renderer::getInstance().clearStats();
-            Renderer::getInstance().updateMvp(getRenderWindow().getProjection());
+            Renderer::getInstance().updateVp(getRenderWindow().getView(), getRenderWindow().getProjection());
         }
 
         {
@@ -290,7 +290,7 @@ namespace rosa {
                 auto& text_comp = m_registry.get<TextComponent>(entid);
                 auto& transform = m_registry.get<TransformComponent>(entid);
                 //auto sprite_comp = m_registry.get<SpriteComponent>(entid);
-                text_comp.render(transform.getGlobalTransform(), getRenderWindow().getSize().x, getRenderWindow().getSize().y);
+                text_comp.render(transform.getGlobalTransform());
             };
         }
 

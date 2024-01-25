@@ -16,10 +16,10 @@
 #pragma once
 
 #include <cstdint>
-#include <graphics/Vertex.hpp>
 #include <graphics/Quad.hpp>
-#include <graphics/Shader.hpp>
 #include <graphics/RenderWindow.hpp>
+#include <graphics/ShaderProgram.hpp>
+#include <graphics/Vertex.hpp>
 #include <memory>
 
 constexpr int max_vertex_count{10000};
@@ -35,27 +35,37 @@ namespace rosa {
         int textures{0};
     };
 
+    struct Renderable {
+        Quad           quad;
+        glm::mat4      transform{1.F};
+        ShaderProgram* shader_program{};
+        bool           screen_space{false};
+        float          texture_index{0.F};
+    };
+
     class Renderer {
         public:
             static auto getInstance() -> Renderer&;
             static auto shutdown() -> void;
 
-            auto submitForBatch(const Quad& quad) -> void;
+            auto submit(Renderable renderable) -> void;
             auto flushBatch() -> void;
 
-            auto submit(const Quad& quad, glm::mat4 transform, bool override_mvp = false) -> void;
-
-            auto updateMvp(glm::mat4 projection) -> void;
             auto getStats() -> RendererStats;
             auto clearStats() -> void;
-
-            auto setShader(ShaderType type, Shader* shader) -> void;
-            auto linkShaders() -> void;
 
             Renderer();
             ~Renderer();
 
+            auto updateVp(glm::mat4 view, glm::mat4 projection) -> void {
+                m_view_matrix       = view;
+                m_projection_matrix = projection;
+            }
+
         private:
+            auto flush(unsigned int shader_program_id, glm::mat4 mvp, int mvp_id) -> void;
+
+            std::vector<Renderable> m_renderables{};
 
             Vertex* m_vertex_buffer;
             Vertex* m_vertex_buffer_ptr;
@@ -76,13 +86,10 @@ namespace rosa {
             int m_draw_calls{0};
             int m_texture_binds{0};
 
-            unsigned int m_pid;
+            glm::vec4 m_camera_pos{0};
 
-            Shader* m_vertex_shader{nullptr};
-            Shader* m_fragment_shader{nullptr};
-
-            glm::mat4 m_mvp{0.F};
-            int m_mvp_id;
+            glm::mat4 m_view_matrix;
+            glm::mat4 m_projection_matrix;
 
             static std::unique_ptr<Renderer> s_instance;
     };

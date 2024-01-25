@@ -37,7 +37,6 @@ public:
             auto& entity = createEntity();
             entity.setParent(parent.getUUID());
             auto& sprite = entity.addComponent<rosa::SpriteComponent>();
-            sprite.setBatched(true);
         }
 
         parent.addComponent<rosa::SoundPlayerComponent>();

@@ -27,6 +27,9 @@ namespace rosa {
     Sprite::Sprite() {
         m_quad.pos = {0, 0};
         m_quad.size = {0, 0};
+
+        m_shader_program = ShaderProgram();
+        m_shader_program.compile();
     }
 
     auto Sprite::draw(glm::mat4 transform) -> void {
@@ -36,11 +39,12 @@ namespace rosa {
         m_quad.pos.x = transform[3].x;
         m_quad.pos.y = transform[3].y;
 
-        if (m_batched) {
-            Renderer::getInstance().submitForBatch(m_quad);
-        } else {
-            Renderer::getInstance().submit(m_quad, transform);
-        }
+        Renderable renderable{
+                m_quad,
+                transform,
+                &m_shader_program};
+
+        Renderer::getInstance().submit(renderable);
     }
 
     auto Sprite::setColour(const Colour& colour) -> void {
@@ -54,14 +58,12 @@ namespace rosa {
         m_quad.size = m_texture->getSize();
     }
 
-    auto Sprite::setBatched(bool batched) -> void
-    {
-        m_batched = batched;
+    auto Sprite::setScreenSpace(bool screen_space) -> void {
+        m_screen_space = screen_space;
     }
 
-    auto Sprite::getBatched() -> bool
-    {
-        return m_batched;
+    auto Sprite::getScreenSpace() -> bool {
+        return m_screen_space;
     }
 
     auto Sprite::getTexture() const -> Texture &

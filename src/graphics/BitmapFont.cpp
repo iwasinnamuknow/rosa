@@ -16,6 +16,7 @@
 #include <GLFW/glfw3.h>
 #include <cassert>
 #include <core/ResourceManager.hpp>
+#include <cstring>
 #include <graphics/BitmapFont.hpp>
 #include <graphics/Colour.hpp>
 #include <graphics/Quad.hpp>
@@ -53,10 +54,10 @@ namespace rosa {
         }
 
         // Grab the rest of the header
-        memcpy(&m_image_x, &data[2], sizeof(int));
-        memcpy(&m_image_y, &data[6], sizeof(int));
-        memcpy(&m_cell_x, &data[10], sizeof(int));
-        memcpy(&m_cell_y, &data[14], sizeof(int));
+        std::memcpy(&m_image_x, &data[2], sizeof(int));
+        std::memcpy(&m_image_y, &data[6], sizeof(int));
+        std::memcpy(&m_cell_x, &data[10], sizeof(int));
+        std::memcpy(&m_cell_y, &data[14], sizeof(int));
 
         char bpp    = data[18];
         m_base_char = data[19];
@@ -91,22 +92,26 @@ namespace rosa {
                 break;
         }
 
+        auto data_size = static_cast<std::uint64_t>(m_image_x) *
+                         static_cast<std::uint64_t>(m_image_y) *
+                         (static_cast<std::uint64_t>(bpp) / 8);
+
         std::vector<char> image_data;
-        image_data.resize(
-                static_cast<std::uint64_t>(m_image_x) *
-                static_cast<std::uint64_t>(m_image_y) *
-                (static_cast<std::uint64_t>(bpp) * 8));
+        image_data.resize(data_size);
+
 
         // Grab char widths
-        memcpy(m_widths.data(), &data[bf_width_data_offset], 256);
+        std::memcpy(m_widths.data(), &data[bf_width_data_offset], 256);
 
         // Grab image data
-        memcpy(
+        std::memcpy(
                 image_data.data(),
                 &data[bf_map_data_offset],
-                static_cast<std::uint64_t>(m_image_x) *
-                        static_cast<std::uint64_t>(m_image_y) *
-                        (static_cast<std::uint64_t>(bpp) * 8));
+                data_size);
+
+        if (glfwGetCurrentContext() == nullptr) {
+            return;
+        }
 
         // Create Texture
         glGenTextures(1, &m_texture_id);

@@ -15,12 +15,13 @@
 
 #pragma once
 
-#include <graphics/Texture.hpp>
+#include <core/Uuid.hpp>
+#include <cstddef>
 #include <graphics/Drawable.hpp>
 #include <graphics/Quad.hpp>
 #include <graphics/Rect.hpp>
-#include <core/Uuid.hpp>
-#include <cstddef>
+#include <graphics/ShaderProgram.hpp>
+#include <graphics/Texture.hpp>
 
 class Window;
 
@@ -43,8 +44,8 @@ namespace rosa {
             auto getTexture() const -> Texture&;
             auto setTexture(Uuid uuid) -> void;
 
-            auto setBatched(bool batched) -> void;
-            auto getBatched() -> bool;
+            auto setScreenSpace(bool screen_space) -> void;
+            auto getScreenSpace() -> bool;
 
         protected:
             auto draw(glm::mat4 transform) -> void override;
@@ -56,7 +57,9 @@ namespace rosa {
             friend class Scene;
 
             Quad m_quad;
-            bool m_batched{false};
+            bool m_screen_space{false};
+
+            ShaderProgram m_shader_program;
     };
 
 } // namespace rosa

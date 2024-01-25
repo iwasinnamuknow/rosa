@@ -55,14 +55,14 @@ class MyScene : public rosa::Scene {
 
             // Set the sprites texture
             entity.getComponent<rosa::SpriteComponent>().setTexture(dds_uuid);
-            entity.getComponent<rosa::SpriteComponent>().setBatched(true);
+            //entity.getComponent<rosa::SpriteComponent>().setBatched(true);
 
             // Add a text component and set a string
             auto& text_comp = entity.addComponent<rosa::TextComponent>();
             text_comp.setFont(font_uuid);
             text_comp.setText("Test String");
             text_comp.setColour(rosa::Colour(1.F, 0.F, 0.F, 1.F));
-            text_comp.setScreenSpace(false);
+            text_comp.setScreenSpace(true);
 
             // Set the position
             entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);

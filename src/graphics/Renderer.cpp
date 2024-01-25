@@ -13,22 +13,28 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include <GLFW/glfw3.h>
 #include <cstddef>
 #include <cstdint>
 #include <graphics/Renderer.hpp>
 #include <graphics/gl.hpp>
-#include <GLFW/glfw3.h>
 #include <tracy/Tracy.hpp>
 
 namespace rosa {
 
+    static bool sortByScreenSpace(const Renderable& a, const Renderable& b) {
+        return a.screen_space < b.screen_space;
+    }
+
+    static bool sortByShader(const Renderable& a, const Renderable& b) {
+        return a.shader_program < b.shader_program;
+    }
+
     Renderer::Renderer() {
 
         // See destructor for deletion
-        m_vertex_buffer = new Vertex[max_vertex_count];
+        m_vertex_buffer     = new Vertex[max_vertex_count];
         m_vertex_buffer_ptr = m_vertex_buffer;
-
-        m_pid = glCreateProgram();
 
         // Setup opengl
         glGenVertexArrays(1, &m_vao);
@@ -39,16 +45,16 @@ namespace rosa {
         //glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * (m_quads * 4), nullptr, GL_DYNAMIC_DRAW);
 
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)offsetof(Vertex, position.x));
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*) offsetof(Vertex, position.x));
 
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, sizeof(Vertex), (const void*)offsetof(Vertex, texture_coords.x));
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, sizeof(Vertex), (const void*) offsetof(Vertex, texture_coords.x));
 
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)offsetof(Vertex, colour.r));
+        glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*) offsetof(Vertex, colour.r));
 
         glEnableVertexAttribArray(3);
-        glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)offsetof(Vertex, texture_slot));
+        glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*) offsetof(Vertex, texture_slot));
 
         // Fill the index array
         uint32_t offset{0};
@@ -69,170 +75,49 @@ namespace rosa {
         glGenBuffers(1, &m_ibo);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * max_index_count, m_indices.data(), GL_STATIC_DRAW);
-
-        // Generate empty texture 1x1 white
-//        glGenTextures(1, &m_empty_tex_id);
-//        glBindTexture(GL_TEXTURE_2D, m_empty_tex_id);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-//        uint32_t colour = 0xffffffff;
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &colour);
-//        m_textures[0] = m_empty_tex_id;
-
-        linkShaders();
-
-        m_mvp_id = glGetUniformLocation(m_pid, "mvp");
     }
 
     Renderer::~Renderer() {
-        
+
         glDeleteVertexArrays(1, &m_vao);
         glDeleteBuffers(1, &m_vbo);
         glDeleteBuffers(1, &m_ibo);
 
-        glDeleteTextures(1, &m_empty_tex_id);
-
         delete[] m_vertex_buffer;
     }
 
-    auto Renderer::submitForBatch(const Quad& quad) -> void {
-        ZoneScopedN("Render:Renderer:SubmitForBatch");
+    auto Renderer::submit(Renderable renderable) -> void {
+        ZoneScopedN("Render:Renderer:Submit");
 
-        if ((m_index_count) + 6 > max_index_count || m_texture_count > 31) {
+        assert(renderable.shader_program->isCompiled());
+
+        if (m_renderables.size() >= max_quad_count || m_texture_count > 31) {
             flushBatch();
         }
 
-        float texture_index{0.F};
+        //float texture_index{0.F};
         for (uint32_t i = 1; i < m_texture_count; i++) {
-            if (m_textures[i] == quad.texture_id) {
-                texture_index = static_cast<float>(i);
+            if (m_textures[i] == renderable.quad.texture_id) {
+                renderable.texture_index = static_cast<float>(i);
                 break;
             }
         }
 
-        if (texture_index == 0.F) {
-            texture_index = static_cast<float>(m_texture_count);
-            m_textures[m_texture_count] = quad.texture_id;
+        if (renderable.texture_index == 0.F) {
+            renderable.texture_index    = static_cast<float>(m_texture_count);
+            m_textures[m_texture_count] = renderable.quad.texture_id;
             m_texture_count++;
         }
 
-        m_vertex_buffer_ptr->position = quad.pos;
-        m_vertex_buffer_ptr->colour = quad.colour;
-        m_vertex_buffer_ptr->texture_coords = quad.texture_rect_pos;
-        m_vertex_buffer_ptr->texture_slot = texture_index;
-        m_vertex_buffer_ptr++;
-
-        m_vertex_buffer_ptr->position = { quad.pos.x + quad.size.x, quad.pos.y };
-        m_vertex_buffer_ptr->colour = quad.colour;
-        m_vertex_buffer_ptr->texture_coords = {quad.texture_rect_pos.x + quad.texture_rect_size.x, quad.texture_rect_pos.y};
-        m_vertex_buffer_ptr->texture_slot = texture_index;
-        m_vertex_buffer_ptr++;
-
-        m_vertex_buffer_ptr->position = { quad.pos.x, quad.pos.y + quad.size.y };
-        m_vertex_buffer_ptr->colour = quad.colour;
-        m_vertex_buffer_ptr->texture_coords = {quad.texture_rect_pos.x, quad.texture_rect_pos.y + quad.texture_rect_size.y};
-        m_vertex_buffer_ptr->texture_slot = texture_index;
-        m_vertex_buffer_ptr++;
-
-        m_vertex_buffer_ptr->position = quad.pos + quad.size;
-        m_vertex_buffer_ptr->colour = quad.colour;
-        m_vertex_buffer_ptr->texture_coords = quad.texture_rect_pos + quad.texture_rect_size;
-        m_vertex_buffer_ptr->texture_slot = texture_index;
-        m_vertex_buffer_ptr++;
-
-        m_index_count += 6;
-        m_quad_draws++;
-    }
-
-    auto Renderer::submit(const Quad& quad, glm::mat4 transform, bool override_mvp) -> void {
-        ZoneScopedN("Render:Renderer:Submit");
-
-        float texture_index{0.F};
-        for (uint32_t i = 1; i < m_texture_count; i++) {
-            if (m_textures[i] == quad.texture_id) {
-                texture_index = static_cast<float>(i);
-                break;
-            }
-        }
-
-        if (texture_index == 0.F) {
-            texture_index = static_cast<float>(m_texture_count);
-            m_textures[m_texture_count] = quad.texture_id;
-            m_texture_count++;
-        }
-
-        float pos_x = transform[3].x;
-        float pos_y = transform[3].y;
-
-        std::array<Vertex, 4> vertices;
-
-        vertices[0].position = glm::vec2(-(quad.size.x/2), -(quad.size.y/2));
-        vertices[0].colour = quad.colour;
-        vertices[0].texture_coords = glm::vec2(quad.texture_rect_pos.x, quad.texture_rect_pos.y + quad.texture_rect_size.y);
-        vertices[0].texture_slot = texture_index;
-
-        vertices[1].position = glm::vec2(  quad.size.x/2,  -(quad.size.y/2));
-        vertices[1].colour = quad.colour;
-        vertices[1].texture_coords = (quad.texture_rect_pos + quad.texture_rect_size);
-        vertices[1].texture_slot = texture_index;
-
-        vertices[2].position = glm::vec2(-(quad.size.x/2),   quad.size.y/2);
-        vertices[2].colour = quad.colour;
-        vertices[2].texture_coords = quad.texture_rect_pos;
-        vertices[2].texture_slot = texture_index;
-
-        vertices[3].position = glm::vec2(  quad.size.x/2,    quad.size.y/2);
-        vertices[3].colour = quad.colour;
-        vertices[3].texture_coords = glm::vec2(quad.texture_rect_pos.x + quad.texture_rect_size.x, quad.texture_rect_pos.y);
-        vertices[3].texture_slot = texture_index;
-
-        m_quad_draws++;
-
-        glm::mat4 mvp_tmp;
-        if (override_mvp) {
-            glm::mat4 fake{0};
-            fake[3].x = quad.pos.x;
-            fake[3].y = quad.pos.y;
-            mvp_tmp = transform * fake;
-        } else {
-            mvp_tmp = m_mvp * transform;
-        }
-
-        glUseProgram(m_pid);
-        glBindVertexArray(m_vao);
-        glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 4, vertices.data(), GL_DYNAMIC_DRAW);
-
-        for (auto texture_id : m_textures) {
-            if (texture_id != 0) {
-                glBindTexture(GL_TEXTURE_2D, texture_id);
-                m_texture_binds++;
-            }
-        }
-
-        glUniformMatrix4fv(m_mvp_id, 1, GL_FALSE, &mvp_tmp[0][0]);
-
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
-        glUseProgram(0);
-
-        m_texture_count = 0;
-
-        m_draw_calls++;
+        m_renderables.push_back(renderable);
     }
 
     auto Renderer::flushBatch() -> void {
         ZoneScopedN("Render:Renderer:FlushBatch");
-        
-        glUseProgram(m_pid);
-        glBindVertexArray(m_vao);
-        glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * (m_quad_draws * 4), m_vertex_buffer, GL_DYNAMIC_DRAW);
 
+        // bind active textures
         int i{0};
-        for (auto texture_id : m_textures) {
+        for (auto texture_id: m_textures) {
             if (texture_id != 0) {
                 glActiveTexture(GL_TEXTURE0 + i);
                 glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -241,102 +126,126 @@ namespace rosa {
             }
         }
 
-        glUniformMatrix4fv(m_mvp_id, 1, GL_FALSE, &m_mvp[0][0]);
+        // sort renderables by world space first, then screen space
+        auto ss_group_start = m_renderables.begin();
+        while (ss_group_start != m_renderables.end()) {
+            auto ss_group_end = std::upper_bound(
+                    ss_group_start, m_renderables.end(),
+                    *ss_group_start, sortByScreenSpace);
+
+            // Within this, sort by shader program
+            std::sort(ss_group_start, ss_group_end, sortByShader);
+
+            ss_group_start = ss_group_end;
+        }
+
+        // If we're rendering in screen space, use an orthographic projection of the screen
+        // If it's world space, use the regular MVP
+
+        unsigned int current_shader_id{0};
+        glm::mat4    current_transform{1.F};
+        int          current_mvp_id{-1};
+        glm::mat4    current_mvp{m_view_matrix * m_projection_matrix};
+        bool         screen_space{false};
+
+        for (auto& renderable: m_renderables) {
+
+            // Check for the switch between world and screen space
+            if (!screen_space && renderable.screen_space) {
+                if (m_index_count > 0) {
+                    flush(current_shader_id, current_mvp, current_mvp_id);
+                }
+                current_mvp  = m_projection_matrix;
+                screen_space = true;
+            }
+
+            // Whenever we encounter a different shader program, flush the cache (assuming there is
+            // anything in there).
+            if (renderable.shader_program->getProgramId() != current_shader_id) {
+                if (m_index_count > 0) {
+                    flush(current_shader_id, current_mvp, current_mvp_id);
+                }
+                current_shader_id = renderable.shader_program->getProgramId();
+                current_mvp_id    = renderable.shader_program->getMvpId();
+            }
+
+            // Calculate the positions for each of the 4 vertices, taking the object transform
+            // into account.
+            glm::vec2 top_left = renderable.transform *
+                                 glm::vec4(-(renderable.quad.size.x / 2.F),
+                                           -(renderable.quad.size.y / 2.F),
+                                           1.F, 1.F);
+
+            glm::vec2 top_right = renderable.transform *
+                                  glm::vec4((renderable.quad.size.x / 2.F),
+                                            -(renderable.quad.size.y / 2.F),
+                                            1.F, 1.F);
+
+            glm::vec2 bottom_left = renderable.transform *
+                                    glm::vec4(-(renderable.quad.size.x / 2.F),
+                                              (renderable.quad.size.y / 2.F),
+                                              1.F, 1.F);
+
+            glm::vec2 bottom_right = renderable.transform *
+                                     glm::vec4((renderable.quad.size.x / 2.F),
+                                               (renderable.quad.size.y / 2.F),
+                                               1.F, 1.F);
+
+            // Populate the vertex cache with data from the quad
+            m_vertex_buffer_ptr->position       = top_left;
+            m_vertex_buffer_ptr->colour         = renderable.quad.colour;
+            m_vertex_buffer_ptr->texture_coords = renderable.quad.texture_rect_pos;
+            m_vertex_buffer_ptr->texture_slot   = renderable.texture_index;
+            m_vertex_buffer_ptr++;
+
+            m_vertex_buffer_ptr->position       = top_right;
+            m_vertex_buffer_ptr->colour         = renderable.quad.colour;
+            m_vertex_buffer_ptr->texture_coords = {renderable.quad.texture_rect_pos.x + renderable.quad.texture_rect_size.x, renderable.quad.texture_rect_pos.y};
+            m_vertex_buffer_ptr->texture_slot   = renderable.texture_index;
+            m_vertex_buffer_ptr++;
+
+            m_vertex_buffer_ptr->position       = bottom_left;
+            m_vertex_buffer_ptr->colour         = renderable.quad.colour;
+            m_vertex_buffer_ptr->texture_coords = {renderable.quad.texture_rect_pos.x, renderable.quad.texture_rect_pos.y + renderable.quad.texture_rect_size.y};
+            m_vertex_buffer_ptr->texture_slot   = renderable.texture_index;
+            m_vertex_buffer_ptr++;
+
+            m_vertex_buffer_ptr->position       = bottom_right;
+            m_vertex_buffer_ptr->colour         = renderable.quad.colour;
+            m_vertex_buffer_ptr->texture_coords = renderable.quad.texture_rect_pos + renderable.quad.texture_rect_size;
+            m_vertex_buffer_ptr->texture_slot   = renderable.texture_index;
+            m_vertex_buffer_ptr++;
+
+            m_index_count += 6;
+            m_quad_draws++;
+        }
+
+        // Flush the cache one last time if there is anything to render
+        if (m_index_count > 0) {
+            flush(current_shader_id, current_mvp, current_mvp_id);
+        }
+
+        // Clear the render queue
+        m_renderables.clear();
+    }
+
+    auto Renderer::flush(unsigned int shader_program_id, glm::mat4 mvp, int mvp_id) -> void {
+        ZoneScopedN("Render:Renderer:Flush");
+
+        glUseProgram(shader_program_id);
+        glBindVertexArray(m_vao);
+        glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * (m_quad_draws * 4), m_vertex_buffer, GL_DYNAMIC_DRAW);
+
+        glUniformMatrix4fv(mvp_id, 1, GL_FALSE, &mvp[0][0]);
 
         glDrawElements(GL_TRIANGLES, m_index_count, GL_UNSIGNED_INT, nullptr);
 
-        glUseProgram(0);
-
-        m_index_count = 0;
-        m_texture_count = 0;
+        m_index_count       = 0;
+        m_texture_count     = 0;
         m_vertex_buffer_ptr = m_vertex_buffer;
 
         m_draw_calls++;
-    }
-
-    auto Renderer::updateMvp(glm::mat4 projection) -> void {
-        m_mvp = projection;
-    }
-
-    auto Renderer::linkShaders() -> void {
-
-        bool defaulted_v_shader{false};
-        bool defaulted_f_shader{false};
-
-        if (m_vertex_shader == nullptr){ 
-            m_vertex_shader = new Shader("default", Uuid(), "", VertexShader);
-            defaulted_v_shader = true;
-            spdlog::warn("Using default vertex shader");
-        }
-        if (m_fragment_shader == nullptr) {
-            m_fragment_shader = new Shader("default", Uuid(), "", FragmentShader);
-            defaulted_f_shader = true;
-            spdlog::warn("Using default fragment shader");
-        }
-
-        auto vshader_id = glCreateShader(VertexShader);
-        auto fshader_id = glCreateShader(FragmentShader);
-
-        GLint result = GL_FALSE;
-        int info_log_length{0};
-
-        // Compile vertex shader
-        spdlog::debug("Compiling vertex shader");
-        const char* vertex_source_ptr = m_vertex_shader->getSource().c_str();
-        glShaderSource(vshader_id, 1, &vertex_source_ptr , nullptr);
-        glCompileShader(vshader_id);
-
-        // Check shader
-        glGetShaderiv(vshader_id, GL_COMPILE_STATUS, &result);
-        glGetShaderiv(vshader_id, GL_INFO_LOG_LENGTH, &info_log_length);
-        if ( info_log_length > 0 ){
-            std::vector<char> error(info_log_length + 1);
-            glGetShaderInfoLog(vshader_id, info_log_length, nullptr, error.data());
-            spdlog::error("Failed to compile shader: {}", error.data());
-        }
-        
-        // Compile fragment shader
-        spdlog::debug("Compiling fragment shader");
-        const char* frag_source_ptr = m_fragment_shader->getSource().c_str();
-        glShaderSource(fshader_id, 1, &frag_source_ptr , nullptr);
-        glCompileShader(fshader_id);
-
-        // Check shader
-        glGetShaderiv(fshader_id, GL_COMPILE_STATUS, &result);
-        glGetShaderiv(fshader_id, GL_INFO_LOG_LENGTH, &info_log_length);
-        if ( info_log_length > 0 ){
-            std::vector<char> error(info_log_length + 1);
-            glGetShaderInfoLog(fshader_id, info_log_length, nullptr, error.data());
-            spdlog::error("Failed to compile shader: {}", error.data());
-        }
-
-        // Link shader to program
-        spdlog::debug("Linking shaders");
-        glAttachShader(m_pid, vshader_id);
-        glAttachShader(m_pid, fshader_id);
-        glLinkProgram(m_pid);
-
-        // Check the program
-        glGetProgramiv(m_pid, GL_LINK_STATUS, &result);
-        glGetProgramiv(m_pid, GL_INFO_LOG_LENGTH, &info_log_length);
-        if ( info_log_length > 0 ){
-            std::vector<char> error(info_log_length + 1);
-            glGetProgramInfoLog(m_pid, info_log_length, NULL, error.data());
-            spdlog::error("Failed to link shaders: {}", error.data());
-        }
-
-        glDetachShader(m_pid, vshader_id);
-        glDetachShader(m_pid, fshader_id);
-        glDeleteShader(vshader_id);
-        glDeleteShader(fshader_id);
-
-        if (defaulted_v_shader) {
-            delete m_vertex_shader;
-        }
-
-        if (defaulted_f_shader) {
-            delete m_fragment_shader;
-        }
     }
 
     auto Renderer::getStats() -> RendererStats {
@@ -344,20 +253,14 @@ namespace rosa {
     }
 
     auto Renderer::clearStats() -> void {
-        m_draw_calls = 0;
-        m_quad_draws = 0;
+        m_draw_calls    = 0;
+        m_quad_draws    = 0;
         m_texture_binds = 0;
-    }
-
-    auto Renderer::setShader(ShaderType type, Shader* shader) -> void {
-        if (type == ShaderType::FragmentShader && shader != nullptr) {
-            m_fragment_shader = shader;
-        }
     }
 
     std::unique_ptr<Renderer> Renderer::s_instance{nullptr};
 
-    auto Renderer::getInstance() -> Renderer & {
+    auto Renderer::getInstance() -> Renderer& {
         if (!s_instance) {
             s_instance = std::make_unique<Renderer>();
         }
@@ -372,4 +275,4 @@ namespace rosa {
         }
     }
 
-} // namespace rosa
+}// namespace rosa
