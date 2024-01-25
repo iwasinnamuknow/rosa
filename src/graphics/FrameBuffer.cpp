@@ -252,6 +252,16 @@ namespace rosa {
         // store pixel data to internal array
         glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo_id);
         glReadPixels(0, 0, m_width, m_height, GL_RGBA, GL_UNSIGNED_BYTE, m_color_buffer.data());
+
+        // Flip the image data vertically
+        for (int y = 0; y < m_height / 2; ++y) {
+            int topOffset    = y * m_width * 4;
+            int bottomOffset = (m_height - y - 1) * m_width * 4;
+
+            for (int x = 0; x < m_width * 4; ++x) {
+                std::swap(m_color_buffer[topOffset + x], m_color_buffer[bottomOffset + x]);
+            }
+        }
     }
 
     auto FrameBuffer::copyDepthBuffer() -> void {

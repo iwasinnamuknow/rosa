@@ -8,7 +8,7 @@ function onLoad()
 end
 
 function onUpdate(delta_time)
-  persist["rotation"] = (persist["rotation"] + 1) % 360
+  persist["rotation"] = (persist["rotation"] + 0.1) % 360
   entity:getTransform():setRotation(persist["rotation"])
   --print(persist["rotation"])
 end
