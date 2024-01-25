@@ -83,7 +83,7 @@ namespace rosa {
         void resize(int change_x, int change_y);
 
         glm::mat4 m_projection_matrix{};
-        glm::mat4 m_view_matrix{};
+        glm::mat4 m_view_matrix{0.F};
 
         FrameBuffer m_framebuffer;
     };
