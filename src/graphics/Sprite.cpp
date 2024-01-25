@@ -28,8 +28,7 @@ namespace rosa {
         m_quad.pos = {0, 0};
         m_quad.size = {0, 0};
 
-        m_shader_program = ShaderProgram();
-        m_shader_program.compile();
+        m_shader_program = Renderer::getInstance().makeShaderProgram();
     }
 
     auto Sprite::draw(glm::mat4 transform) -> void {
@@ -42,7 +41,7 @@ namespace rosa {
         Renderable renderable{
                 m_quad,
                 transform,
-                &m_shader_program};
+                m_shader_program};
 
         Renderer::getInstance().submit(renderable);
     }

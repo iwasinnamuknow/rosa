@@ -34,8 +34,8 @@ namespace rosa {
 
     struct TextComponent {
 
-        TextComponent() {
-            m_shader_program.compile();
+        TextComponent()
+            : m_shader_program(Renderer::getInstance().makeShaderProgram()) {
         }
 
         auto setText(const std::string& text) -> void {
@@ -82,7 +82,7 @@ namespace rosa {
                 Renderable renderable{
                         quad,
                         glm::translate(transform, glm::vec3(quad.pos.x, quad.pos.y, 0.F)),
-                        &m_shader_program,
+                        m_shader_program,
                         m_screen_space};
                 Renderer::getInstance().submit(renderable);
             }
@@ -96,7 +96,7 @@ namespace rosa {
         std::string m_text;
         Colour m_colour{1.F, 1.F, 1.F};
 
-        ShaderProgram m_shader_program{};
+        ShaderProgram* m_shader_program{nullptr};
 
         friend class SceneSerialiser;
     };

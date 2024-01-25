@@ -59,7 +59,7 @@ namespace rosa {
             Quad m_quad;
             bool m_screen_space{false};
 
-            ShaderProgram m_shader_program;
+            ShaderProgram* m_shader_program{nullptr};
     };
 
 } // namespace rosa
