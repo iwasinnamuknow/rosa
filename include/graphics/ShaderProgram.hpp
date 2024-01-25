@@ -47,11 +47,21 @@ namespace rosa {
             return m_compiled;
         }
 
+        auto getVertexShaderUuid() const -> Uuid {
+            return m_vertex_shader_id;
+        }
+
+        auto getFragmentShaderUuid() const -> Uuid {
+            return m_fragment_shader_id;
+        }
+
     private:
         unsigned int m_program_id{0};
         Shader*      m_vertex_shader{nullptr};
         Shader*      m_fragment_shader{nullptr};
         int          m_mvp_id{-1};
+        Uuid         m_vertex_shader_id{};
+        Uuid         m_fragment_shader_id{};
 
         bool m_compiled{false};
     };

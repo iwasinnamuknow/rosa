@@ -19,18 +19,27 @@
 
 namespace rosa {
     ShaderProgram::ShaderProgram(Uuid vertex_shader, Uuid fragment_shader)
-        : m_vertex_shader(&ResourceManager::getInstance().getAsset<Shader>(vertex_shader)),
-          m_fragment_shader(&ResourceManager::getInstance().getAsset<Shader>(fragment_shader)) {
+        : m_vertex_shader_id(vertex_shader), m_fragment_shader_id(fragment_shader) {
+
+        if (!vertex_shader.empty()) {
+            m_vertex_shader = &ResourceManager::getInstance().getAsset<Shader>(vertex_shader);
+        }
+
+        if (!fragment_shader.empty()) {
+            m_fragment_shader = &ResourceManager::getInstance().getAsset<Shader>(fragment_shader);
+        }
     }
 
     auto ShaderProgram::loadVertexShader(Uuid vertex_shader) -> void {
-        m_vertex_shader = &ResourceManager::getInstance().getAsset<Shader>(vertex_shader);
-        m_compiled      = false;
+        m_vertex_shader_id = vertex_shader;
+        m_vertex_shader    = &ResourceManager::getInstance().getAsset<Shader>(vertex_shader);
+        m_compiled         = false;
     }
 
     auto ShaderProgram::loadFragmentShader(Uuid fragment_shader) -> void {
-        m_fragment_shader = &ResourceManager::getInstance().getAsset<Shader>(fragment_shader);
-        m_compiled        = false;
+        m_fragment_shader_id = fragment_shader;
+        m_fragment_shader    = &ResourceManager::getInstance().getAsset<Shader>(fragment_shader);
+        m_compiled           = false;
     }
 
     auto ShaderProgram::compile() -> void {
