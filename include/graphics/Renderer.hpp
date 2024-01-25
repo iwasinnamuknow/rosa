@@ -62,6 +62,8 @@ namespace rosa {
                 m_projection_matrix = projection;
             }
 
+            auto makeShaderProgram(Uuid vertex_shader = {}, Uuid fragment_shader = {}) -> ShaderProgram*;
+
         private:
             auto flush(unsigned int shader_program_id, glm::mat4 mvp, int mvp_id) -> void;
 
@@ -90,6 +92,8 @@ namespace rosa {
 
             glm::mat4 m_view_matrix;
             glm::mat4 m_projection_matrix;
+
+            std::vector<std::unique_ptr<ShaderProgram>> m_shaders{};
 
             static std::unique_ptr<Renderer> s_instance;
     };

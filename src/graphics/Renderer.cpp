@@ -86,6 +86,19 @@ namespace rosa {
         delete[] m_vertex_buffer;
     }
 
+    auto Renderer::makeShaderProgram(Uuid vertex_shader, Uuid fragment_shader) -> ShaderProgram* {
+        for (const auto& program: m_shaders) {
+            if (program->getVertexShaderUuid() == vertex_shader && program->getFragmentShaderUuid() == fragment_shader) {
+                return program.get();
+            }
+        }
+
+        auto program = m_shaders.emplace(m_shaders.end(), std::make_unique<ShaderProgram>(vertex_shader, fragment_shader));
+        program->get()->compile();
+
+        return program->get();
+    }
+
     auto Renderer::submit(Renderable renderable) -> void {
         ZoneScopedN("Render:Renderer:Submit");
 
