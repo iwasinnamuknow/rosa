@@ -13,7 +13,6 @@
 *  see <https://www.gnu.org/licenses/>.
 */
 
-
 #pragma once
 
 #include <core/Uuid.hpp>
@@ -21,36 +20,83 @@
 
 namespace rosa {
 
+    /**
+     * \brief Manages an OpenGL shader program
+     *
+     * Shader programs are made up of a vertex shader plus a fragment shader.
+     * If one of those shaders is not provided or an empty Uuid is provided, a
+     * default hardcoded shader will be used.
+     *
+     * On compilation, the shaders will be sent to the GPU and linked into a program
+     * which can then be used when rendering.
+     */
     class ShaderProgram {
     public:
+        /**
+         * \brief Create a shader program with default shaders
+         */
         ShaderProgram() = default;
+
+        /**
+         * \brief Create a shader program with provided shaders
+         */
         ShaderProgram(Uuid vertex_shader, Uuid fragment_shader);
 
+        /**
+         * \brief Set the vertex shader, this will require re-compilation
+         */
         auto loadVertexShader(Uuid vertex_shader) -> void;
+
+        /**
+         * \brief Set the fragment shader, this will require re-compilation
+         */
         auto loadFragmentShader(Uuid fragment_shader) -> void;
 
+        /**
+         * \brief Compile and link the program
+         */
         auto compile() -> void;
 
+        /**
+         * \brief Comparison operator so we can sort by ID
+         */
         auto operator<(const ShaderProgram& other) const -> bool {
             return m_program_id < other.getProgramId();
         }
 
+        /**
+         * \brief Get the OpenGL program ID
+         *
+         * This will be non-zero on compilation
+         */
         auto getProgramId() const -> unsigned int {
             return m_program_id;
         }
 
+        /**
+         * \brief Get the uniform ID for the MVP
+         */
         auto getMvpId() const -> int {
             return m_mvp_id;
         }
 
+        /**
+         * \brief Check if the program has been compiled
+         */
         auto isCompiled() const -> bool {
             return m_compiled;
         }
 
+        /**
+         * \brief Get the Uuid of the vertex shader
+         */
         auto getVertexShaderUuid() const -> Uuid {
             return m_vertex_shader_id;
         }
 
+        /**
+         * \brief Get the Uuid of the fragment shader
+         */
         auto getFragmentShaderUuid() const -> Uuid {
             return m_fragment_shader_id;
         }
@@ -62,8 +108,7 @@ namespace rosa {
         int          m_mvp_id{-1};
         Uuid         m_vertex_shader_id{};
         Uuid         m_fragment_shader_id{};
-
-        bool m_compiled{false};
+        bool         m_compiled{false};
     };
 
 }// namespace rosa
