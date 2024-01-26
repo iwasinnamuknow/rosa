@@ -29,12 +29,19 @@ constexpr int max_textures{32};
 
 namespace rosa {
 
+    /**
+     * \brief Stats for each frame
+     */
     struct RendererStats {
         int draws{0};
-        int verts{0};
+        int vertices{0};
         int textures{0};
+        int shaders{0};
     };
 
+    /**
+     * \brief Collection of data required to render
+     */
     struct Renderable {
         Quad           quad;
         glm::mat4      transform{1.F};
@@ -43,59 +50,102 @@ namespace rosa {
         float          texture_index{0.F};
     };
 
+    /**
+     * \brief A semi-intelligent batch quad renderer
+     *
+     * Renderables are submitted to the renderer. On flushing, the renderer will
+     * sort renderables by render space. World-space objects will be rendered first,
+     * then screen-space.
+     *
+     * The renderables are sorted secondarily by shader, grouping objects which use the
+     * same shader together to minimise program changes.
+     *
+     * There is an upper limit to how many objects will be rendered in a single draw call.
+     * If the limit is reached and additional objects are submitted, the renderer will flush
+     * the render queue before adding the new object.
+     */
     class Renderer {
-        public:
-            static auto getInstance() -> Renderer&;
-            static auto shutdown() -> void;
+    public:
+        /**
+         * \brief Get the global instance
+         */
+        static auto getInstance() -> Renderer&;
 
-            auto submit(Renderable renderable) -> void;
-            auto flushBatch() -> void;
+        /**
+         * \brief Cleanup the global instance
+         */
+        static auto shutdown() -> void;
 
-            auto getStats() -> RendererStats;
-            auto clearStats() -> void;
+        /**
+         * \brief Push a renderable object to the queue
+         */
+        auto submit(Renderable renderable) -> void;
 
-            Renderer();
-            ~Renderer();
+        /**
+         * \brief Explicitly flush the queue
+         */
+        auto flushBatch() -> void;
 
-            auto updateVp(glm::mat4 view, glm::mat4 projection) -> void {
-                m_view_matrix       = view;
-                m_projection_matrix = projection;
-            }
+        /**
+         * \brief Get render stats for the previous frame
+         */
+        auto getStats() -> RendererStats;
 
-            auto makeShaderProgram(Uuid vertex_shader = {}, Uuid fragment_shader = {}) -> ShaderProgram*;
+        /**
+         * \brief Zero out all stats counters
+         */
+        auto clearStats() -> void;
 
-        private:
-            auto flush(unsigned int shader_program_id, glm::mat4 mvp, int mvp_id) -> void;
+        /**
+         * \brief Set the view and projection matrices
+         */
+        auto updateVp(glm::mat4 view, glm::mat4 projection) -> void;
 
-            std::vector<Renderable> m_renderables{};
+        /**
+         * \brief Request a shader program be constructed
+         *
+         * Renderable objects should request a shader program here. If a matching
+         * shader already exists, it will be returned - otherwise it will be constructed
+         * and cached.
+         */
+        auto makeShaderProgram(Uuid vertex_shader = {}, Uuid fragment_shader = {}) -> ShaderProgram*;
 
-            Vertex* m_vertex_buffer;
-            Vertex* m_vertex_buffer_ptr;
-            GLuint m_vao;
-            GLuint m_vbo;
-            GLuint m_ibo;
-            
-            int m_index_count{0};
-            std::array<uint32_t, max_index_count> m_indices;
+        Renderer();
+        ~Renderer();
 
-            uint32_t m_texture_count{0};
-            std::array<uint32_t, max_textures> m_textures;
+    private:
+        auto flush(unsigned int shader_program_id, glm::mat4 mvp, int mvp_id) -> void;
 
-            uint32_t m_empty_tex_id{0};
+        std::vector<Renderable> m_renderables{};
 
-            // statistics per call
-            int m_quad_draws{0};
-            int m_draw_calls{0};
-            int m_texture_binds{0};
+        Vertex* m_vertex_buffer;
+        Vertex* m_vertex_buffer_ptr;
+        GLuint  m_vao;
+        GLuint  m_vbo;
+        GLuint  m_ibo;
 
-            glm::vec4 m_camera_pos{0};
+        int                                   m_index_count{0};
+        std::array<uint32_t, max_index_count> m_indices;
 
-            glm::mat4 m_view_matrix;
-            glm::mat4 m_projection_matrix;
+        uint32_t                           m_texture_count{0};
+        std::array<uint32_t, max_textures> m_textures;
 
-            std::vector<std::unique_ptr<ShaderProgram>> m_shaders{};
+        uint32_t m_empty_tex_id{0};
 
-            static std::unique_ptr<Renderer> s_instance;
+        // statistics per call
+        int m_quad_draws{0};
+        int m_draw_calls{0};
+        int m_texture_binds{0};
+        int m_shader_changes{0};
+
+        glm::vec4 m_camera_pos{0};
+
+        glm::mat4 m_view_matrix;
+        glm::mat4 m_projection_matrix;
+
+        std::vector<std::unique_ptr<ShaderProgram>> m_shaders{};
+
+        static std::unique_ptr<Renderer> s_instance;
     };
 
-} // namespace rosa
+}// namespace rosa

@@ -180,6 +180,7 @@ namespace rosa {
                 }
                 current_shader_id = renderable.shader_program->getProgramId();
                 current_mvp_id    = renderable.shader_program->getMvpId();
+                m_shader_changes++;
             }
 
             // Calculate the positions for each of the 4 vertices, taking the object transform
@@ -262,13 +263,14 @@ namespace rosa {
     }
 
     auto Renderer::getStats() -> RendererStats {
-        return {m_draw_calls, m_quad_draws * 4, m_texture_binds};
+        return {m_draw_calls, m_quad_draws * 4, m_texture_binds, m_shader_changes};
     }
 
     auto Renderer::clearStats() -> void {
-        m_draw_calls    = 0;
-        m_quad_draws    = 0;
-        m_texture_binds = 0;
+        m_draw_calls     = 0;
+        m_quad_draws     = 0;
+        m_texture_binds  = 0;
+        m_shader_changes = 0;
     }
 
     std::unique_ptr<Renderer> Renderer::s_instance{nullptr};
@@ -279,6 +281,11 @@ namespace rosa {
         }
 
         return *s_instance;
+    }
+
+    auto Renderer::updateVp(glm::mat4 view, glm::mat4 projection) -> void {
+        m_view_matrix       = view;
+        m_projection_matrix = projection;
     }
 
     auto Renderer::shutdown() -> void {
