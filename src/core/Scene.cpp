@@ -297,4 +297,8 @@ namespace rosa {
         Renderer::getInstance().flushBatch();
     }
 
+    auto Scene::getEntity(Uuid uuid) -> Entity& {
+        return m_entities.at(m_uuid_to_entity.at(uuid));
+    }
+
 } // namespace rosa

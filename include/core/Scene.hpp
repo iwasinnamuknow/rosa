@@ -131,9 +131,7 @@ namespace rosa {
              * @param entt_id entt ID of the entity
              * @return Entity& reference to the entity
              */
-            auto getEntity(Uuid uuid) -> Entity& {
-                return m_entities.at(m_uuid_to_entity.at(uuid));
-            }
+            auto getEntity(Uuid uuid) -> Entity&;
 
 
         private:
