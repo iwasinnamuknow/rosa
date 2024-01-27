@@ -30,7 +30,7 @@ public:
         spdlog::info("NativeScript Test script loaded");
     }
 
-    void onUpdate(float delta_time) override {
+    void onUpdate(float /*delta_time*/) override {
         m_test_int++;
         m_test_string = "test_string" + std::to_string(m_test_int);
     }

@@ -64,7 +64,7 @@ namespace rosa {
 
         protected:
             virtual auto serialise() const -> YAML::Node{ return {}; }
-            virtual auto deserialise(YAML::Node node) -> void{}
+            virtual auto deserialise(YAML::Node /*node*/) -> void {}
             virtual auto getName() const -> std::string{ return{}; }
 
             friend auto operator<<(YAML::Emitter& out, const NativeScriptEntity& component) -> YAML::Emitter&;

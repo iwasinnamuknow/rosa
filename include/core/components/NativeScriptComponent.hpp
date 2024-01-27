@@ -67,7 +67,7 @@ namespace rosa {
         }
 
         void bind(NativeScriptEntity* nse) {
-            instantiate_function = [this, nse](std::reference_wrapper<Scene> scene, std::reference_wrapper<Entity> entity) {
+            instantiate_function = [this, nse](std::reference_wrapper<Scene> /*scene*/, std::reference_wrapper<Entity> /*entity*/) {
                 instance = nse;
             };
 

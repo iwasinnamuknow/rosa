@@ -59,13 +59,13 @@ namespace rosa {
         // Fill the index array
         uint32_t offset{0};
         for (int i = 0; i < max_index_count; i += 6) {
-            m_indices[i + 0] = 0 + offset;
-            m_indices[i + 1] = 1 + offset;
-            m_indices[i + 2] = 2 + offset;
+            m_indices[static_cast<std::uint32_t>(i + 0)] = 0 + offset;
+            m_indices[static_cast<std::uint32_t>(i + 1)] = 1 + offset;
+            m_indices[static_cast<std::uint32_t>(i + 2)] = 2 + offset;
 
-            m_indices[i + 3] = 1 + offset;
-            m_indices[i + 4] = 2 + offset;
-            m_indices[i + 5] = 3 + offset;
+            m_indices[static_cast<std::uint32_t>(i + 3)] = 1 + offset;
+            m_indices[static_cast<std::uint32_t>(i + 4)] = 2 + offset;
+            m_indices[static_cast<std::uint32_t>(i + 5)] = 3 + offset;
 
             offset += 4;
         }
@@ -129,7 +129,7 @@ namespace rosa {
         ZoneScopedN("Render:Renderer:FlushBatch");
 
         // bind active textures
-        int i{0};
+        unsigned int i{0};
         for (auto texture_id: m_textures) {
             if (texture_id != 0) {
                 glActiveTexture(GL_TEXTURE0 + i);
@@ -249,7 +249,7 @@ namespace rosa {
         glUseProgram(shader_program_id);
         glBindVertexArray(m_vao);
         glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * (m_quad_draws * 4), m_vertex_buffer, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * (static_cast<std::uint32_t>(m_quad_draws * 4)), m_vertex_buffer, GL_DYNAMIC_DRAW);
 
         glUniformMatrix4fv(mvp_id, 1, GL_FALSE, &mvp[0][0]);
 

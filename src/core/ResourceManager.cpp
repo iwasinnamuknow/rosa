@@ -14,11 +14,9 @@
  * rosa. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "core/LuaScript.hpp"
 #include <audio/AudioFile.hpp>
-#include <graphics/Shader.hpp>
-#include <graphics/BitmapFont.hpp>
 #include <cassert>
+#include <core/LuaScript.hpp>
 #include <core/Resource.hpp>
 #include <core/ResourceManager.hpp>
 #include <core/SerialiserTypes.hpp>
@@ -27,25 +25,26 @@
 #include <exception>
 #include <filesystem>
 #include <fmt/format.h>
+#include <graphics/BitmapFont.hpp>
 #include <graphics/Shader.hpp>
 #include <physfs.h>
 #include <string>
 
-#if (_WIN32)
+#if defined(_WIN32)
 #include <stdlib.h>
-#elif (__linux__)
+#elif defined(__linux__)
 #include <unistd.h>
 #endif
 
 auto get_exe_dir() -> std::string {
-#if (_WIN32)
+#if defined(_WIN32)
     char* exe_path;
     if (_get_pgmptr(&exePath) != 0) {
         return {};
     }
 
     std::string directory{exe_path};
-#elif (__linux__)
+#elif defined(__linux__)
     std::uint64_t     path_max{256};
     std::vector<char> exe_path(path_max, 0);
     ssize_t           len = ::readlink("/proc/self/exe", exe_path.data(), /*max_length=*/path_max);

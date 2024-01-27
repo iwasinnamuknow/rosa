@@ -36,7 +36,7 @@ public:
         for (int i = 0; i < 12; i++) {
             auto& entity = createEntity();
             entity.setParent(parent.getUUID());
-            auto& sprite = entity.addComponent<rosa::SpriteComponent>();
+            entity.addComponent<rosa::SpriteComponent>();
         }
 
         parent.addComponent<rosa::SoundPlayerComponent>();

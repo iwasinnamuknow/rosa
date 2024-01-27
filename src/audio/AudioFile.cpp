@@ -45,7 +45,7 @@ namespace rosa {
     }
 
     auto AudioFile::seek(int offset) -> void {
-        PHYSFS_seek(m_file_ptr, static_cast<std::uint64_t>(offset));
+        PHYSFS_seek(m_file_ptr, static_cast<std::uint32_t>(offset));
     }
 
     auto AudioFile::pos() -> unsigned int {

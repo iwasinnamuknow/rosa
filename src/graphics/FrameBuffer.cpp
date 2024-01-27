@@ -259,7 +259,7 @@ namespace rosa {
             int bottomOffset = (m_height - y - 1) * m_width * 4;
 
             for (int x = 0; x < m_width * 4; ++x) {
-                std::swap(m_color_buffer[topOffset + x], m_color_buffer[bottomOffset + x]);
+                std::swap(m_color_buffer[static_cast<std::uint32_t>(topOffset + x)], m_color_buffer[static_cast<std::uint32_t>(bottomOffset + x)]);
             }
         }
     }

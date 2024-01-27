@@ -232,7 +232,7 @@ namespace rosa {
             new_quad.texture_rect_pos.y = (static_cast<float>(row) * static_cast<float>(m_cell_y)) / static_cast<float>(m_image_y);
 
             quads.push_back(new_quad);
-            m_cursor_x += m_widths.at(character);
+            m_cursor_x += m_widths.at(static_cast<std::uint64_t>(character));
         }
 
         return quads;

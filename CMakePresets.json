@@ -24,6 +24,7 @@
             "binaryDir": "${sourceDir}/build/linux/debug",
             "inherits": [ "base-linux" ],
             "cacheVariables": {
+                "ROSA_PROFILE": false,
                 "BUILD_DOCUMENTATION": "true",
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_VERBOSE_MAKEFILE": "ON",
