@@ -325,7 +325,7 @@ namespace rosa {
                 "setTexture", &rosa::SpriteComponent::setTexture,
                 "getColour", &rosa::SpriteComponent::getColour,
                 "setColour", &rosa::SpriteComponent::setColour,
-                "getSize", &rosa::SpriteComponent::getSize,
+                "getWindowSize", &rosa::SpriteComponent::getSize,
                 "setTextureRect", sol::overload(
                         static_cast<void (rosa::SpriteComponent::*)(glm::vec2, glm::vec2)>(&rosa::SpriteComponent::setTextureRect),
                         static_cast<void (rosa::SpriteComponent::*)(rosa::Rect)>(&rosa::SpriteComponent::setTextureRect)
@@ -387,8 +387,7 @@ namespace rosa {
 
         state.new_usertype<rosa::RenderWindow>(
                 "RenderWindow",
-                "getViewportSize", &rosa::RenderWindow::getViewportSize
-        );
+                "getWindowSize", &rosa::RenderWindow::getWindowSize);
     }
 
     LuaScriptComponent::LuaScriptComponent(Scene* scene, entt::entity entity) : m_entity(entity), m_scene(scene) {

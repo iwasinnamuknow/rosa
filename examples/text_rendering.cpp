@@ -38,7 +38,7 @@ class MyScene : public rosa::Scene {
         // any time the GameManager activates the scene.
         auto onLoad() -> void override {
             // Grab the window size
-            auto window_size = getRenderWindow().getSize();
+            auto window_size = getRenderWindow().getWindowSize();
 
             // Calculate a screen-centered position for the image
             const auto position = glm::vec2(

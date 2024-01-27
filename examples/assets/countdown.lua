@@ -60,7 +60,7 @@ function onCreate()
 
     local start_pos = Vec2.new(0, 0)
     local end_pos = Vec2.new(total_width, 128)
-    local window_size = scene:getRenderWindow():getViewportSize()
+    local window_size = scene:getRenderWindow():getWindowSize()
 
     local position = Vec2.new(
         ((window_size.x / 2.0) - ((end_pos.x - start_pos.x) / 2.0)),

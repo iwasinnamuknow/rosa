@@ -39,7 +39,7 @@ public:
     auto onLoad() -> void override {
 
         // Grab the window size
-        auto window_size = getRenderWindow().getSize();
+        auto window_size = getRenderWindow().getWindowSize();
 
         // Calculate a screen-centered position for the image
         const auto position = glm::vec2(
@@ -82,7 +82,7 @@ TEST_CASE("Rotate an image via lua script", "[lua]") {
     // Advance some frames
     game_mgr.run(3);
 
-    auto wnd_size = game_mgr.getRenderWindow()->getSize();
+    auto wnd_size = game_mgr.getRenderWindow()->getWindowSize();
 
     // Read current framebuffer and compare to the reference image
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();

@@ -32,6 +32,8 @@
 
 namespace rosa {
 
+    class GameManager;
+
     /**
      * \brief An error occurred in the render context
      */
@@ -42,35 +44,104 @@ namespace rosa {
         }
     };
 
+    /**
+     * \brief Provides and interface to the OpenGL context
+     *
+     * The RenderWindow handles initialising the OpenGL context and window. It also polls for events
+     * and pushes them to the event queue. It can handle resizing the window and going into/out of
+     * fullscreen.
+     */
     class RenderWindow {
     public:
-        RenderWindow(int width, int height, const std::string& title = "OpenGL", int msaa = 1, bool window_hidden = false);
-        static void callbackResize(GLFWwindow* window, int changed_x, int changed_y);
-        auto        isFullscreen() const -> bool;
-        auto        setFullScreen(bool fullscreen) -> void;
-        auto        clearColour(Colour colour) -> void;
-        auto        isOpen() const -> bool;
-        auto        display(glm::vec2 camera_pos) -> void;
+        /**
+         * \brief Create the render window
+         * \param width window width
+         * \param height window height
+         * \param title window title
+         * \param msaa MSAA multiplier
+         * \param window_hidden Make the window invisible
+         */
+        RenderWindow(int width, int height, const std::string& title = "Rosa Engine", int msaa = 1, bool window_hidden = false);
 
-        auto getSize() const -> glm::vec2 {
-            return {m_wnd_size[0], m_wnd_size[1]};
-        }
+        /**
+         * \brief Tracks whether window closure has been requested
+         */
+        auto isOpen() const -> bool;
 
-        auto getGlWindowPtr() -> GLFWwindow* {
-            return m_wnd;
-        }
-
+        /**
+         * \brief Request window closure
+         */
         auto close() -> void {
             glfwSetWindowShouldClose(m_wnd, 1);
         }
 
+        /**
+         * \brief Clear the window with a background colour
+         */
+        auto clearWindow(Colour colour) -> void;
+
+        /**
+         * \brief Check if the window is fullscreen
+         */
+        auto isFullscreen() const -> bool;
+
+        /**
+         * \brief Set the fullscreen state of the window
+         */
+        auto setFullScreen(bool fullscreen) -> void;
+
+        /**
+         * \brief Get the pixel size of the window
+         */
+        auto getWindowSize() const -> glm::vec2 {
+            return {m_wnd_size[0], m_wnd_size[1]};
+        }
+
+        /**
+         * \brief Discover if a key is being pressed
+         */
         auto isKeyDown(Key key) -> bool;
-        auto readFrame() -> std::span<unsigned char>;
-        auto getViewportSize() const -> glm::vec2;
+
+        /**
+         * \brief Get the projection matrix
+         */
         auto getProjection() const -> glm::mat4;
+
+        /**
+         * \brief Get the view matrix
+         */
         auto getView() const -> glm::mat4;
+
+        /**
+         * \brief Get the framebuffer
+         */
         auto getFrameBuffer() -> FrameBuffer&;
-        auto pollEvents() -> bool;
+
+        /**
+         * \brief Poll for input events and push to the queue
+         */
+        auto pollEvents() -> void;
+
+        /**
+         * \brief Get the size of the OpenGL viewport
+         */
+        auto getViewportSize() const -> glm::vec2;
+
+        /**
+         * \brief Update the window, viewport and calculate matrices
+         * \param camera_pos World-space position of the active camera
+         */
+        auto display(glm::vec2 camera_pos) -> void;
+
+        /**
+         * \brief Get pixel data for the current framebuffer state
+         */
+        auto readFrame() -> std::span<unsigned char>;
+
+        /**
+         * \brief This callback is used by OpenGL on resizing
+         */
+        static void callbackResize(GLFWwindow* window, int changed_x, int changed_y);
 
     private:
         std::array<int, 2> m_wnd_pos{0, 0};
@@ -82,10 +153,19 @@ namespace rosa {
 
         void resize(int change_x, int change_y);
 
+        /**
+         * \brief Get an OpenGL window pointer
+         */
+        auto getGlWindowPtr() -> GLFWwindow* {
+            return m_wnd;
+        }
+
         glm::mat4 m_projection_matrix{};
         glm::mat4 m_view_matrix{0.F};
 
         FrameBuffer m_framebuffer;
+
+        friend class GameManager;
     };
 
 }// namespace rosa

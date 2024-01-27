@@ -38,7 +38,7 @@ public:
     auto onLoad() -> void override {
 
         // Grab the window size
-        auto window_size = getRenderWindow().getSize();
+        auto window_size = getRenderWindow().getWindowSize();
 
         // Calculate a screen-centered position for the image
         const auto position = glm::vec2(
@@ -83,7 +83,7 @@ TEST_CASE("Displays a simple 2d image on a quad", "[gl]") {
     auto pixels = game_mgr.getRenderWindow()->readFrame();
 
     // Save out a copy of the current framebuffer for debugging
-    [[maybe_unused]] auto size = game_mgr.getRenderWindow()->getSize();
+    [[maybe_unused]] auto size = game_mgr.getRenderWindow()->getWindowSize();
     // rosa::ImageComparator::writePNG("display_image.png", pixels, size.x, size.y);
 
     // Load in the reference image

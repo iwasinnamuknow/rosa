@@ -132,7 +132,7 @@ namespace rosa {
         m_update_viewport = true;
 
         m_view_matrix       = glm::lookAt(glm::vec3(0.F, 0.F, 1.F), glm::vec3(0.F, 0.F, 0.F), glm::vec3(0.F, 1.F, 0.F));
-        m_projection_matrix = glm::ortho(0.F, static_cast<float>(m_vp_size[0]), static_cast<float>(m_vp_size[1]), 0.F);
+        m_projection_matrix = glm::ortho(0.F, static_cast<float>(m_wnd_size[0]), static_cast<float>(m_wnd_size[1]), 0.F);
 
         if (msaa > 1) {
             m_framebuffer.init(width, height, msaa);
@@ -155,7 +155,7 @@ namespace rosa {
         m_framebuffer.init(change_x, change_y);
 
         m_update_viewport = true;
-        m_projection_matrix = glm::ortho(0.F, static_cast<float>(m_vp_size[0]), static_cast<float>(m_vp_size[1]), 0.F);
+        m_projection_matrix = glm::ortho(0.F, static_cast<float>(m_wnd_size[0]), static_cast<float>(m_wnd_size[1]), 0.F);
 
         rosa::Event event{};
         event.type   = rosa::EventType::EventResize;
@@ -163,9 +163,8 @@ namespace rosa {
         rosa::EventManager::getInstance().pushEvent(event);
     }
 
-    auto RenderWindow::pollEvents() -> bool {
+    auto RenderWindow::pollEvents() -> void {
         glfwPollEvents();
-        return false;
     }
 
     auto RenderWindow::isOpen() const -> bool {
@@ -184,7 +183,7 @@ namespace rosa {
             m_view_matrix = glm::lookAt(glm::vec3(camera_pos.x - 1, camera_pos.y - 1, 1.F), glm::vec3(camera_pos.x - 1, camera_pos.y - 1, 0.F), glm::vec3(0.F, 1.F, 0.F));
         }
 
-        m_projection_matrix = glm::ortho(0.F, static_cast<float>(m_vp_size[0]), static_cast<float>(m_vp_size[1]), 0.F);
+        m_projection_matrix = glm::ortho(0.F, static_cast<float>(m_wnd_size[0]), static_cast<float>(m_wnd_size[1]), 0.F);
 
         {
             TracyGpuZone("Swap Buffers");
@@ -192,7 +191,7 @@ namespace rosa {
         }
     }
 
-    auto RenderWindow::clearColour(Colour colour) -> void {
+    auto RenderWindow::clearWindow(Colour colour) -> void {
         ZoneScopedN("Render:Clear");
         TracyGpuZone("Clear");
         glClearColor(colour.r, colour.g, colour.b, colour.a);

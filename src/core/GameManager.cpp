@@ -119,7 +119,7 @@ namespace rosa {
                 ZoneScopedNC("Render", 0xFF0000);
 
                 m_render_window->getFrameBuffer().bind();
-                m_render_window->clearColour(m_clear_colour);
+                m_render_window->clearWindow(m_clear_colour);
                 m_current_scene->render();
 
                 {
@@ -132,7 +132,7 @@ namespace rosa {
                 m_render_window->getFrameBuffer().unbind();
             }
 
-            auto size = m_render_window->getSize();
+            auto size = m_render_window->getWindowSize();
             assert(m_render_window->getFrameBuffer().getWidth() == size.x);
             m_render_window->getFrameBuffer().blitColorTo(0, 0, 0, static_cast<int>(size.x), static_cast<int>(size.y));
             m_render_window->getFrameBuffer().blitDepthTo(0, 0, 0, static_cast<int>(size.x), static_cast<int>(size.y));
