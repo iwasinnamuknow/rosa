@@ -31,10 +31,6 @@ namespace rosa {
             return getTexture().getUUID();
         }
 
-        auto setTexture(Uuid uuid) -> void {
-            Sprite::setTexture(uuid);
-        }
-
         private:
             friend class SceneSerialiser;
     };
