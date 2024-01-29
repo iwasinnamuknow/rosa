@@ -109,25 +109,13 @@ namespace rosa {
 
     template auto Entity::addComponent<TransformComponent>() -> TransformComponent&;
     template auto Entity::addComponent<CameraComponent>() -> CameraComponent&;
+    template auto Entity::addComponent<LuaScriptComponent>() -> LuaScriptComponent&;
     template auto Entity::addComponent<NativeScriptComponent>() -> NativeScriptComponent&;
     template auto Entity::addComponent<TextComponent>() -> TextComponent&;
     template auto Entity::addComponent<MusicPlayerComponent>() -> MusicPlayerComponent&;
     template auto Entity::addComponent<SoundPlayerComponent>() -> SoundPlayerComponent&;
     template auto Entity::addComponent<SpriteComponent>() -> SpriteComponent&;
 
-    template<typename T>
-    auto Entity::addComponent(Scene* scene, entt::entity entity) -> T& {
-        assert(!hasComponent<T>());
-        return m_scene.getRegistry().emplace<T>(m_id, std::forward<Scene*>(scene), std::forward<entt::entity>(entity));
-    }
-
-    template auto Entity::addComponent<LuaScriptComponent>(Scene* scene, entt::entity entity) -> LuaScriptComponent&;
-
-    /**
-         * \brief Remove a specific component type from the Entity
-         * \tparam T Component type
-         * \return true if the component was removed, false otherwise
-         */
     template<typename T>
     auto Entity::removeComponent() -> bool {
         assert(hasComponent<T>());

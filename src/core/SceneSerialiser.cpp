@@ -153,8 +153,8 @@ namespace rosa {
                     auto& sprite = new_entity.addComponent<SpriteComponent>();
                     sprite = comp.as<SpriteComponent>();
                 } else if (type == "lua_script") {
-                    auto& lsc = new_entity.addComponent<LuaScriptComponent>(&m_scene, new_entity);
-                    YAML::convert<LuaScriptComponent>::decode(comp, lsc);
+                    auto& lsc = new_entity.addComponent<LuaScriptComponent>();
+                    YAML::convert<LuaScriptComponent>::decode(comp, lsc, &m_scene, new_entity.getUUID());
                 } else if (type == "sound") {
                     auto& player = new_entity.addComponent<SoundPlayerComponent>();
                     YAML::convert<SoundPlayerComponent>::decode(comp, player);

@@ -56,16 +56,16 @@ public:
         auto& entity = createEntity();
 
         // Add a SpriteComponent to it.
-        entity.addComponent<rosa::SpriteComponent>();
+        auto& sprite = entity.addComponent<rosa::SpriteComponent>();
 
         // Set the sprites texture. This is via uuid, not the object we obtained earlier.
-        entity.getComponent<rosa::SpriteComponent>().setTexture(dds_uuid);
+        sprite.setTexture(dds_uuid);
 
         // Set the position to screen-center
         entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
 
         // Create lua script
-        auto& lsc = entity.addComponent<rosa::LuaScriptComponent>(this, entity);
+        auto& script_comp = entity.addComponent<rosa::LuaScriptComponent>();
 
         // Create sound player
         auto& splayer = entity.addComponent<rosa::SoundPlayerComponent>();
@@ -75,8 +75,7 @@ public:
         auto& mplayer = entity.addComponent<rosa::MusicPlayerComponent>();
         mplayer.setAudio(music_uuid);
 
-        // Initialise the lua script
-        lsc.setScript(script_uuid);
+        script_comp.setScript(entity.getUUID(), this, script_uuid);
 
         // Create a NativeScriptComponent to test serialisation of that too
         getRegistry().emplace<rosa::NativeScriptComponent>(entity).bind<NSCTest>();

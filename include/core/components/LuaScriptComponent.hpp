@@ -45,7 +45,7 @@ namespace rosa {
          * \param scene parent scene
          * \param entity parent entity
          */
-        LuaScriptComponent(Scene* scene, entt::entity entity);
+        LuaScriptComponent();
 
         /**
          * \brief Load a script
@@ -57,7 +57,7 @@ namespace rosa {
          * \param deserialised true if this entity is being deserialised
          * \return true if loading was successful
          */
-        auto setScript(Uuid uuid, bool deserialised = false) -> bool;
+        auto setScript(Uuid entity, Scene* scene, Uuid script, bool deserialised = false) -> bool;
 
         /**
          * \brief Get the loaded script
@@ -109,8 +109,8 @@ namespace rosa {
         sol::protected_function m_on_input_function;
         Uuid                    m_uuid;
 
-        entt::entity m_entity;
-        Scene* m_scene;
+        Uuid   m_entity;
+        Scene* m_scene{nullptr};
 
         friend class Scene;
 

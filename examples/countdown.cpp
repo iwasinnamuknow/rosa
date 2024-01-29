@@ -40,9 +40,10 @@ public:
         }
 
         parent.addComponent<rosa::SoundPlayerComponent>();
-        auto& script_comp = parent.addComponent<rosa::LuaScriptComponent>(this, parent);
+        auto& script_comp = parent.addComponent<rosa::LuaScriptComponent>();
         script_comp.setValue("start_time", countdown_start);
-        script_comp.setScript(script_uuid);
+        script_comp.setScript(parent.getUUID(), this, script_uuid);
+
     }
 };
 

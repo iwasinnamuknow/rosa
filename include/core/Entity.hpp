@@ -15,9 +15,9 @@
 
 #pragma once
 
-#include "core/components/TransformComponent.hpp"
-#include <entt/entt.hpp>
 #include <core/Uuid.hpp>
+#include <core/components/TransformComponent.hpp>
+#include <entt/entt.hpp>
 #include <functional>
 
 namespace rosa {
@@ -116,9 +116,6 @@ namespace rosa {
          */
         template<typename T>
         auto addComponent() -> T&;
-
-        template<typename T>
-        auto addComponent(Scene* scene, entt::entity entity) -> T&;
 
         /**
          * \brief Remove a specific component type from the Entity

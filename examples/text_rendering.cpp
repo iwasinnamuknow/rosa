@@ -73,8 +73,8 @@ class MyScene : public rosa::Scene {
             cam_comp.setEnabled(true);
 
             // Add a simple camera movement script
-            auto& cam_script_comp = cam_entity.addComponent<rosa::LuaScriptComponent>(this, cam_entity);
-            cam_script_comp.setScript(cam_script_uuid);
+            auto& cam_script_comp = cam_entity.addComponent<rosa::LuaScriptComponent>();
+            cam_script_comp.setScript(cam_entity.getUUID(), this, cam_script_uuid);
         }
 };
 

@@ -61,8 +61,8 @@ public:
         entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
 
         // Creat the lua script component and load our script
-        auto& script_comp = entity.addComponent<rosa::LuaScriptComponent>(this, entity);
-        script_comp.setScript(script_uuid);
+        auto& script_comp = entity.addComponent<rosa::LuaScriptComponent>();
+        script_comp.setScript(entity.getUUID(), this, script_uuid);
     }
 };
 

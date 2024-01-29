@@ -239,12 +239,12 @@ namespace YAML {
 
     template<>
     struct convert<rosa::LuaScriptComponent> {
-        static auto decode(const Node& node, rosa::LuaScriptComponent& rhs) -> bool {
+        static auto decode(const Node& node, rosa::LuaScriptComponent& rhs, rosa::Scene* scene, rosa::Uuid entity) -> bool {
             if (!node.IsMap()) {
                 return false;
             }
 
-            rhs.setScript(node["script"].as<rosa::Uuid>(), true);
+            rhs.setScript(entity, scene, node["script"].as<rosa::Uuid>(), true);
 
             if (node["data"]) {
                 auto script_data = node["data"];

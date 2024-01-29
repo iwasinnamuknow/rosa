@@ -390,19 +390,24 @@ namespace rosa {
                 "getWindowSize", &rosa::RenderWindow::getWindowSize);
     }
 
-    LuaScriptComponent::LuaScriptComponent(Scene* scene, entt::entity entity) : m_entity(entity), m_scene(scene) {
+    LuaScriptComponent::LuaScriptComponent() {
         ZoneScopedN("LuaScriptComponent:Initialise");
 
         m_state.open_libraries(sol::lib::base, sol::lib::string);
     }
 
-    auto LuaScriptComponent::setScript(Uuid uuid, bool deserialised) -> bool {
+    auto LuaScriptComponent::setScript(Uuid entity_id, Scene* scene, Uuid script_id, bool deserialised) -> bool {
         ZoneScopedN("LuaScriptComponent:setScript");
 
-        try {
-            const auto& script = ResourceManager::getInstance().getAsset<LuaScript>(uuid);
+        assert(scene != nullptr);
 
-            auto& entity = m_scene->getEntity(m_scene->m_entity_to_uuid.at(m_entity));
+        m_scene  = scene;
+        m_entity = entity_id;
+
+        try {
+            const auto& script = ResourceManager::getInstance().getAsset<LuaScript>(script_id);
+
+            auto& entity = m_scene->getEntity(m_entity);
 
             init_events(m_state);
             init_types(m_state);
@@ -416,7 +421,7 @@ namespace rosa {
                 m_on_input_function = m_state["onInput"];
                 m_on_load_function  = m_state["onLoad"];
 
-                m_uuid = uuid;
+                m_uuid = script_id;
 
                 m_state["scene"] = m_scene;
 
