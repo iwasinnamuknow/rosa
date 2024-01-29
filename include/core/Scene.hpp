@@ -21,17 +21,14 @@
 #include <spdlog/spdlog.h>
 #include <unordered_map>
 
-//#include <core/Entity.hpp>
+#include <core/Entity.hpp>
 #include <core/Event.hpp>
-#include <core/Uuid.hpp>
 
 namespace rosa {
 
     class NativeScriptEntity;
     struct LuaScriptComponent;
     class SceneSerialiser;
-
-    class Entity;
 
     /**
      * @brief Contains a registry of Entity and methods for handling them.

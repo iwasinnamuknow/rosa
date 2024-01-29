@@ -15,25 +15,22 @@
 
 #pragma once
 
-#include <core/Entity.hpp>
-#include <core/Scene.hpp>
-
 #include <string>
 #include <memory>
 #include <algorithm>
 #include <unordered_map>
 #include <vector>
 
-#include <glm/glm.hpp>
-#include <physfs.h>
-#include <spdlog/spdlog.h>
-#include <sol/sol.hpp>
+#include <GLFW/glfw3.h>
+#include <entt/fwd.hpp>
 #include <fmt/format.h>
-#include <entt/entt.hpp>
+#include <glm/glm.hpp>
+#include <graphics/gl.hpp>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include <graphics/gl.hpp>
-#include <GLFW/glfw3.h>
+#include <physfs.h>
+#include <sol/sol.hpp>
+#include <spdlog/spdlog.h>
 #include <tracy/Tracy.hpp>
 #include <yaml-cpp/yaml.h>

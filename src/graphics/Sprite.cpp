@@ -13,13 +13,14 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include <GLFW/glfw3.h>
+#include <core/ResourceManager.hpp>
 #include <cstddef>
 #include <cstring>
 #include <glm/glm.hpp>
+#include <graphics/Renderer.hpp>
 #include <graphics/Sprite.hpp>
 #include <graphics/gl.hpp>
-#include <GLFW/glfw3.h>
-#include <graphics/Renderer.hpp>
 #include <spdlog/spdlog.h>
 
 namespace rosa {

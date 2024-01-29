@@ -23,6 +23,7 @@
 #include <array>
 #include <core/input/Keyboard.hpp>
 #include <fmt/format.h>
+#include <graphics/Colour.hpp>
 #include <graphics/FrameBuffer.hpp>
 #include <graphics/Sprite.hpp>
 #include <graphics/Texture.hpp>

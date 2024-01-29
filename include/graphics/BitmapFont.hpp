@@ -16,6 +16,8 @@
 #pragma once
 
 #include <core/Resource.hpp>
+#include <graphics/Colour.hpp>
+#include <graphics/Quad.hpp>
 
 #include <array>
 

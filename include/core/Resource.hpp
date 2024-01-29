@@ -40,6 +40,20 @@ namespace rosa {
     };
 
     /**
+     * \brief A requested resource was not found
+     *
+     * Throw when:
+     *   * A resource was not found where the manifest claims
+     *   * A non-existent resource is requested from the ResourceManager
+     */
+    class ResourceNotFoundException : public Exception {
+    public:
+        explicit ResourceNotFoundException(const std::string& msg)
+            : Exception(msg) {
+        }
+    };
+
+    /**
      * \brief Base type of any resource that can be loaded/used
      */
     class Resource {

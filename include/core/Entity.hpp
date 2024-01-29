@@ -19,9 +19,10 @@
 #include <entt/entt.hpp>
 #include <core/Uuid.hpp>
 #include <functional>
-#include <core/Scene.hpp>
 
 namespace rosa {
+
+    class Scene;
 
     /**
      * \brief Represents a single object in the engine
@@ -98,10 +99,7 @@ namespace rosa {
          * \return reference to the component
          */
         template<typename T>
-        auto getComponent() -> T& {
-            assert(hasComponent<T>());
-            return m_scene.getRegistry().get<T>(m_id);
-        }
+        auto getComponent() -> T&;
 
         /**
          * \brief Enquire if the Entity contains a specific component type
@@ -109,20 +107,18 @@ namespace rosa {
          * \return true if the component exists, false otherwise
          */
         template<typename T>
-        auto hasComponent() -> bool {
-            return m_scene.getRegistry().any_of<T>(m_id);
-        }
+        auto hasComponent() -> bool;
 
         /**
          * \brief Add a specific component type to the Entity
          * \tparam T Component type
          * \return reference to the created component
          */
-        template<typename T, typename... Args>
-        auto addComponent(Args&& ... args) -> T& {
-            assert(!hasComponent<T>());
-            return m_scene.getRegistry().emplace<T>(m_id, std::forward<Args>(args)...);
-        }
+        template<typename T>
+        auto addComponent() -> T&;
+
+        template<typename T>
+        auto addComponent(Scene* scene, entt::entity entity) -> T&;
 
         /**
          * \brief Remove a specific component type from the Entity
@@ -130,10 +126,7 @@ namespace rosa {
          * \return true if the component was removed, false otherwise
          */
         template<typename T>
-        auto removeComponent() -> bool {
-            assert(hasComponent<T>());
-            return m_scene.getRegistry().remove<T>(m_id);
-        }
+        auto removeComponent() -> bool;
 
         /**
          * \brief Get the entt id of the Entity

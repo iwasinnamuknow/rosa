@@ -13,6 +13,7 @@
 *  see <https://www.gnu.org/licenses/>.
 */
 
+#include <graphics/Colour.hpp>
 #include <graphics/ImageComparator.hpp>
 #include <span>
 

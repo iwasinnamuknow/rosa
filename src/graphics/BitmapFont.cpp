@@ -18,8 +18,6 @@
 #include <core/ResourceManager.hpp>
 #include <cstring>
 #include <graphics/BitmapFont.hpp>
-#include <graphics/Colour.hpp>
-#include <graphics/Quad.hpp>
 #include <graphics/gl.hpp>
 #include <physfs.h>
 #include <vector>
