@@ -60,7 +60,8 @@ namespace rosa {
         }
 
         auto zero() const -> bool {
-            return (r == g == b == a == 0.F);
+            return (
+                    (r == g) && (r == b) && (r == a) && (a == 0.F));
         }
 
         float r{1}; /**< red value   */
