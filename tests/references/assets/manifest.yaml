@@ -15,3 +15,9 @@ assets:
     filtering:
       minify: 0x2601
       magnify: 0x2601
+  - type: 1
+    path: music.ogg
+    uuid: a3c890ea-0f97-d3ed-32de-55ba88c8dc63
+  - type: 1
+    path: bell.ogg
+    uuid: 60f20064-0c13-2e94-35cd-404c011c00a2

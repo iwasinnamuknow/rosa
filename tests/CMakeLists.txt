@@ -21,6 +21,7 @@ set(TESTS
   lua_coloured_image.cpp
   msaa.cpp
   texture_filtering.cpp
+        serialise.cpp
 )
 
 project(rosa_tests)
