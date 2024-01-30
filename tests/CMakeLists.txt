@@ -4,8 +4,9 @@ include(FetchContent)
 
 
 FetchContent_Declare(snitch                                                                          
-    GIT_REPOSITORY https://github.com/cschreib/snitch.git                           
-    GIT_TAG        v1.2.0) # update version number as needed                        
+    GIT_REPOSITORY https://github.com/cschreib/snitch.git
+        GIT_TAG v1.2.0 # update version number as needed
+        SYSTEM)
 FetchContent_MakeAvailable(snitch)                                                                   
                                                                                                      
 if (NOT CMAKE_BUILD_TYPE)                                                                            
