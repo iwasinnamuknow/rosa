@@ -495,7 +495,13 @@ namespace rosa {
     }
 
     auto LuaScriptComponent::getTable(const std::string& table) const -> sol::table {
-        return m_state[table];
+
+        auto result = m_state[table];
+        if (result.valid()) {
+            return m_state[table];
+        }
+
+        return {};
     }
 
 } // namespace rosa
