@@ -58,6 +58,10 @@ namespace rosa {
 
     GameManager::~GameManager() {
         spdlog::info("Rosa is shutting down");
+
+        // make sure scene destructors are called before everything else
+        m_scenes.clear();
+
         ImGui_ImplGlfw_Shutdown();
         ImGui_ImplOpenGL3_Shutdown();
         ImGui::DestroyContext();

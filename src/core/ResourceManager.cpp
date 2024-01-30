@@ -139,6 +139,7 @@ namespace rosa {
     }
 
     auto ResourceManager::shutdown() -> void {
+        spdlog::debug("ResourceManager: Shutting down");
         if (s_instance) {
             //s_instance.release();
             s_instance.reset();
