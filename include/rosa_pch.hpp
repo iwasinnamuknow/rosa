@@ -21,11 +21,11 @@
 #include <unordered_map>
 #include <vector>
 
+#include <graphics/gl.hpp>
 #include <GLFW/glfw3.h>
 #include <entt/fwd.hpp>
 #include <fmt/format.h>
 #include <glm/glm.hpp>
-#include <graphics/gl.hpp>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
