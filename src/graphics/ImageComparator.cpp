@@ -89,7 +89,7 @@ namespace rosa {
                     static_cast<float>(image_b[index + 3] / 254.99));
 
             auto difference = colour_a - colour_b;
-            if (difference.zero()) {
+            if (difference.isZero()) {
                 pixels_different++;
             }
 
