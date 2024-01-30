@@ -61,7 +61,7 @@ namespace rosa {
 
     auto operator<<(YAML::Emitter& out, const rosa::Colour& colour) -> YAML::Emitter& {
         out << YAML::Flow;
-        out << YAML::BeginSeq << static_cast<int>(colour.r) << static_cast<int>(colour.g) << static_cast<int>(colour.b) << static_cast<int>(colour.a) << YAML::EndSeq;
+        out << YAML::BeginSeq << colour.r << colour.g << colour.b << colour.a << YAML::EndSeq;
         return out;
     }
 

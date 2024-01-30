@@ -154,10 +154,10 @@ namespace YAML {
                 return false;
             }
 
-            rhs.r = node[0].as<std::uint8_t>();
-            rhs.g = node[1].as<std::uint8_t>();
-            rhs.b = node[2].as<std::uint8_t>();
-            rhs.a = node[3].as<std::uint8_t>();
+            rhs.r = node[0].as<float>();
+            rhs.g = node[1].as<float>();
+            rhs.b = node[2].as<float>();
+            rhs.a = node[3].as<float>();
             return true;
         }
     };
