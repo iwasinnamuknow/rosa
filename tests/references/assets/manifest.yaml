@@ -21,3 +21,6 @@ assets:
   - type: 1
     path: bell.ogg
     uuid: 60f20064-0c13-2e94-35cd-404c011c00a2
+  - type: 4
+    path: serialise_test.lua
+    uuid: 2404de33-3a8f-4dd3-97d9-5fe2bb579780

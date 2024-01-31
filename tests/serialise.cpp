@@ -35,7 +35,7 @@ static constexpr auto serialise_file = std::string("serialise.yaml");
 static constexpr auto dds_uuid    = rosa::Uuid("f7055f22-6bfa-1a3b-4dbd-b366dd18866d");
 static constexpr auto bell_uuid   = rosa::Uuid("60f20064-0c13-2e94-35cd-404c011c00a2");
 static constexpr auto music_uuid  = rosa::Uuid("a3c890ea-0f97-d3ed-32de-55ba88c8dc63");
-static constexpr auto script_uuid = rosa::Uuid("9046e8fe-cb01-7adf-1029-c79e71961173");
+static constexpr auto script_uuid = rosa::Uuid("2404de33-3a8f-4dd3-97d9-5fe2bb579780");
 
 namespace {
     bool camera_entity_found{false};
@@ -83,12 +83,10 @@ public:
         // Create sound player
         auto& splayer = entity.addComponent<rosa::SoundPlayerComponent>();
         splayer.setAudio(bell_uuid);
-        splayer.play();
 
         // Create music player
         auto& mplayer = entity.addComponent<rosa::MusicPlayerComponent>();
         mplayer.setAudio(music_uuid);
-        mplayer.play();
 
         script_comp.setScript(entity.getUUID(), this, script_uuid);
 
@@ -171,7 +169,7 @@ auto check_sprite(const YAML::Node& component) -> void {
     const auto& colour = component["colour"];
     REQUIRE(colour.Type() == YAML::NodeType::Sequence);
     auto colour_value = colour.as<rosa::Colour>();
-    REQUIRE(colour_value == rosa::Colour(1.F, 1.F, 1.F, 1.F));
+    REQUIRE(colour_value == rosa::Colour(0.46F, 1.F, 1.F, 1.F));
 }
 
 auto check_sound(const YAML::Node& component, rosa::Uuid source) -> void {
@@ -219,7 +217,13 @@ auto check_lua(const YAML::Node& component) -> void {
     REQUIRE(rotation.Type() == YAML::NodeType::Scalar);
     REQUIRE(rotation.Tag() == "!float");
     auto rotation_value = rotation.as<float>();
-    REQUIRE(roughly_equals(rotation_value, 0.5F));
+    REQUIRE(roughly_equals(rotation_value, 2.F));
+
+    const auto& red = data["red"];
+    REQUIRE(red.Type() == YAML::NodeType::Scalar);
+    REQUIRE(red.Tag() == "!float");
+    auto red_value = red.as<float>();
+    REQUIRE(roughly_equals(red_value, 0.51F));
 }
 
 auto check_native_script(const YAML::Node& component) -> void {
@@ -234,12 +238,12 @@ auto check_native_script(const YAML::Node& component) -> void {
     const auto& test_int = data["test_int"];
     REQUIRE(test_int.Type() == YAML::NodeType::Scalar);
     auto test_int_value = test_int.as<int>();
-    REQUIRE(test_int_value == 1239);
+    REQUIRE(test_int_value == 1244);
 
     const auto& test_string = data["test_string"];
     REQUIRE(test_string.Type() == YAML::NodeType::Scalar);
     auto test_string_value = test_string.as<std::string>();
-    REQUIRE(test_string_value == "test_string1239");
+    REQUIRE(test_string_value == "test_string1244");
 }
 
 auto check_entity(const YAML::Node& components) -> void {
@@ -258,7 +262,7 @@ auto check_entity(const YAML::Node& components) -> void {
         auto type_value = type.as<std::string>();
 
         if (type_value == "transform") {
-            check_transform(component, {400.F, 300.F, 1.F}, {1.F, 1.F, 1.F}, 0.5F);
+            check_transform(component, {400.F, 300.F, 1.F}, {1.F, 1.F, 1.F}, 2.F);
             found_transform = true;
 
         } else if (type_value == "sprite") {
@@ -336,7 +340,7 @@ TEST_CASE("Serialise a scene", "[serialiser]") {
         game_mgr.changeScene("serialise");
 
         // Advance a few frames
-        game_mgr.run(5);
+        game_mgr.run(10);
     }
 
     // Check it wrote out a file
