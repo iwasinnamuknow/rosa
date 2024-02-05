@@ -15,8 +15,8 @@
 
 #pragma once
 
-#include <entt/entt.hpp>
 #include <core/ResourceManager.hpp>
+#include <ecs/EntityRegistry.hpp>
 #include <graphics/RenderWindow.hpp>
 #include <spdlog/spdlog.h>
 #include <unordered_map>
@@ -87,10 +87,8 @@ namespace rosa {
 
             /**
              * @brief Get the ECS registry
-             * 
-             * @return entt::registry& reference to the registry
              */
-            auto getRegistry() -> entt::registry& {
+            auto getRegistry() -> ecs::EntityRegistry<Entity>& {
                 return m_registry;
             }
 
@@ -124,19 +122,12 @@ namespace rosa {
 
             /**
              * @brief Get a specific entity
-             * 
-             * @param entt_id entt ID of the entity
-             * @return Entity& reference to the entity
              */
             auto getEntity(Uuid uuid) -> Entity&;
 
-
         private:
-            entt::registry m_registry{};
+            ecs::EntityRegistry<Entity> m_registry;
             RenderWindow* m_render_window;
-            std::unordered_map<entt::entity, Entity> m_entities{};
-            std::unordered_map<Uuid, entt::entity> m_uuid_to_entity{};
-            std::unordered_map<entt::entity, Uuid> m_entity_to_uuid{};
 
             virtual auto onLoad() -> void {}
             virtual auto onUnload() ->  void {}

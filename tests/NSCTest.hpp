@@ -41,7 +41,7 @@ public:
 
     // We need this for deserialisation so we can re-create the class
     static rosa::NativeScriptEntity* factoryCreator(rosa::Scene* scene, rosa::Entity* entity) {
-        return new NSCTest(*scene, *entity);
+        return new NSCTest(scene, entity);
     }
 
 protected:

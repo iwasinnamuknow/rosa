@@ -25,7 +25,8 @@
 #include <core/Scene.hpp>
 #include <yaml-cpp/yaml.h>
 
-#define ROSA_CONSTRUCTOR(class) explicit class(std::reference_wrapper<rosa::Scene> scene, std::reference_wrapper<rosa::Entity> entity) : NativeScriptEntity(scene, entity) {}
+#define ROSA_CONSTRUCTOR(class) \
+    explicit class(rosa::Scene * scene, rosa::Entity * entity) : NativeScriptEntity(scene, entity) {}
 
 namespace rosa {
 
@@ -33,8 +34,9 @@ namespace rosa {
 
     class NativeScriptEntity {
         public:
-            explicit NativeScriptEntity(std::reference_wrapper<Scene> scene, std::reference_wrapper<Entity> entity) : m_entity(entity), m_scene(scene) {}
-            NativeScriptEntity(NativeScriptEntity const &) = delete;
+        explicit NativeScriptEntity(Scene* scene, Entity* entity)
+            : m_entity(entity), m_scene(scene) {}
+        NativeScriptEntity(NativeScriptEntity const &) = delete;
             auto operator=(NativeScriptEntity const &) -> NativeScriptEntity & = delete;
             NativeScriptEntity(NativeScriptEntity const &&) = delete;
             auto operator=(NativeScriptEntity const &&) -> NativeScriptEntity & = delete;
@@ -47,19 +49,19 @@ namespace rosa {
             virtual auto onDestroy() -> void{}
 
             static NativeScriptEntity* factoryCreator(Scene* scene, Entity* entity) {
-                return new NativeScriptEntity(*scene, *entity);
+                return new NativeScriptEntity(scene, entity);
             }
 
             auto getScene() -> Scene& {
-                return m_scene.get();
+                return *m_scene;
             }
 
             auto getEntity() -> Entity& {
-                return m_entity.get();
+                return *m_entity;
             }
 
             auto die() -> void {
-                m_entity.get().die();
+                m_entity->die();
             }
 
         protected:
@@ -70,8 +72,8 @@ namespace rosa {
             friend auto operator<<(YAML::Emitter& out, const NativeScriptEntity& component) -> YAML::Emitter&;
             
         private:
-            std::reference_wrapper<Entity> m_entity;
-            std::reference_wrapper<Scene> m_scene;
+            Entity* m_entity;
+            Scene*  m_scene;
             friend class Scene;
             friend class SceneSerialiser;
     };

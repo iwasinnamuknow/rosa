@@ -32,6 +32,10 @@ namespace rosa {
 
     Renderer::Renderer() {
 
+        if (glfwGetCurrentContext() == nullptr) {
+            return;
+        }
+
         // See destructor for deletion
         m_vertex_buffer     = new Vertex[max_vertex_count];
         m_vertex_buffer_ptr = m_vertex_buffer;
@@ -79,6 +83,10 @@ namespace rosa {
 
     Renderer::~Renderer() {
 
+        if (glfwGetCurrentContext() == nullptr) {
+            return;
+        }
+
         glDeleteVertexArrays(1, &m_vao);
         glDeleteBuffers(1, &m_vbo);
         glDeleteBuffers(1, &m_ibo);
@@ -87,6 +95,11 @@ namespace rosa {
     }
 
     auto Renderer::makeShaderProgram(Uuid vertex_shader, Uuid fragment_shader) -> ShaderProgram* {
+
+        if (glfwGetCurrentContext() == nullptr) {
+            return nullptr;
+        }
+
         for (const auto& program: m_shaders) {
             if (program->getVertexShaderUuid() == vertex_shader && program->getFragmentShaderUuid() == fragment_shader) {
                 return program.get();
@@ -290,7 +303,7 @@ namespace rosa {
 
     auto Renderer::shutdown() -> void {
         if (s_instance) {
-            s_instance.release();
+            //s_instance.release();
             s_instance.reset();
         }
     }

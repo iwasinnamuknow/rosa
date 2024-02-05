@@ -34,6 +34,10 @@ template<>
 struct std::hash<rosa::Uuid>;
 
 namespace rosa {
+
+    static std::unique_ptr<std::mt19937_64>             s_generator{nullptr};
+    static std::uniform_int_distribution<std::uint64_t> s_dist{};
+
     /**
      * \brief UUIDv4 for entities and assets
      */
@@ -98,19 +102,18 @@ namespace rosa {
          * \brief Generate a UUID from random bytes
          */
         static auto generate() -> Uuid {
-            // Set up RNG
-            std::random_device rd;
-            auto seed_data = std::array<int, std::mt19937_64::state_size> {};
-            std::generate(std::begin(seed_data), std::end(seed_data), std::ref(rd));
-            std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
-            std::mt19937_64 generator(seq);
+            if (s_generator == nullptr) {
+                s_generator = std::make_unique<std::mt19937_64>(std::random_device()());
+                s_dist      = std::uniform_int_distribution(std::numeric_limits<std::uint64_t>::min(), std::numeric_limits<std::uint64_t>::max());
+            }
 
             // Grab two 64-bit values
-            std::uint64_t top = generator();
-            std::uint64_t bottom = generator();
+            auto top    = s_dist(*s_generator);
+            auto bottom = s_dist(*s_generator);
 
             // Split into 16 bytes
             std::array<std::uint8_t, 16> bytes{0};
+
             std::memcpy(bytes.data(), &top, sizeof(top));
             std::memcpy(bytes.data() + (sizeof(std::uint8_t) * 8), &bottom, sizeof(bottom));
 

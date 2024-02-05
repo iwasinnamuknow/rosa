@@ -29,19 +29,21 @@ namespace rosa {
 
     auto Entity::setParent(Uuid parent_id) -> bool {
 
+        assert(m_scene != nullptr);
+
         // no empty entities
         if (parent_id == Uuid()) {
             return false;
         }
 
-        Entity& new_parent = m_scene.getEntity(parent_id);
+        Entity& new_parent = m_scene->getEntity(parent_id);
 
-        // Remove ourself from the previous parents' children
+        // Remove ourselves from the previous parents' children
         if (m_parent != Uuid()) {
-            Entity& old_parent = m_scene.getEntity(m_parent);
+            Entity& old_parent = m_scene->getEntity(m_parent);
 
             for (auto ch_it = old_parent.m_children.begin(); ch_it != old_parent.m_children.end(); ++ch_it) {
-                if (*ch_it == m_uuid) {
+                if (*ch_it == getUuid()) {
                     old_parent.m_children.erase(ch_it);
                 }
             }
@@ -50,17 +52,20 @@ namespace rosa {
         // Set our new parent
         m_parent = parent_id;
         // Set us as a new child
-        new_parent.m_children.push_back(m_uuid);
+        new_parent.m_children.push_back(getUuid());
         return true;
     }
 
     auto Entity::removeParent() -> bool {
+
+        assert(m_scene != nullptr);
+
         if (m_parent != Uuid()) {
 
-            Entity& old_parent = m_scene.getEntity(m_parent);
+            Entity& old_parent = m_scene->getEntity(m_parent);
 
             for (auto ch_it = old_parent.m_children.begin(); ch_it != old_parent.m_children.end(); ++ch_it) {
-                if (*ch_it == m_uuid) {
+                if (*ch_it == getUuid()) {
                     old_parent.m_children.erase(ch_it);
                 }
             }
@@ -75,7 +80,7 @@ namespace rosa {
     template<typename T>
     auto Entity::getComponent() -> T& {
         assert(hasComponent<T>());
-        return m_scene.getRegistry().get<T>(m_id);
+        return m_scene->getRegistry().getComponent<T>(getUuid());
     }
 
     template auto Entity::getComponent<TransformComponent>() -> TransformComponent&;
@@ -89,7 +94,8 @@ namespace rosa {
 
     template<typename T>
     auto Entity::hasComponent() -> bool {
-        return m_scene.getRegistry().any_of<T>(m_id);
+        assert(m_scene != nullptr);
+        return m_scene->getRegistry().hasComponent<T>(getUuid());
     }
 
     template auto Entity::hasComponent<TransformComponent>() -> bool;
@@ -104,7 +110,7 @@ namespace rosa {
     template<typename T>
     auto Entity::addComponent() -> T& {
         assert(!hasComponent<T>());
-        return m_scene.getRegistry().emplace<T>(m_id);
+        return m_scene->getRegistry().addComponent<T>(getUuid());
     }
 
     template auto Entity::addComponent<TransformComponent>() -> TransformComponent&;
@@ -117,9 +123,28 @@ namespace rosa {
     template auto Entity::addComponent<SpriteComponent>() -> SpriteComponent&;
 
     template<typename T>
+    auto Entity::addComponent(T& data) -> T& {
+        assert(!hasComponent<T>());
+        return m_scene->getRegistry().addComponent<T>(getUuid(), data);
+    }
+
+    template auto Entity::addComponent<TransformComponent>(TransformComponent& data) -> TransformComponent&;
+    template auto Entity::addComponent<CameraComponent>(CameraComponent& data) -> CameraComponent&;
+    template auto Entity::addComponent<LuaScriptComponent>(LuaScriptComponent& data) -> LuaScriptComponent&;
+    template auto Entity::addComponent<NativeScriptComponent>(NativeScriptComponent& data) -> NativeScriptComponent&;
+    template auto Entity::addComponent<TextComponent>(TextComponent& data) -> TextComponent&;
+    template auto Entity::addComponent<MusicPlayerComponent>(MusicPlayerComponent& data) -> MusicPlayerComponent&;
+    template auto Entity::addComponent<SoundPlayerComponent>(SoundPlayerComponent& data) -> SoundPlayerComponent&;
+    template auto Entity::addComponent<SpriteComponent>(SpriteComponent& data) -> SpriteComponent&;
+
+    template<typename T>
     auto Entity::removeComponent() -> bool {
-        assert(hasComponent<T>());
-        return m_scene.getRegistry().remove<T>(m_id);
+        if (hasComponent<T>()) {
+            m_scene->getRegistry().removeComponent<T>(getUuid());
+            return true;
+        }
+
+        return false;
     }
 
     template auto Entity::removeComponent<TransformComponent>() -> bool;

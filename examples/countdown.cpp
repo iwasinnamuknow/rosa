@@ -35,15 +35,14 @@ public:
 
         for (int i = 0; i < 12; i++) {
             auto& entity = createEntity();
-            entity.setParent(parent.getUUID());
+            entity.setParent(parent.getUuid());
             entity.addComponent<rosa::SpriteComponent>();
         }
 
         parent.addComponent<rosa::SoundPlayerComponent>();
         auto& script_comp = parent.addComponent<rosa::LuaScriptComponent>();
         script_comp.setValue("start_time", countdown_start);
-        script_comp.setScript(parent.getUUID(), this, script_uuid);
-
+        script_comp.setScript(parent.getUuid(), this, script_uuid);
     }
 };
 

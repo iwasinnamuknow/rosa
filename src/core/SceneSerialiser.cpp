@@ -13,24 +13,25 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
+#include <cmath>
 #include <core/Scene.hpp>
 #include <core/SceneSerialiser.hpp>
+#include <core/SerialiserTypes.hpp>
+#include <core/Uuid.hpp>
+#include <core/components/CameraComponent.hpp>
+#include <core/components/LuaScriptComponent.hpp>
+#include <core/components/MusicPlayerComponent.hpp>
+#include <core/components/NativeScriptComponent.hpp>
+#include <core/components/SoundPlayerComponent.hpp>
+#include <core/components/SpriteComponent.hpp>
+#include <core/components/TransformComponent.hpp>
+#include <ecs/RegistryView.hpp>
 #include <fstream>
+#include <graphics/Colour.hpp>
 #include <limits>
 #include <spdlog/spdlog.h>
 #include <sstream>
 #include <string_view>
-#include <core/components/TransformComponent.hpp>
-#include <core/components/SpriteComponent.hpp>
-#include <core/components/LuaScriptComponent.hpp>
-#include <core/components/SoundPlayerComponent.hpp>
-#include <core/components/MusicPlayerComponent.hpp>
-#include <core/components/NativeScriptComponent.hpp>
-#include <core/components/CameraComponent.hpp>
-#include <graphics/Colour.hpp>
-#include <cmath>
-#include <core/Uuid.hpp>
-#include <core/SerialiserTypes.hpp>
 
 namespace rosa {
 
@@ -47,8 +48,8 @@ namespace rosa {
             out << YAML::Key << "version" << YAML::Value << serialiser_version;
             out << YAML::Key << "scene" << YAML::Value << YAML::BeginMap; // Scene
                 out << YAML::Key << "entities" << YAML::Value << YAML::BeginSeq; // Entities
-                    for (auto& [eid, entity] : m_scene.m_entities) {
-                        serialise_entity(out, entity);
+            for (auto& entity: ecs::RegistryView<Entity>(m_scene.getRegistry())) {
+                serialise_entity(out, entity);
                     }
                 out << YAML::EndSeq; // Entities
             out << YAML::EndMap; // Scene
@@ -60,8 +61,8 @@ namespace rosa {
 
     auto SceneSerialiser::serialise_entity(YAML::Emitter& out, Entity& entity) -> void {
         out << YAML::BeginMap; // Entity
-            out << YAML::Key << "uuid" << YAML::Value << static_cast<std::string>(entity.getUUID());
-            out << YAML::Key << "components" << YAML::Value << YAML::BeginSeq; //components
+        out << YAML::Key << "uuid" << YAML::Value << entity.getUuid().toString();
+        out << YAML::Key << "components" << YAML::Value << YAML::BeginSeq; //components
 
                 auto& transform = entity.getComponent<TransformComponent>();
                 out << transform;
@@ -154,7 +155,7 @@ namespace rosa {
                     sprite = comp.as<SpriteComponent>();
                 } else if (type == "lua_script") {
                     auto& lsc = new_entity.addComponent<LuaScriptComponent>();
-                    YAML::convert<LuaScriptComponent>::decode(comp, lsc, &m_scene, new_entity.getUUID());
+                    YAML::convert<LuaScriptComponent>::decode(comp, lsc, &m_scene, new_entity.getUuid());
                 } else if (type == "sound") {
                     auto& player = new_entity.addComponent<SoundPlayerComponent>();
                     YAML::convert<SoundPlayerComponent>::decode(comp, player);
@@ -166,7 +167,7 @@ namespace rosa {
                     auto factory_func = m_nsc_map.at(classname);
                     auto nsc = factory_func(&m_scene, &new_entity);
                     nsc->deserialise(comp["data"]);
-                    m_scene.getRegistry().emplace<NativeScriptComponent>(new_entity).bind(nsc);
+                    new_entity.addComponent<NativeScriptComponent>().bind(nsc);
                 } else if (type == "camera") {
                     auto& camera = new_entity.addComponent<CameraComponent>();
                     YAML::convert<CameraComponent>::decode(comp, camera);

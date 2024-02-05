@@ -61,7 +61,7 @@ public:
 
         // Add movement script to camera entity
         auto& cam_script_comp = cam_entity.addComponent<rosa::LuaScriptComponent>();
-        cam_script_comp.setScript(cam_entity.getUUID(), this, cam_script_uuid);
+        cam_script_comp.setScript(cam_entity.getUuid(), this, cam_script_uuid);
     }
 };
 

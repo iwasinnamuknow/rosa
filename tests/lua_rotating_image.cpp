@@ -62,7 +62,7 @@ public:
 
         // Creat the lua script component and load our script
         auto& script_comp = entity.addComponent<rosa::LuaScriptComponent>();
-        script_comp.setScript(entity.getUUID(), this, script_uuid);
+        script_comp.setScript(entity.getUuid(), this, script_uuid);
     }
 };
 

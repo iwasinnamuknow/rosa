@@ -75,10 +75,10 @@ public:
         auto& mplayer = entity.addComponent<rosa::MusicPlayerComponent>();
         mplayer.setAudio(music_uuid);
 
-        script_comp.setScript(entity.getUUID(), this, script_uuid);
+        script_comp.setScript(entity.getUuid(), this, script_uuid);
 
         // Create a NativeScriptComponent to test serialisation of that too
-        getRegistry().emplace<rosa::NativeScriptComponent>(entity).bind<NSCTest>();
+        entity.addComponent<rosa::NativeScriptComponent>().bind<NSCTest>();
     }
 
     ~SerialiseScene() override {

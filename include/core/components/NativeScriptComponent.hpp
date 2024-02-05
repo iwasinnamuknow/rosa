@@ -25,7 +25,7 @@ namespace rosa {
     struct NativeScriptComponent {
         NativeScriptEntity* instance = nullptr;
 
-        std::function<void(std::reference_wrapper<Scene>, std::reference_wrapper<Entity>)> instantiate_function;
+        std::function<void(Scene*, Entity*)> instantiate_function;
         std::function<void()> destroy_instance_function;
 
         std::function<void(NativeScriptEntity*)> on_create_function;
@@ -36,7 +36,7 @@ namespace rosa {
 
         template<typename T>
         void bind() {
-            instantiate_function = [this](std::reference_wrapper<Scene> scene, std::reference_wrapper<Entity> entity) {
+            instantiate_function = [this](Scene* scene, Entity* entity) {
                 instance = new T(scene, entity);
             };
 
@@ -67,7 +67,7 @@ namespace rosa {
         }
 
         void bind(NativeScriptEntity* nse) {
-            instantiate_function = [this, nse](std::reference_wrapper<Scene> /*scene*/, std::reference_wrapper<Entity> /*entity*/) {
+            instantiate_function = [this, nse](Scene* /*scene*/, Entity* /*entity*/) {
                 instance = nse;
             };
 

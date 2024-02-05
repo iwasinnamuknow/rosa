@@ -13,18 +13,21 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include <snitch/snitch.hpp>
-#include <core/Scene.hpp>
 #include <core/Entity.hpp>
+#include <core/Scene.hpp>
+#include <graphics/Renderer.hpp>
+#include <snitch/snitch.hpp>
 
 TEST_CASE("Allows us to create an entity in a scene", "[scene]") {
 
     auto scene = rosa::Scene();
     auto& entity = scene.createEntity();
 
-    REQUIRE(scene.getRegistry().storage<entt::entity>().in_use() == 1);
-    REQUIRE(entity.getUUID() != rosa::Uuid());
+    REQUIRE(scene.getRegistry().count() == 1);
+    REQUIRE(entity.getUuid() != rosa::Uuid());
     REQUIRE(entity.hasComponent<rosa::TransformComponent>() == true);
+
+    rosa::Renderer::shutdown();
 }
 
 TEST_CASE("Allows us to create an entity in a scene with a Uuid", "[scene]") {
@@ -34,9 +37,11 @@ TEST_CASE("Allows us to create an entity in a scene with a Uuid", "[scene]") {
     auto scene = rosa::Scene();
     auto& entity = scene.createEntity(uuid);
 
-    REQUIRE(scene.getRegistry().storage<entt::entity>().in_use() == 1);
-    REQUIRE(entity.getUUID() == uuid);
+    REQUIRE(scene.getRegistry().count() == 1);
+    REQUIRE(entity.getUuid() == uuid);
     REQUIRE(entity.hasComponent<rosa::TransformComponent>() == true);
+
+    rosa::Renderer::shutdown();
 }
 
 TEST_CASE("Allows us to create an entity in a scene and remove it", "[scene]") {
@@ -44,10 +49,12 @@ TEST_CASE("Allows us to create an entity in a scene and remove it", "[scene]") {
     auto scene = rosa::Scene();
     auto& entity = scene.createEntity();
 
-    REQUIRE(scene.getRegistry().storage<entt::entity>().in_use() == 1);
-    REQUIRE(scene.removeEntity(entity.getUUID()) == true);
+    REQUIRE(scene.getRegistry().count() == 1);
+    REQUIRE(scene.removeEntity(entity.getUuid()) == true);
     scene.update(0.F);
-    REQUIRE(scene.getRegistry().storage<entt::entity>().in_use() == 0);
+    REQUIRE(scene.getRegistry().count() == 0);
+
+    rosa::Renderer::shutdown();
 }
 
 TEST_CASE("Create an entity and retrieve it", "[scene]") {
@@ -55,7 +62,9 @@ TEST_CASE("Create an entity and retrieve it", "[scene]") {
     auto scene = rosa::Scene();
     auto& original_entity = scene.createEntity();
 
-    auto& retrieved_entity = scene.getEntity(original_entity.getUUID());
+    auto& retrieved_entity = scene.getEntity(original_entity.getUuid());
 
     REQUIRE(original_entity == retrieved_entity);
+
+    rosa::Renderer::shutdown();
 }

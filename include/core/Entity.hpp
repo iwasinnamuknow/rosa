@@ -17,7 +17,7 @@
 
 #include <core/Uuid.hpp>
 #include <core/components/TransformComponent.hpp>
-#include <entt/entt.hpp>
+#include <ecs/Entity.hpp>
 #include <functional>
 
 namespace rosa {
@@ -30,27 +30,27 @@ namespace rosa {
      * An Entity may have components and child entities. It may also be the child
      * of another Entity.
      */
-    class Entity {
+    class Entity : public ecs::Entity {
     public:
         /**
          * \brief Construct an Entity
-         * \param ent_id the Entt registry id
          * \param scene the Scene that has created this Entity
          *
          * UUID will be generated on construction
          */
-        Entity(entt::entity ent_id, Scene& scene) : m_id(ent_id), m_uuid(Uuid::generate()), m_scene(scene) {}
+        Entity(Scene* scene = nullptr)
+            : ecs::Entity(Uuid::generate()), m_scene(scene) {}
 
         /**
          * \brief Construct an Entity from serialisation
          * \param uuid the previous UUID
-         * \param ent_id the Entt registry id
          * \param scene the Scene that has create this Entity
          *
          * This constructor variant should be used when re-creating a previously
          * serialised entity.
          */
-        Entity(Uuid uuid, entt::entity ent_id, Scene& scene) : m_id(ent_id), m_uuid(uuid), m_scene(scene) {}
+        Entity(Uuid uuid, Scene* scene = nullptr)
+            : ecs::Entity(uuid), m_scene(scene) {}
 
         /**
          * \brief Copy constructor
@@ -83,62 +83,7 @@ namespace rosa {
          * \return true if matching, false if not
          */
         auto operator==(const Entity& other) const -> bool {
-            return getUUID() == other.getUUID();
-        }
-
-        /**
-         * \brief Cast operator for Entt
-         */
-        operator entt::entity() const {
-            return m_id;
-        }
-
-        /**
-         * \brief Get a specific component
-         * \tparam T Component type
-         * \return reference to the component
-         */
-        template<typename T>
-        auto getComponent() -> T&;
-
-        /**
-         * \brief Enquire if the Entity contains a specific component type
-         * \tparam T Component type
-         * \return true if the component exists, false otherwise
-         */
-        template<typename T>
-        auto hasComponent() -> bool;
-
-        /**
-         * \brief Add a specific component type to the Entity
-         * \tparam T Component type
-         * \return reference to the created component
-         */
-        template<typename T>
-        auto addComponent() -> T&;
-
-        /**
-         * \brief Remove a specific component type from the Entity
-         * \tparam T Component type
-         * \return true if the component was removed, false otherwise
-         */
-        template<typename T>
-        auto removeComponent() -> bool;
-
-        /**
-         * \brief Get the entt id of the Entity
-         * \return entt::entity identifier
-         */
-        auto getId() const -> entt::entity {
-            return m_id;
-        }
-
-        /**
-         * \brief Get the UUID of the Entity
-         * \return Uuid
-         */
-        auto getUUID() const -> Uuid {
-            return m_uuid;
+            return getUuid() == other.getUuid();
         }
 
         /**
@@ -158,27 +103,15 @@ namespace rosa {
         }
 
         /**
-         * \brief Set this Entity as the child of another
-         * \param parent_id UUID of the parent Entity
-         * \return true relationship was created
-         * \return false relationship was not created (empty parent_id?)
-         */
-        auto setParent(Uuid parent_id) -> bool;
-
-        /**
-         * \brief Orphan this entity
-         * \return true relationship was removed
-         * \return false relationship was not removed (is there a parent to remove?)
-         */
-        auto removeParent() -> bool;
-
-        /**
          * \brief Get the UUID of the parent Entity
          * \return Uuid
          */
         auto getParent() -> Uuid {
             return m_parent;
         }
+
+        auto setParent(Uuid parent_id) -> bool;
+        auto removeParent() -> bool;
 
         /**
          * \brief Get the collection of children for this Entity
@@ -188,19 +121,39 @@ namespace rosa {
             return m_children;
         }
 
+        template<typename T>
+        auto getComponent() -> T&;
+
+        template<typename T>
+        auto addComponent() -> T&;
+
+        template<typename T>
+        auto addComponent(T& data) -> T&;
+
+        template<typename T>
+        auto hasComponent() -> bool;
+
+        template<typename T>
+        auto removeComponent() -> bool;
+
+        auto isActive() const -> bool override {
+            return m_enabled;
+        }
+
+        auto setActive(bool active) -> void {
+            m_enabled = active;
+        }
+
     private:
-        entt::entity m_id = entt::null;
-        bool m_enabled{true};
+        bool m_enabled{false};
         bool m_for_deletion{false};
-        Uuid m_uuid;
 
         std::vector<Uuid> m_children{};
         Uuid m_parent = Uuid();
 
-        Scene& m_scene;
-
         friend class NativeScriptEntity;
 
+        Scene* m_scene{nullptr};
         friend class Scene;
     };
 

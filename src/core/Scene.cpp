@@ -23,59 +23,67 @@
 
 #include <core/ResourceManager.hpp>
 #include <core/Scene.hpp>
-#include <core/components/SpriteComponent.hpp>
-#include <core/components/TransformComponent.hpp>
-#include <core/components/NativeScriptComponent.hpp>
-#include <core/components/LuaScriptComponent.hpp>
 #include <core/components/CameraComponent.hpp>
+#include <core/components/LuaScriptComponent.hpp>
+#include <core/components/MusicPlayerComponent.hpp>
+#include <core/components/NativeScriptComponent.hpp>
+#include <core/components/SoundPlayerComponent.hpp>
+#include <core/components/SpriteComponent.hpp>
 #include <core/components/TextComponent.hpp>
+#include <core/components/TransformComponent.hpp>
 #include <functional>
 #include <stack>
 
 #include <core/Entity.hpp>
+#include <ecs/RegistryView.hpp>
 #include <graphics/Renderer.hpp>
 
 namespace rosa {
 
-    Scene::Scene(RenderWindow* render_window) : m_render_window(render_window) { }
+    Scene::Scene(RenderWindow* render_window)
+        : m_registry(ecs::EntityRegistry<Entity>()), m_render_window(render_window) {
+        m_registry.registerComponent<TransformComponent>();
+        m_registry.registerComponent<SpriteComponent>();
+        m_registry.registerComponent<NativeScriptComponent>();
+        m_registry.registerComponent<LuaScriptComponent>();
+        m_registry.registerComponent<CameraComponent>();
+        m_registry.registerComponent<TextComponent>();
+        m_registry.registerComponent<SoundPlayerComponent>();
+        m_registry.registerComponent<MusicPlayerComponent>();
+    }
 
     auto Scene::createEntity() -> Entity& {
         
         ZoneScopedN("Entity:Create");
 
-        Entity entity{m_registry.create(), *this};
-        entity.addComponent<TransformComponent>();
-        m_entities.insert({entity.getId(), entity});
-        m_uuid_to_entity.insert({entity.getUUID(), entity.getId()});
-        m_entity_to_uuid.insert({entity.getId(), entity.getUUID()});
-        return m_entities.at(entity.getId());
+        Entity& entity = m_registry.createEntity();
+        entity.m_scene = this;
+        m_registry.addComponent<TransformComponent>(entity.getUuid());
+
+        return entity;
     }
 
     auto Scene::createEntity(Uuid uuid) -> Entity& {
 
         ZoneScopedN("Entity:Create_UUID");
 
-        Entity entity{uuid, m_registry.create(), *this};
-        entity.addComponent<TransformComponent>();
-        m_entities.insert({entity.getId(), entity});
-        m_uuid_to_entity.insert({entity.getUUID(), entity.getId()});
-        m_entity_to_uuid.insert({entity.getId(), entity.getUUID()});
-        return m_entities.at(entity.getId());
+        Entity& entity = m_registry.createEntity(uuid);
+        entity.m_scene = this;
+        m_registry.addComponent<TransformComponent>(entity.getUuid());
+
+        return entity;
     }
     
     auto Scene::removeEntity(Uuid uuid) -> bool {
-        
+
         ZoneScopedN("Entity:Remove");
 
-        auto ent_id = m_uuid_to_entity.at(uuid);
+        // TODO: chase getEntity to return a result instead of throw for non-existant entities
 
-        if (m_entities.contains(ent_id)) {
-            auto& entity = m_entities.at(ent_id);
-            entity.m_for_deletion = true;
-            return true;
-        }
+        Entity& entity        = m_registry.getEntity(uuid);
+        entity.m_for_deletion = true;
 
-        return false;
+        return true;
     }
 
     auto Scene::input(const Event& event) -> void {
@@ -98,24 +106,25 @@ namespace rosa {
             ZoneScopedN("Events:NativeScript");
 
             // Run updates for native script components, instantiating where needed
-            m_registry.view<NativeScriptComponent>().each([this, event](entt::entity entity, auto& nsc) {
-
-                Entity* actual = &m_entities.at(entity);
+            for (auto& entity: ecs::RegistryView<Entity, NativeScriptComponent>(m_registry)) {
+                auto& nsc = m_registry.getComponent<NativeScriptComponent>(entity.getUuid());
 
                 if (!nsc.instance) {
-                    nsc.instantiate_function(std::reference_wrapper<Scene>(*this), std::reference_wrapper<Entity>(*actual));
+                    nsc.instantiate_function(this, &entity);
                     nsc.on_create_function(nsc.instance);
                 }
 
                 nsc.on_input_function(nsc.instance, event);
-            });
+            }
         }
 
         {
             ZoneScopedN("Events:LuaScript");
 
             // Run updates for native script components, instantiating where needed
-            m_registry.view<LuaScriptComponent>().each([event](auto& lsc) {
+            for (auto& entity: ecs::RegistryView<Entity, LuaScriptComponent>(m_registry)) {
+
+                auto& lsc = m_registry.getComponent<LuaScriptComponent>(entity.getUuid());
 
                 //Entity* actual = &m_entities.at(entity);
 
@@ -124,7 +133,7 @@ namespace rosa {
                     sol::error err = result;
                     spdlog::error("Failed to call onInput for lua script: {}", err.what());
                 }
-            });
+            }
         }
     }
 
@@ -136,61 +145,57 @@ namespace rosa {
             ZoneScopedN("Updates:NativeScript");
 
             // Run updates for native script components, instantiating where needed
-            m_registry.view<NativeScriptComponent>().each([this, delta_time](entt::entity entity, auto& nsc) {
+            for (auto& entity: ecs::RegistryView<Entity, NativeScriptComponent>(m_registry)) {
 
-                Entity* actual = &m_entities.at(entity);
+                auto& nsc = m_registry.getComponent<NativeScriptComponent>(entity.getUuid());
 
                 if (!nsc.instance) {
-                    nsc.instantiate_function(std::reference_wrapper<Scene>(*this), std::reference_wrapper<Entity>(*actual));
+                    nsc.instantiate_function(this, &entity);
                     nsc.on_create_function(nsc.instance);
                 }
 
                 nsc.on_update_function(nsc.instance, delta_time);
-            });
+            }
         }
 
         {
             ZoneScopedN("Updates:LuaScript");
 
             // Run updates for lua script components
-            m_registry.view<LuaScriptComponent>().each([delta_time](entt::entity /*entity*/, LuaScriptComponent& lsc) {
+            for (auto& entity: ecs::RegistryView<Entity, LuaScriptComponent>(m_registry)) {
 
-    //            Entity* actual = &m_entities.at(entity);
+                auto& lsc    = m_registry.getComponent<LuaScriptComponent>(entity.getUuid());
                 auto result = lsc.m_on_update_function(delta_time);
                 if (!result.valid()) {
                     sol::error err = result;
                     spdlog::error("Failed to call onUpdate for lua script: {}", err.what());
                 }
-            });
+            }
         }
 
         {
             ZoneScopedN("Updates:TransformUpdate");
 
             // This function only cares about entities with TransformComponent, which is all of them i guess
-            auto view = m_registry.view<TransformComponent>();
+            for (auto& entity: ecs::RegistryView<Entity, TransformComponent>(m_registry)) {
 
-            for (const auto& entid : view)
-            {
-                Entity* entity = &m_entities.at(entid);
+                Entity* entity_ptr = &entity;
 
-                if (entity->m_children.empty()) {
+                if (entity.m_children.empty()) {
                     std::stack<Entity*> stack;
+                    stack.push(entity_ptr);
 
-                    
-                    stack.push(entity);
-
-                    while (entity->m_parent != Uuid()) {
-                        entity = &m_entities.at(m_uuid_to_entity.at(entity->m_parent));
-                        stack.push(entity);
+                    while (entity.m_parent != Uuid()) {
+                        entity_ptr = &getEntity(entity.getParent());
+                        stack.push(entity_ptr);
                     }
 
                     glm::mat4 combined_transform{1.F};
                     while(!stack.empty()) {
-                        entity = stack.top();
+                        entity_ptr = stack.top();
                         stack.pop();
 
-                        auto& transform = entity->getComponent<TransformComponent>();
+                        auto& transform            = entity.getComponent<TransformComponent>();
                         transform.parent_transform = combined_transform;
                         combined_transform *= transform.getLocalTransform();
                     }
@@ -201,24 +206,19 @@ namespace rosa {
         {
             ZoneScopedN("Updates:EntitiesForDeletion");
 
-            for (auto [entity] : m_registry.storage<entt::entity>().each()) {
-                Entity* actual = &m_entities.at(entity);
+            for (auto& entity: ecs::RegistryView<Entity>(m_registry)) {
 
-                if (actual->forDeletion()) {
+                if (entity.forDeletion()) {
                     // TODO move this stuff to removeEntity above
-                    if (actual->hasComponent<NativeScriptComponent>()) {
-                        auto& nsc = actual->getComponent<NativeScriptComponent>();
+                    if (m_registry.hasComponent<NativeScriptComponent>(entity.getUuid())) {
+                        auto& nsc = m_registry.getComponent<NativeScriptComponent>(entity.getUuid());
                         nsc.on_destroy_function(nsc.instance);
                         nsc.destroy_instance_function();
-                    } else if (actual->hasComponent<LuaScriptComponent>()) {
-                        auto& lsc = actual->getComponent<LuaScriptComponent>();
+                    } else if (m_registry.hasComponent<LuaScriptComponent>(entity.getUuid())) {
+                        auto& lsc = m_registry.getComponent<LuaScriptComponent>(entity.getUuid());
                         lsc.m_on_delete_function();
-                        //lua_close(lsc.m_state);
                     }
-                    m_entities.erase(entity);
-                    m_uuid_to_entity.erase(actual->getUUID());
-                    m_entity_to_uuid.erase(entity);
-                    m_registry.destroy(entity);
+                    m_registry.removeEntity(entity.getUuid());
                 }
             }
         }
@@ -227,17 +227,13 @@ namespace rosa {
             ZoneScopedN("Updates:Camera");
 
             bool found_active{false};
-            auto view = m_registry.view<CameraComponent>();
-
-            for (const auto& entid : view)
-            {
+            for (auto& entity: ecs::RegistryView<Entity, CameraComponent>(m_registry)) {
                 if (found_active) {
                     break;
                 }
 
-                auto& entity = m_entities.at(entid);
-                auto& cam = entity.getComponent<CameraComponent>();
-                auto& transform = entity.getComponent<TransformComponent>();
+                auto& cam       = m_registry.getComponent<CameraComponent>(entity.getUuid());
+                auto& transform = m_registry.getComponent<TransformComponent>(entity.getUuid());
 
                 if (cam.getEnabled()) {
                     found_active = true;
@@ -265,13 +261,10 @@ namespace rosa {
         {
             ZoneScopedN("Render:Sprites");
 
-            auto view = m_registry.view<SpriteComponent>();
-
             // For every entity with a SpriteComponent, draw it.
-            for (const auto& entid : view)
-            {
-                auto& sprite_comp = m_registry.get<SpriteComponent>(entid);
-                auto& transform = m_registry.get<TransformComponent>(entid);
+            for (const auto& entity: ecs::RegistryView<Entity, SpriteComponent>(m_registry)) {
+                auto& sprite_comp = m_registry.getComponent<SpriteComponent>(entity.getUuid());
+                auto& transform   = m_registry.getComponent<TransformComponent>(entity.getUuid());
                 //auto sprite_comp = m_registry.get<SpriteComponent>(entid);
                 sprite_comp.draw(transform.getGlobalTransform());
             };
@@ -282,13 +275,10 @@ namespace rosa {
         {
             ZoneScopedN("Render:Text");
 
-            auto view = m_registry.view<TextComponent>();
-
             // For every entity with a SpriteComponent, draw it.
-            for (const auto& entid : view)
-            {
-                auto& text_comp = m_registry.get<TextComponent>(entid);
-                auto& transform = m_registry.get<TransformComponent>(entid);
+            for (const auto& entity: ecs::RegistryView<Entity, TextComponent>(m_registry)) {
+                auto& text_comp = m_registry.getComponent<TextComponent>(entity.getUuid());
+                auto& transform = m_registry.getComponent<TransformComponent>(entity.getUuid());
                 //auto sprite_comp = m_registry.get<SpriteComponent>(entid);
                 text_comp.render(transform.getGlobalTransform());
             };
@@ -298,7 +288,8 @@ namespace rosa {
     }
 
     auto Scene::getEntity(Uuid uuid) -> Entity& {
-        return m_entities.at(m_uuid_to_entity.at(uuid));
+        return m_registry.getEntity(uuid);
     }
+
 
 } // namespace rosa

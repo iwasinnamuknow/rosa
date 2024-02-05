@@ -301,7 +301,7 @@ namespace rosa {
                 "getSprite", &rosa::Entity::getComponent<SpriteComponent>,
                 "getSoundPlayer", &rosa::Entity::getComponent<SoundPlayerComponent>,
                 "getMusicPlayer", &rosa::Entity::getComponent<MusicPlayerComponent>,
-                "getUuid", &rosa::Entity::getUUID,
+                "getUuid", &rosa::Entity::getUuid,
                 "getParent", &rosa::Entity::getParent,
                 "getChildren", &rosa::Entity::getChildren
         );
