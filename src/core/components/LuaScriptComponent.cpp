@@ -392,8 +392,6 @@ namespace rosa {
 
     LuaScriptComponent::LuaScriptComponent() {
         ZoneScopedN("LuaScriptComponent:Initialise");
-
-        m_state.open_libraries(sol::lib::base, sol::lib::string);
     }
 
     auto LuaScriptComponent::setScript(Uuid entity_id, Scene* scene, Uuid script_id, bool deserialised) -> bool {
@@ -405,6 +403,8 @@ namespace rosa {
         m_entity = entity_id;
 
         try {
+            m_state.open_libraries(sol::lib::base, sol::lib::string);
+
             const auto& script = ResourceManager::getInstance().getAsset<LuaScript>(script_id);
 
             auto& entity = m_scene->getEntity(m_entity);

@@ -26,13 +26,13 @@
 namespace rosa {
 
     Sprite::Sprite() {
-        m_quad.pos = {0, 0};
-        m_quad.size = {0, 0};
-
-        m_shader_program = Renderer::getInstance().makeShaderProgram();
     }
 
     auto Sprite::draw(glm::mat4 transform) -> void {
+
+        if (m_shader_program == nullptr) {
+            m_shader_program = Renderer::getInstance().makeShaderProgram();
+        }
 
         //auto temppos = glm::vec4(m_quad.pos, 0, 0);
         //auto temptrans = (projection * transform);
