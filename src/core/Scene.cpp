@@ -181,12 +181,13 @@ namespace rosa {
 
                 Entity* entity_ptr = &entity;
 
-                if (entity.m_children.empty()) {
+                // orphan
+                if (entity.getChildren().empty()) {
                     std::stack<Entity*> stack;
                     stack.push(entity_ptr);
 
-                    while (entity.m_parent != Uuid()) {
-                        entity_ptr = &getEntity(entity.getParent());
+                    while (entity_ptr->getParent() != Uuid()) {
+                        entity_ptr = &getEntity(entity_ptr->getParent());
                         stack.push(entity_ptr);
                     }
 
@@ -195,7 +196,7 @@ namespace rosa {
                         entity_ptr = stack.top();
                         stack.pop();
 
-                        auto& transform            = entity.getComponent<TransformComponent>();
+                        auto& transform            = entity_ptr->getComponent<TransformComponent>();
                         transform.parent_transform = combined_transform;
                         combined_transform *= transform.getLocalTransform();
                     }
