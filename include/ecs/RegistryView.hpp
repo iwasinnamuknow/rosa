@@ -23,8 +23,8 @@ namespace rosa::ecs {
     class RegistryView {
     public:
         struct Iterator {
-            Iterator(EntityRegistry<C>* pregistry, size_t pindex, ec_sig pmask, bool pall, bool pend = false)
-                : index(pindex), registry(pregistry), mask(pmask), all(pall), end(pend) {}
+            Iterator(EntityRegistry<C>* pregistry, size_t pindex, ec_sig pmask, bool pall)
+                : index(pindex), registry(pregistry), mask(pmask), all(pall) {}
 
             auto operator*() const -> C& {
                 return *static_cast<C*>(&(registry->getAtIndex(index)));
@@ -42,7 +42,7 @@ namespace rosa::ecs {
                 auto& amask  = entity.getComponentSignature();
                 return (
                         all ||       // everything
-                        amask == mask// the correct component mask
+                        (amask & mask) != 0// the correct component mask
                 );
             }
 
@@ -55,7 +55,6 @@ namespace rosa::ecs {
             size_t             index;
             EntityRegistry<C>* registry;
             ec_sig             mask;
-            bool               end{false};
             bool               all{false};
         };
 
