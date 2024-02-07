@@ -34,6 +34,7 @@
 #include <functional>
 #include <stack>
 
+#include <ProfilerSections.hpp>
 #include <core/Entity.hpp>
 #include <ecs/RegistryView.hpp>
 #include <graphics/Renderer.hpp>
@@ -42,6 +43,7 @@ namespace rosa {
 
     Scene::Scene(RenderWindow* render_window)
         : m_registry(ecs::EntityRegistry<Entity>()), m_render_window(render_window) {
+        ZoneScopedN("Scene:Setup");
         m_registry.registerComponent<TransformComponent>();
         m_registry.registerComponent<SpriteComponent>();
         m_registry.registerComponent<NativeScriptComponent>();
@@ -53,8 +55,8 @@ namespace rosa {
     }
 
     auto Scene::createEntity() -> Entity& {
-        
-        ZoneScopedN("Entity:Create");
+
+        ZoneScopedN("Scene:Entity:Create");
 
         Entity& entity = m_registry.createEntity();
         entity.m_scene = this;
@@ -65,7 +67,7 @@ namespace rosa {
 
     auto Scene::createEntity(Uuid uuid) -> Entity& {
 
-        ZoneScopedN("Entity:Create_UUID");
+        ZoneScopedN("Scene:Entity:Create_UUID");
 
         Entity& entity = m_registry.createEntity(uuid);
         entity.m_scene = this;
@@ -76,7 +78,7 @@ namespace rosa {
     
     auto Scene::removeEntity(Uuid uuid) -> bool {
 
-        ZoneScopedN("Entity:Remove");
+        ZoneScopedN("Scene:Entity:Remove");
 
         // TODO: chase getEntity to return a result instead of throw for non-existant entities
 
@@ -88,8 +90,8 @@ namespace rosa {
 
     auto Scene::input(const Event& event) -> void {
         {
-            
-            ZoneScopedN("Events:Scene");
+
+            ZoneScopedNC("Events:Scene", profiler::detail::tracy_colour_events);
             switch (event.keyboard.type) {
                 case KeyboardEventType::KeyReleased:
                     if (event.keyboard.key == KeyEscape) {
@@ -103,7 +105,7 @@ namespace rosa {
         }
 
         {
-            ZoneScopedN("Events:NativeScript");
+            ZoneScopedNC("Events:NativeScript", profiler::detail::tracy_colour_events);
 
             // Run updates for native script components, instantiating where needed
             for (auto& entity: ecs::RegistryView<Entity, NativeScriptComponent>(m_registry)) {
@@ -119,7 +121,7 @@ namespace rosa {
         }
 
         {
-            ZoneScopedN("Events:LuaScript");
+            ZoneScopedNC("Events:LuaScript", profiler::detail::tracy_colour_events);
 
             // Run updates for native script components, instantiating where needed
             for (auto& entity: ecs::RegistryView<Entity, LuaScriptComponent>(m_registry)) {
@@ -140,9 +142,10 @@ namespace rosa {
     auto Scene::update(float delta_time) -> void {
 
         m_last_frame_time = static_cast<double>(delta_time);
+        ZoneScopedNC("Updates", profiler::detail::tracy_colour_updates);
 
         {
-            ZoneScopedN("Updates:NativeScript");
+            ZoneScopedNC("Updates:LuaScript", profiler::detail::tracy_colour_updates);
 
             // Run updates for native script components, instantiating where needed
             for (auto& entity: ecs::RegistryView<Entity, NativeScriptComponent>(m_registry)) {
@@ -159,7 +162,7 @@ namespace rosa {
         }
 
         {
-            ZoneScopedN("Updates:LuaScript");
+            ZoneScopedNC("Updates:LuaScript", profiler::detail::tracy_colour_updates);
 
             // Run updates for lua script components
             for (auto& entity: ecs::RegistryView<Entity, LuaScriptComponent>(m_registry)) {
@@ -174,7 +177,7 @@ namespace rosa {
         }
 
         {
-            ZoneScopedN("Updates:TransformUpdate");
+            ZoneScopedNC("Updates:TransformUpdate", profiler::detail::tracy_colour_updates);
 
             // This function only cares about entities with TransformComponent, which is all of them i guess
             for (auto& entity: ecs::RegistryView<Entity, TransformComponent>(m_registry)) {
@@ -205,7 +208,7 @@ namespace rosa {
         }
 
         {
-            ZoneScopedN("Updates:EntitiesForDeletion");
+            ZoneScopedNC("Updates:EntitiesForDeletion", profiler::detail::tracy_colour_updates);
 
             for (auto& entity: ecs::RegistryView<Entity>(m_registry)) {
 
@@ -225,7 +228,7 @@ namespace rosa {
         }
 
         {
-            ZoneScopedN("Updates:Camera");
+            ZoneScopedNC("Updates:Camera", profiler::detail::tracy_colour_updates);
 
             bool found_active{false};
             for (auto& entity: ecs::RegistryView<Entity, CameraComponent>(m_registry)) {
@@ -254,33 +257,29 @@ namespace rosa {
         }
 
         {
-            ZoneScopedN("Render:BatchRenderer:Setup");
+            ZoneScopedNC("Render:Setup", profiler::detail::tracy_colour_render);
             Renderer::getInstance().clearStats();
             Renderer::getInstance().updateVp(getRenderWindow().getView(), getRenderWindow().getProjection());
         }
 
         {
-            ZoneScopedN("Render:Sprites");
+            ZoneScopedNC("Render:Sprites", profiler::detail::tracy_colour_render);
 
             // For every entity with a SpriteComponent, draw it.
             for (const auto& entity: ecs::RegistryView<Entity, SpriteComponent>(m_registry)) {
                 auto& sprite_comp = m_registry.getComponent<SpriteComponent>(entity.getUuid());
                 auto& transform   = m_registry.getComponent<TransformComponent>(entity.getUuid());
-                //auto sprite_comp = m_registry.get<SpriteComponent>(entid);
                 sprite_comp.draw(transform.getGlobalTransform());
             };
         }
 
-        //Renderer::getInstance().flushBatch();
-
         {
-            ZoneScopedN("Render:Text");
+            ZoneScopedNC("Render:Text", profiler::detail::tracy_colour_render);
 
-            // For every entity with a SpriteComponent, draw it.
+            // For every entity with a TextComponent, draw it.
             for (const auto& entity: ecs::RegistryView<Entity, TextComponent>(m_registry)) {
                 auto& text_comp = m_registry.getComponent<TextComponent>(entity.getUuid());
                 auto& transform = m_registry.getComponent<TransformComponent>(entity.getUuid());
-                //auto sprite_comp = m_registry.get<SpriteComponent>(entid);
                 text_comp.render(transform.getGlobalTransform());
             };
         }

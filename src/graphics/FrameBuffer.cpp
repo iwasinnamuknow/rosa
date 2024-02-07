@@ -18,9 +18,10 @@
 // UPDATED: 2022-05-21
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <sstream>
-#include <graphics/FrameBuffer.hpp>
+#include <ProfilerSections.hpp>
 #include <cstdint>
+#include <graphics/FrameBuffer.hpp>
+#include <sstream>
 
 namespace {
     constexpr unsigned int GL_LUMINANCE = 0x1909;
@@ -55,6 +56,9 @@ namespace rosa {
     }
 
     auto FrameBuffer::init(int width, int height, int msaa) -> bool {
+
+        ZoneScopedNC("Framebuffer:Setup", profiler::detail::tracy_colour_framebuffer);
+
         // check w/h
         if (width <= 0 || height <= 0) {
             m_error_message = "The buffer size is not positive.";
@@ -102,6 +106,8 @@ namespace rosa {
 
         // create multi-sample fbo
         if (msaa > 0) {
+            ZoneScopedNC("Framebuffer:Setup:MultiSample", profiler::detail::tracy_colour_framebuffer);
+
             glGenFramebuffers(1, &m_fbo_msaa_id);
             glBindFramebuffer(GL_FRAMEBUFFER, m_fbo_msaa_id);
 
@@ -171,6 +177,8 @@ namespace rosa {
     }
 
     auto FrameBuffer::bind() -> void {
+        ZoneScopedNC("Framebuffer:Bind", profiler::detail::tracy_colour_framebuffer);
+
         if (m_msaa == 0) {
             glBindFramebuffer(GL_FRAMEBUFFER, m_fbo_id);
         } else {
@@ -179,6 +187,8 @@ namespace rosa {
     }
 
     auto FrameBuffer::update() -> void {
+        ZoneScopedNC("Framebuffer:Update", profiler::detail::tracy_colour_framebuffer);
+
         if (m_msaa > 0) {
             // blit color buffer
             glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo_msaa_id);
@@ -203,10 +213,14 @@ namespace rosa {
     }
 
     auto FrameBuffer::unbind() -> void {
+        ZoneScopedNC("Framebuffer:Unbind", profiler::detail::tracy_colour_framebuffer);
+
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     auto FrameBuffer::blitColorTo(GLuint fbo_id, int start_x, int start_y, int width, int height) -> void {
+        ZoneScopedNC("Framebuffer:BlitColour", profiler::detail::tracy_colour_framebuffer);
+
         // if width/height not specified, use src dimension
         if (width == 0) {
             width = m_width;
@@ -226,6 +240,8 @@ namespace rosa {
     }
 
     auto FrameBuffer::blitDepthTo(GLuint fbo_id, int start_x, int start_y, int width, int height) -> void {
+        ZoneScopedNC("Framebuffer:BlitDepth", profiler::detail::tracy_colour_framebuffer);
+
         // if width/height not specified, use src dimension
         if (width == 0) {
             width = m_width;
@@ -246,6 +262,8 @@ namespace rosa {
     }
 
     auto FrameBuffer::copyColorBuffer() -> void {
+        ZoneScopedNC("Framebuffer:CopyColour", profiler::detail::tracy_colour_framebuffer);
+
         if (m_msaa > 0) {
             blitColorTo(m_fbo_id); // copy multi-sample to single-sample first
         }
@@ -265,6 +283,8 @@ namespace rosa {
     }
 
     auto FrameBuffer::copyDepthBuffer() -> void {
+        ZoneScopedNC("Framebuffer:CopyDepth", profiler::detail::tracy_colour_framebuffer);
+
         if (m_msaa > 0) {
             blitDepthTo(m_fbo_id);  // copy multi-sample to single-sample first
         }

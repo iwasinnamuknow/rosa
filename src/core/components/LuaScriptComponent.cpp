@@ -17,13 +17,14 @@
 #include <core/components/MusicPlayerComponent.hpp>
 #include <core/components/SoundPlayerComponent.hpp>
 
-#include <graphics/Vertex.hpp>
+#include <core/Entity.hpp>
 #include <core/Event.hpp>
 #include <core/LuaScript.hpp>
 #include <core/Uuid.hpp>
 #include <core/lua_script/CountdownTimer.hpp>
-#include <core/Entity.hpp>
+#include <graphics/Vertex.hpp>
 #include <tracy/Tracy.hpp>
+#include <tracy/TracyLua.hpp>
 
 #include <sstream>
 
@@ -398,6 +399,8 @@ namespace rosa {
         ZoneScopedN("LuaScriptComponent:setScript");
 
         assert(scene != nullptr);
+
+        tracy::LuaRegister(m_state);
 
         m_scene  = scene;
         m_entity = entity_id;

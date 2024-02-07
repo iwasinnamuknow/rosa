@@ -13,16 +13,17 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include <core/GameManager.hpp>
-#include <core/Scene.hpp>
-#include <memory>
+#include <ProfilerSections.hpp>
 #include <chrono>
 #include <core/EventManager.hpp>
-#include <spdlog/spdlog.h>
+#include <core/GameManager.hpp>
+#include <core/Scene.hpp>
 #include <core/SceneSerialiser.hpp>
+#include <graphics/Renderer.hpp>
+#include <memory>
+#include <spdlog/spdlog.h>
 #include <tracy/Tracy.hpp>
 #include <tracy/TracyOpenGL.hpp>
-#include <graphics/Renderer.hpp>
 
 namespace rosa {
 
@@ -81,6 +82,8 @@ namespace rosa {
 
         while (m_render_window->isOpen()) {
 
+            ZoneScopedN("FrameLoop");
+
             if (frames > 0 && m_frame_count >= frames) {
                 break;
             }
@@ -93,7 +96,7 @@ namespace rosa {
             assert(m_current_scene); // Ensure scene pointer is valid - this needs to be managed internally.
 
             {
-                ZoneScopedNC("Events", 0xFEEF99);
+                ZoneScopedNC("Events", profiler::detail::tracy_colour_events);
                 EventManager::getInstance().pollEvents(*m_render_window);
 
                 while (EventManager::getInstance().hasEvents()) {
@@ -108,43 +111,42 @@ namespace rosa {
             }
 
             {
-                ZoneScopedN("ImGui::NewFrame");
+                ZoneScopedNC("ImGui::NewFrame", profiler::detail::tracy_colour_imgui);
                 ImGui_ImplOpenGL3_NewFrame();
                 ImGui_ImplGlfw_NewFrame();
                 ImGui::NewFrame();
             }
 
             {
-                ZoneScopedNC("Updates", 0x22AA22);
                 m_current_scene->update(delta_time);
             }
 
             {
-                ZoneScopedNC("Render", 0xFF0000);
+                ZoneScopedNC("Render", profiler::detail::tracy_colour_render);
 
                 m_render_window->getFrameBuffer().bind();
                 m_render_window->clearWindow(m_clear_colour);
                 m_current_scene->render();
 
                 {
-                    ZoneScopedN("Render::ImGui");
+                    ZoneScopedNC("Render::ImGui", profiler::detail::tracy_colour_imgui);
                     ImGui::Render();
                     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
                 }
 
                 m_render_window->getFrameBuffer().update();
                 m_render_window->getFrameBuffer().unbind();
+
+                auto size = m_render_window->getWindowSize();
+                assert(m_render_window->getFrameBuffer().getWidth() == size.x);
+                m_render_window->getFrameBuffer().blitColorTo(0, 0, 0, static_cast<int>(size.x), static_cast<int>(size.y));
+                m_render_window->getFrameBuffer().blitDepthTo(0, 0, 0, static_cast<int>(size.x), static_cast<int>(size.y));
+
+                m_render_window->display(m_current_scene->m_active_camera_pos);
             }
 
-            auto size = m_render_window->getWindowSize();
-            assert(m_render_window->getFrameBuffer().getWidth() == size.x);
-            m_render_window->getFrameBuffer().blitColorTo(0, 0, 0, static_cast<int>(size.x), static_cast<int>(size.y));
-            m_render_window->getFrameBuffer().blitDepthTo(0, 0, 0, static_cast<int>(size.x), static_cast<int>(size.y));
-
-            m_render_window->display(m_current_scene->m_active_camera_pos);
-
-#ifdef ROSA_PROFILE
-            FrameMark(nullptr);
+#ifdef TRACY_ENABLE
+            FrameMark;
 #endif
 
             TracyGpuCollect
@@ -159,6 +161,7 @@ namespace rosa {
             if (m_current_scene != nullptr) {
                 m_current_scene->onUnload();
             }
+
 
             m_current_scene = search->second.get();
             m_current_scene->onLoad();

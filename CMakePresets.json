@@ -37,6 +37,7 @@
             "name": "linux-debug-profile",
             "hidden": false,
             "inherits": ["linux-debug"],
+          "binaryDir": "${sourceDir}/build/linux/debug-profile",
             "cacheVariables": {
                 "ROSA_PROFILE": true
             }
@@ -63,6 +64,17 @@
             }
         },
         {
+          "name": "linux-release-profile",
+          "hidden": false,
+          "inherits": [
+            "linux-release"
+          ],
+          "binaryDir": "${sourceDir}/build/linux/release-profile",
+          "cacheVariables": {
+            "ROSA_PROFILE": true
+          }
+        },
+      {
             "name": "base-windows",
             "hidden": true,
             "cacheVariables": {

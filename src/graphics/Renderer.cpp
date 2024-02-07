@@ -14,11 +14,13 @@
  */
 
 #include <GLFW/glfw3.h>
+#include <ProfilerSections.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <graphics/Renderer.hpp>
 #include <graphics/gl.hpp>
 #include <tracy/Tracy.hpp>
+#include <tracy/TracyOpenGL.hpp>
 
 namespace rosa {
 
@@ -31,6 +33,8 @@ namespace rosa {
     }
 
     Renderer::Renderer() {
+
+        ZoneScopedNC("Renderer:Setup", profiler::detail::tracy_colour_render);
 
         if (glfwGetCurrentContext() == nullptr) {
             return;
@@ -95,6 +99,7 @@ namespace rosa {
     }
 
     auto Renderer::makeShaderProgram(Uuid vertex_shader, Uuid fragment_shader) -> ShaderProgram* {
+        ZoneScopedNC("Renderer:CompileShaderProgram", profiler::detail::tracy_colour_render);
 
         if (glfwGetCurrentContext() == nullptr) {
             return nullptr;
@@ -113,7 +118,7 @@ namespace rosa {
     }
 
     auto Renderer::submit(Renderable renderable) -> void {
-        ZoneScopedN("Render:Renderer:Submit");
+        ZoneScopedNC("Renderer:Submit", profiler::detail::tracy_colour_render);
 
         assert(renderable.shader_program->isCompiled());
 
@@ -139,7 +144,7 @@ namespace rosa {
     }
 
     auto Renderer::flushBatch() -> void {
-        ZoneScopedN("Render:Renderer:FlushBatch");
+        ZoneScopedNC("Renderer:FlushBatch", profiler::detail::tracy_colour_render);
 
         // bind active textures
         unsigned int i{0};
@@ -257,7 +262,8 @@ namespace rosa {
     }
 
     auto Renderer::flush(unsigned int shader_program_id, glm::mat4 mvp, int mvp_id) -> void {
-        ZoneScopedN("Render:Renderer:Flush");
+        ZoneScopedNC("Renderer:Flush", profiler::detail::tracy_colour_render);
+        TracyGpuZone("Flush");
 
         glUseProgram(shader_program_id);
         glBindVertexArray(m_vao);

@@ -15,6 +15,7 @@
 
 #include "core/input/Mouse.hpp"
 #include <GLFW/glfw3.h>
+#include <ProfilerSections.hpp>
 #include <core/EventManager.hpp>
 #include <cstddef>
 #include <cstdint>
@@ -172,6 +173,7 @@ namespace rosa {
     }
 
     auto RenderWindow::display(glm::vec2 camera_pos) -> void {
+        ZoneScopedNC("Render:DisplayWindow", profiler::detail::tracy_colour_render);
         if (m_update_viewport) {
             TracyGpuZone("Update Viewport");
             glfwGetFramebufferSize(m_wnd, &m_vp_size[0], &m_vp_size[1]);
@@ -192,7 +194,7 @@ namespace rosa {
     }
 
     auto RenderWindow::clearWindow(Colour colour) -> void {
-        ZoneScopedN("Render:Clear");
+        ZoneScopedNC("Render:ClearWindow", profiler::detail::tracy_colour_render);
         TracyGpuZone("Clear");
         glClearColor(colour.r, colour.g, colour.b, colour.a);
         glClear(GL_COLOR_BUFFER_BIT);
