@@ -23,10 +23,10 @@
 #include <vector>
 
 enum BlendFlags {
-    BFG_RS_NONE  = 0x0,
-    BFG_RS_ALPHA = 0x1,
-    BFG_RS_RGB   = 0x2,
-    BFG_RS_RGBA  = 0x4
+    BlendNone  = 0x0,
+    BlendAlpha = 0x1,
+    BlendRgb   = 0x2,
+    BlendRgba  = 0x4
 };
 
 namespace rosa {
@@ -61,13 +61,13 @@ namespace rosa {
         m_base_char = data[19];
 
         // Check filesize
-        auto expected_length = static_cast<std::int64_t>((bf_map_data_offset) + ((m_image_x * m_image_y) * (bpp / 8)));
+        auto expected_length = static_cast<std::int64_t>(bf_map_data_offset) + ((static_cast<std::int64_t>(m_image_x) * static_cast<std::int64_t>(m_image_y)) * (bpp / 8));
         if (length != expected_length) {
             throw Exception("Font size mismatch");
         }
 
         // Calculate font params
-        m_row_pitch  = static_cast<float>(m_image_x) / static_cast<float>(m_cell_x);
+        m_row_pitch  = static_cast<int>(static_cast<float>(m_image_x) / static_cast<float>(m_cell_x));
         m_col_factor = static_cast<float>(m_cell_x) / static_cast<float>(m_image_y);
         m_row_factor = static_cast<float>(m_cell_y) / static_cast<float>(m_image_y);
         m_y_offset   = m_cell_y;
@@ -75,15 +75,15 @@ namespace rosa {
         // Determine blending options based on BPP
         switch (bpp) {
             case 8:// Greyscale
-                m_render_style = BFG_RS_ALPHA;
+                m_render_style = BlendAlpha;
                 break;
 
             case 24:// RGB
-                m_render_style = BFG_RS_RGB;
+                m_render_style = BlendRgb;
                 break;
 
             case 32:// RGBA
-                m_render_style = BFG_RS_RGBA;
+                m_render_style = BlendRgba;
                 break;
 
             default:// Unsupported BPP
@@ -117,22 +117,26 @@ namespace rosa {
         // Fonts should be rendered at native resolution so no need for texture filtering
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        // Stop chararcters from bleeding over edges
+        // Stop characters from bleeding over edges
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         // Tex creation params are dependent on BPP
         switch (m_render_style) {
-            case BFG_RS_ALPHA:
+            case BlendAlpha:
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, m_image_x, m_image_y, 0, GL_RED, GL_UNSIGNED_BYTE, image_data.data());
                 break;
 
-            case BFG_RS_RGB:
+            case BlendRgb:
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_image_x, m_image_y, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data.data());
                 break;
 
-            case BFG_RS_RGBA:
+            case BlendRgba:
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_image_x, m_image_y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data.data());
+                break;
+
+            case BlendNone:
+            default:
                 break;
         }
     }
@@ -160,9 +164,9 @@ namespace rosa {
 
     // private helpers
 
-    auto BitmapFont::setCursor(int x, int y) -> void {
-        m_cursor_x = x;
-        m_cursor_y = y;
+    auto BitmapFont::setCursor(int pos_x, int pos_y) -> void {
+        m_cursor_x = pos_x;
+        m_cursor_y = pos_y;
     }
 
     auto BitmapFont::bind() -> void {
@@ -171,18 +175,22 @@ namespace rosa {
 
     auto BitmapFont::setBlending() -> void {
         switch (m_render_style) {
-            case BFG_RS_ALPHA:// 8Bit
+            case BlendAlpha:// 8Bit
                 glBlendFunc(GL_SRC_ALPHA, GL_SRC_ALPHA);
                 glEnable(GL_BLEND);
                 break;
 
-            case BFG_RS_RGB:// 24Bit
+            case BlendRgb:// 24Bit
                 glDisable(GL_BLEND);
                 break;
 
-            case BFG_RS_RGBA:// 32Bit
+            case BlendRgba:// 32Bit
                 glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
                 glEnable(GL_BLEND);
+                break;
+
+            case BlendNone:
+            default:
                 break;
         }
     }

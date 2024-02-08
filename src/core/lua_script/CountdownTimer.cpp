@@ -16,46 +16,43 @@
 #include <core/lua_script/CountdownTimer.hpp>
 #include <fmt/format.h>
 
-template <class Rep, std::intmax_t num, std::intmax_t denom>
-static auto chronoBurst(std::chrono::duration<Rep, std::ratio<num, denom>> d) -> std::string {
-    const auto hrs = duration_cast<std::chrono::hours>(d);
-    const auto mins = duration_cast<std::chrono::minutes>(d - hrs);
-    const auto secs = duration_cast<std::chrono::seconds>(d - hrs - mins);
-    const auto ms = duration_cast<std::chrono::milliseconds>(d - hrs - mins - secs);
+namespace {
+    template<class Rep, std::intmax_t Num, std::intmax_t Denom>
+    auto chrono_burst(std::chrono::duration<Rep, std::ratio<Num, Denom>> duration) -> std::string {
+        const auto hours   = duration_cast<std::chrono::hours>(duration);
+        const auto minutes = duration_cast<std::chrono::minutes>(duration - hours);
+        const auto seconds = duration_cast<std::chrono::seconds>(duration - hours - minutes);
+        const auto millis  = duration_cast<std::chrono::milliseconds>(duration - hours - minutes - seconds);
 
-    return fmt::format("{:02d}:{:02d}:{:02d}.{:03d}", hrs.count(), mins.count(), secs.count(), ms.count());
-}
+        return fmt::format("{:02d}:{:02d}:{:02d}.{:03d}", hours.count(), minutes.count(), seconds.count(), millis.count());
+    }
+}// namespace
 
-namespace rosa {
+namespace rosa::lua_script {
 
-    namespace lua_script {
-
-        CountdownTimer::CountdownTimer(int seconds) 
-            : m_start_time(std::chrono::steady_clock::now() + std::chrono::seconds(seconds)) {
-
-        }
-
-        auto CountdownTimer::getSeconds() -> int {
-            m_current_time = std::chrono::steady_clock::now();
-            auto duration = m_start_time - m_current_time;
-
-            return std::chrono::duration_cast<std::chrono::seconds>(duration).count();
-        }
-
-        auto CountdownTimer::getFormatted() -> std::string {
-            m_current_time = std::chrono::steady_clock::now();
-            auto duration = m_start_time - m_current_time;
-
-            return chronoBurst(duration);
-        }
-
-        auto CountdownTimer::getFinished() -> bool {
-            m_current_time = std::chrono::steady_clock::now();
-            auto duration = m_start_time - m_current_time;
-            
-            return std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count() <= 0;
-        }
-
+    CountdownTimer::CountdownTimer(int seconds)
+        : m_start_time(std::chrono::steady_clock::now() + std::chrono::seconds(seconds)) {
     }
 
-} // namespace rosa
+    auto CountdownTimer::getSeconds() -> int {
+        m_current_time = std::chrono::steady_clock::now();
+        auto duration  = m_start_time - m_current_time;
+
+        return static_cast<int>(std::chrono::duration_cast<std::chrono::seconds>(duration).count());
+    }
+
+    auto CountdownTimer::getFormatted() -> std::string {
+        m_current_time = std::chrono::steady_clock::now();
+        auto duration  = m_start_time - m_current_time;
+
+        return chrono_burst(duration);
+    }
+
+    auto CountdownTimer::getFinished() -> bool {
+        m_current_time = std::chrono::steady_clock::now();
+        auto duration  = m_start_time - m_current_time;
+
+        return std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count() <= 0;
+    }
+
+}// namespace rosa::lua_script

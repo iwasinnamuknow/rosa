@@ -18,24 +18,23 @@
 #include <chrono>
 #include <string>
 
-namespace rosa {
+namespace rosa::lua_script {
 
-    namespace lua_script {
+    /**
+     * \brief Provides help with counting time from Lua
+     */
+    class CountdownTimer {
+    public:
+        explicit CountdownTimer(int seconds);
+        ~CountdownTimer() = default;
 
-        class CountdownTimer {
-            public:
-                CountdownTimer(int seconds);
-                ~CountdownTimer() = default;
+        auto getSeconds() -> int;
+        auto getFormatted() -> std::string;
+        auto getFinished() -> bool;
 
-                auto getSeconds() -> int;
-                auto getFormatted() -> std::string;
-                auto getFinished() -> bool;
+    private:
+        std::chrono::time_point<std::chrono::steady_clock> m_start_time;
+        std::chrono::time_point<std::chrono::steady_clock> m_current_time;
+    };
 
-            private:
-                std::chrono::time_point<std::chrono::steady_clock> m_start_time;
-                std::chrono::time_point<std::chrono::steady_clock> m_current_time;
-        };
-
-    } // namespace lua_script
-
-} // namespace rosa
+}// namespace rosa::lua_script

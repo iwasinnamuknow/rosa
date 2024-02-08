@@ -91,7 +91,7 @@ namespace rosa {
          * \param bus_name the string name of a created bus
          * \return a handle for further operations
          */
-        auto playOnBus(SoLoud::AudioSource &source, std::string bus_name) -> unsigned int;
+        auto playOnBus(SoLoud::AudioSource& source, const std::string& bus_name) -> unsigned int;
 
         /**
          * \brief Set the volume of a bus
@@ -141,6 +141,12 @@ namespace rosa {
          * \return valid or invalid
          */
         auto checkHandle(unsigned int handle) -> bool;
+
+        AudioManager(const AudioManager&)                    = delete;
+        AudioManager(AudioManager&&)                         = delete;
+        auto operator=(const AudioManager&) -> AudioManager& = delete;
+        auto operator=(AudioManager&&) -> AudioManager&      = delete;
+
     private:
         AudioManager();
         ~AudioManager();

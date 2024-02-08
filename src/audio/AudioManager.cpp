@@ -68,7 +68,7 @@ namespace rosa {
         m_busses.erase(name);
     }
 
-    auto AudioManager::playOnBus(SoLoud::AudioSource &source, std::string bus_name) -> unsigned int {
+    auto AudioManager::playOnBus(SoLoud::AudioSource& source, const std::string& bus_name) -> unsigned int {
         return m_busses.at(bus_name).play(source);
     }
 
