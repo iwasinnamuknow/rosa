@@ -109,7 +109,7 @@ namespace rosa {
              * @param Uuid A predetermined uuid
              * @return Entity& reference to a new entity
              */
-            auto createEntity(Uuid uuid) -> Entity&;
+            auto createEntity(const Uuid& uuid) -> Entity&;
 
             /**
              * @brief Remove an entity from the scene
@@ -118,12 +118,12 @@ namespace rosa {
              * @return true if the entity was removed
              * @return false if the entity didn't exist
              */
-            auto removeEntity(Uuid uuid) -> bool;
+            auto removeEntity(const Uuid& uuid) -> bool;
 
             /**
              * @brief Get a specific entity
              */
-            auto getEntity(Uuid uuid) -> Entity&;
+            auto getEntity(const Uuid& uuid) -> Entity&;
 
         private:
             ecs::EntityRegistry<Entity> m_registry;

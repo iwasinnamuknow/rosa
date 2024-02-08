@@ -25,7 +25,7 @@ namespace rosa::ecs {
     template<class T>
     class EntityArray {
     public:
-        auto createEntity(rosa::Uuid uuid) -> T& {
+        auto createEntity(const rosa::Uuid& uuid) -> T& {
             assert(m_size < max_entities && "Max entities reached.");
             assert(m_uuid_to_index.find(uuid) == m_uuid_to_index.end() && "Uuid is already registered for an entity.");
 
@@ -39,7 +39,7 @@ namespace rosa::ecs {
             return m_entities[new_index];
         }
 
-        auto removeEntity(rosa::Uuid uuid)-> void {
+        auto removeEntity(const rosa::Uuid& uuid) -> void {
 
             assert(m_uuid_to_index.find(uuid) != m_uuid_to_index.end() && "Removing non-existent entity.");
 
@@ -59,7 +59,7 @@ namespace rosa::ecs {
             --m_size;
         }
 
-        auto getEntity(rosa::Uuid uuid)-> T& {
+        auto getEntity(const rosa::Uuid& uuid) -> T& {
             assert(m_uuid_to_index.find(uuid) != m_uuid_to_index.end() && "Retrieving non-existent entity.");
 
             // Return a reference to the entity's component

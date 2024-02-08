@@ -30,7 +30,7 @@ namespace rosa {
      */
     class LuaScript : public ::rosa::Resource {
     public:
-        LuaScript(const std::string& name, Uuid uuid, const std::string& pack);
+        LuaScript(const std::string& name, const Uuid& uuid, const std::string& pack);
 
         /**
          * \brief Get the script text

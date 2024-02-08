@@ -64,7 +64,7 @@ namespace rosa {
          * \param uuid Uuid of the asset
          * \param pack Asset pack mount point
          */
-        Resource(const std::string& name, Uuid uuid, const std::string& pack)
+        Resource(const std::string& name, const Uuid& uuid, const std::string& pack)
             : m_name(name), m_uuid(uuid), m_pack(pack) {}
 
         /**
@@ -77,7 +77,7 @@ namespace rosa {
         /**
          * \brief Get the Uuid of the asset relative to the pack
          */
-        auto getUUID() const -> Uuid {
+        auto getUuid() const -> const Uuid& {
             return m_uuid;
         }
 

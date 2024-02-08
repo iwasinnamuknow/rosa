@@ -21,13 +21,13 @@ namespace rosa::ecs {
         : m_uuid(rosa::Uuid::generate()) {
     }
 
-    Entity::Entity(rosa::Uuid uuid)
+    Entity::Entity(const rosa::Uuid& uuid)
         : m_uuid(uuid) {
     }
 
     Entity::~Entity() = default;
 
-    auto Entity::getUuid() const -> rosa::Uuid {
+    auto Entity::getUuid() const -> const rosa::Uuid& {
         return m_uuid;
     }
 

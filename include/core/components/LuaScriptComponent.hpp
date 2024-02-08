@@ -57,13 +57,13 @@ namespace rosa {
          * \param deserialised true if this entity is being deserialised
          * \return true if loading was successful
          */
-        auto setScript(Uuid entity, Scene* scene, Uuid script, bool deserialised = false) -> bool;
+        auto setScript(const Uuid& entity_uuid, Scene* scene, const Uuid& script_uuid, bool deserialised = false) -> bool;
 
         /**
          * \brief Get the loaded script
          * \return asset Uuid
          */
-        auto getScript() const -> Uuid;
+        auto getScriptUuid() const -> const Uuid&;
 
         /**
          * \brief Assign an entire Lua table

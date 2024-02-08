@@ -74,7 +74,7 @@ namespace rosa {
          * \param pack Mountpoint of the asset pack
          * \param filter_params Filtering parameters
          */
-        Texture(const std::string& name, Uuid uuid, const std::string& pack, TextureFilterParams filter_params = {});
+        Texture(const std::string& name, const Uuid& uuid, const std::string& pack, TextureFilterParams filter_params = {});
 
         /**
          * \brief Get the OpenGL Id of the texture on the GPU

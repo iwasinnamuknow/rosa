@@ -55,11 +55,11 @@ namespace rosa {
             return m_screen_space;
         }
 
-        auto getFont() const -> Uuid {
+        auto getFontUuid() const -> const Uuid& {
             return m_font_uuid;
         }
 
-        auto setFont(Uuid uuid) -> void {
+        auto setFont(const Uuid& uuid) -> void {
             m_font = &ResourceManager::getInstance().getAsset<BitmapFont>(uuid);
             m_font_uuid = uuid;
         }

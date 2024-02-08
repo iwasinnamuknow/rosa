@@ -49,7 +49,7 @@ namespace rosa {
          * This constructor variant should be used when re-creating a previously
          * serialised entity.
          */
-        Entity(Uuid uuid, Scene* scene = nullptr)
+        Entity(const Uuid& uuid, Scene* scene = nullptr)
             : ecs::Entity(uuid), m_scene(scene) {}
 
         /**
@@ -106,11 +106,11 @@ namespace rosa {
          * \brief Get the UUID of the parent Entity
          * \return Uuid
          */
-        auto getParent() -> Uuid {
+        auto getParent() -> const Uuid& {
             return m_parent;
         }
 
-        auto setParent(Uuid parent_id) -> bool;
+        auto setParent(const Uuid& parent_id) -> bool;
         auto removeParent() -> bool;
 
         /**

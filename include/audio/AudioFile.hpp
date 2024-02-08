@@ -38,7 +38,7 @@ namespace rosa {
          * \param uuid asset uuid
          * \param pack additional pack path for submounts
          */
-        AudioFile(const std::string& name, Uuid uuid, const std::string& pack);
+        AudioFile(const std::string& name, const Uuid& uuid, const std::string& pack);
 
         /**
          * \brief Check if the audio read head is at the end of the file

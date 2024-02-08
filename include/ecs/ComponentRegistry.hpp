@@ -57,32 +57,32 @@ namespace rosa::ecs {
         }
 
         template<typename T>
-        auto addComponent(rosa::Uuid uuid) -> T& {
+        auto addComponent(const rosa::Uuid& uuid) -> T& {
             // Add a component to the array for an entity
             getComponentArray<T>()->addData(uuid);
             return getComponent<T>(uuid);
         }
 
         template<typename T>
-        auto addComponent(rosa::Uuid uuid, T& data) -> T& {
+        auto addComponent(const rosa::Uuid& uuid, T& data) -> T& {
             // Add a component to the array for an entity
             getComponentArray<T>()->addData(uuid, data);
             return getComponent<T>(uuid);
         }
 
         template<typename T>
-        void removeComponent(rosa::Uuid uuid) {
+        void removeComponent(const rosa::Uuid& uuid) {
             // Remove a component from the array for an entity
             getComponentArray<T>()->removeData(uuid);
         }
 
         template<typename T>
-        auto getComponent(rosa::Uuid uuid) -> T& {
+        auto getComponent(const rosa::Uuid& uuid) -> T& {
             // Get a reference to a component from the array for an entity
             return getComponentArray<T>()->getData(uuid);
         }
 
-        auto onEntityDestroyed(rosa::Uuid uuid) -> void {
+        auto onEntityDestroyed(const rosa::Uuid& uuid) -> void {
             // Notify each component array that an entity has been destroyed
             // If it has a component for that entity, it will remove it
             for (auto const& pair: m_component_arrays) {

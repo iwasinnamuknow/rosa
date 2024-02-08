@@ -17,7 +17,7 @@
 
 namespace rosa {
 
-    LuaScript::LuaScript(const std::string& name, Uuid uuid, const std::string& pack)
+    LuaScript::LuaScript(const std::string& name, const Uuid& uuid, const std::string& pack)
         : rosa::Resource(name, uuid, pack) {
 
         if (PHYSFS_exists(name.c_str()) == 0) {

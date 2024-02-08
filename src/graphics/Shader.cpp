@@ -18,7 +18,7 @@
 
 namespace rosa {
 
-    Shader::Shader(const std::string& name, Uuid uuid, const std::string& pack, ShaderType type)
+    Shader::Shader(const std::string& name, const Uuid& uuid, const std::string& pack, ShaderType type)
         : Resource(name, uuid, pack), m_type(type) {
 
         if (m_type == VertexShader) {

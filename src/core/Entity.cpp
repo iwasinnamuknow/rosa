@@ -27,7 +27,7 @@
 
 namespace rosa {
 
-    auto Entity::setParent(Uuid parent_id) -> bool {
+    auto Entity::setParent(const Uuid& parent_id) -> bool {
 
         assert(m_scene != nullptr);
 

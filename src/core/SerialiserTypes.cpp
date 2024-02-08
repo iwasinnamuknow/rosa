@@ -78,7 +78,7 @@ namespace rosa {
     auto operator<<(YAML::Emitter &out, const SpriteComponent &component) -> YAML::Emitter & {
         out << YAML::BeginMap;
         out << YAML::Key << "type" << YAML::Value << "sprite";
-        out << YAML::Key << "texture" << YAML::Value << static_cast<std::string>(component.getTextureUUID());
+        out << YAML::Key << "texture" << YAML::Value << static_cast<std::string>(component.getTextureUuid());
         out << YAML::Key << "colour" << YAML::Value << component.getColour();
         out << YAML::EndMap;
         return out;
@@ -87,7 +87,7 @@ namespace rosa {
     auto operator<<(YAML::Emitter &out, const SoundPlayerComponent &component) -> YAML::Emitter & {
         out << YAML::BeginMap;
         out << YAML::Key << "type" << YAML::Value << "sound";
-        out << YAML::Key << "source" << YAML::Value << static_cast<std::string>(component.getAudio());
+        out << YAML::Key << "source" << YAML::Value << static_cast<std::string>(component.getAudioUuid());
         out << YAML::Key << "position" << YAML::Value << component.getPosition();
         out << YAML::Key << "volume" << YAML::Value << component.getVolume();
         out << YAML::Key << "default_volume" << YAML::Value << component.getDefaultVolume();
@@ -100,7 +100,7 @@ namespace rosa {
     auto operator<<(YAML::Emitter &out, const MusicPlayerComponent &component) -> YAML::Emitter & {
         out << YAML::BeginMap;
         out << YAML::Key << "type" << YAML::Value << "music";
-        out << YAML::Key << "source" << YAML::Value << static_cast<std::string>(component.getAudio());
+        out << YAML::Key << "source" << YAML::Value << static_cast<std::string>(component.getAudioUuid());
         out << YAML::Key << "position" << YAML::Value << component.getPosition();
         out << YAML::Key << "volume" << YAML::Value << component.getVolume();
         out << YAML::Key << "default_volume" << YAML::Value << component.getDefaultVolume();
@@ -113,7 +113,7 @@ namespace rosa {
     auto operator<<(YAML::Emitter &out, const LuaScriptComponent &component) -> YAML::Emitter & {
         out << YAML::BeginMap;
         out << YAML::Key << "type" << YAML::Value << "lua_script";
-        out << YAML::Key << "script" << YAML::Value << static_cast<std::string>(component.getScript());
+        out << YAML::Key << "script" << YAML::Value << static_cast<std::string>(component.getScriptUuid());
 
         // TODO There has to be a neater way of capturing data that doesn't require all data to
         //      be kept inside a single lua table

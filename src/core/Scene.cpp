@@ -65,7 +65,7 @@ namespace rosa {
         return entity;
     }
 
-    auto Scene::createEntity(Uuid uuid) -> Entity& {
+    auto Scene::createEntity(const Uuid& uuid) -> Entity& {
 
         ZoneScopedN("Scene:Entity:Create_UUID");
 
@@ -75,8 +75,8 @@ namespace rosa {
 
         return entity;
     }
-    
-    auto Scene::removeEntity(Uuid uuid) -> bool {
+
+    auto Scene::removeEntity(const Uuid& uuid) -> bool {
 
         ZoneScopedN("Scene:Entity:Remove");
 
@@ -287,7 +287,7 @@ namespace rosa {
         Renderer::getInstance().flushBatch();
     }
 
-    auto Scene::getEntity(Uuid uuid) -> Entity& {
+    auto Scene::getEntity(const Uuid& uuid) -> Entity& {
         return m_registry.getEntity(uuid);
     }
 

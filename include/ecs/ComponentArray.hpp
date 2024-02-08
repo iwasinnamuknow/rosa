@@ -26,13 +26,13 @@ namespace rosa::ecs {
     class IComponentArray {
     public:
         virtual ~IComponentArray()                          = default;
-        virtual void onEntityDestroyed(rosa::Uuid /*uuid*/) = 0;
+        virtual void onEntityDestroyed(const rosa::Uuid& /*uuid*/) = 0;
     };
 
     template<typename T>
     class ComponentArray : public IComponentArray {
     public:
-        auto addData(rosa::Uuid uuid) -> T& {
+        auto addData(const rosa::Uuid& uuid) -> T& {
             assert(m_uuid_to_index.find(uuid) == m_uuid_to_index.end() && "Component added to same entity more than once.");
 
             // Put new entry at end and update the maps
@@ -45,7 +45,7 @@ namespace rosa::ecs {
             return m_components[new_index];
         }
 
-        auto addData(rosa::Uuid uuid, T& data) -> T& {
+        auto addData(const rosa::Uuid& uuid, T& data) -> T& {
             assert(m_uuid_to_index.find(uuid) == m_uuid_to_index.end() && "Component added to same entity more than once.");
 
             // Put new entry at end and update the maps
@@ -58,7 +58,7 @@ namespace rosa::ecs {
             return m_components[new_index];
         }
 
-        auto removeData(rosa::Uuid uuid) -> void {
+        auto removeData(const rosa::Uuid& uuid) -> void {
             assert(m_uuid_to_index.find(uuid) != m_uuid_to_index.end() && "Removing non-existent component.");
 
             // Copy element at end into deleted element's place to maintain density
@@ -77,14 +77,14 @@ namespace rosa::ecs {
             --m_size;
         }
 
-        auto getData(rosa::Uuid uuid) -> T& {
+        auto getData(const rosa::Uuid& uuid) -> T& {
             assert(m_uuid_to_index.find(uuid) != m_uuid_to_index.end() && "Retrieving non-existent component.");
 
             // Return a reference to the entity's component
             return m_components[m_uuid_to_index[uuid]];
         }
 
-        void onEntityDestroyed(rosa::Uuid uuid) override {
+        void onEntityDestroyed(const rosa::Uuid& uuid) override {
             if (m_uuid_to_index.find(uuid) != m_uuid_to_index.end()) {
                 // Remove the entity's component if it existed
                 removeData(uuid);

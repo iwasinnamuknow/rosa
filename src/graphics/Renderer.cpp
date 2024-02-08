@@ -98,7 +98,7 @@ namespace rosa {
         delete[] m_vertex_buffer;
     }
 
-    auto Renderer::makeShaderProgram(Uuid vertex_shader, Uuid fragment_shader) -> ShaderProgram* {
+    auto Renderer::makeShaderProgram(const Uuid& vertex_shader, const Uuid& fragment_shader) -> ShaderProgram* {
         ZoneScopedNC("Renderer:CompileShaderProgram", profiler::detail::tracy_colour_render);
 
         if (glfwGetCurrentContext() == nullptr) {

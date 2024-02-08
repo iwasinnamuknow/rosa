@@ -38,12 +38,12 @@ namespace rosa {
         /**
          * \brief Get the Uuid of the associated asset
          */
-        auto getAudio() const -> Uuid;
+        auto getAudioUuid() const -> const Uuid&;
 
         /**
          * \brief Load an asset by Uuid
          */
-        auto setAudio(Uuid uuid) -> void;
+        auto setAudio(const Uuid& uuid) -> void;
 
         /**
          * \brief Play the audio track

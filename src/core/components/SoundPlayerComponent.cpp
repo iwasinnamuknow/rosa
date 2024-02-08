@@ -19,11 +19,11 @@
 
 namespace rosa {
 
-    auto SoundPlayerComponent::getAudio() const -> Uuid {
+    auto SoundPlayerComponent::getAudioUuid() const -> const Uuid& {
         return m_uuid;
     }
 
-    auto SoundPlayerComponent::setAudio(Uuid uuid) -> void {
+    auto SoundPlayerComponent::setAudio(const Uuid& uuid) -> void {
         m_uuid = uuid;
         m_audio_file = &ResourceManager::getInstance().getAsset<AudioFile>(m_uuid);
         auto result = m_wav.loadFile(m_audio_file);

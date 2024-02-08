@@ -18,7 +18,7 @@
 #include <graphics/ShaderProgram.hpp>
 
 namespace rosa {
-    ShaderProgram::ShaderProgram(Uuid vertex_shader, Uuid fragment_shader)
+    ShaderProgram::ShaderProgram(const Uuid& vertex_shader, const Uuid& fragment_shader)
         : m_vertex_shader_id(vertex_shader), m_fragment_shader_id(fragment_shader) {
 
         if (!vertex_shader.empty()) {
@@ -30,13 +30,13 @@ namespace rosa {
         }
     }
 
-    auto ShaderProgram::loadVertexShader(Uuid vertex_shader) -> void {
+    auto ShaderProgram::loadVertexShader(const Uuid& vertex_shader) -> void {
         m_vertex_shader_id = vertex_shader;
         m_vertex_shader    = &ResourceManager::getInstance().getAsset<Shader>(vertex_shader);
         m_compiled         = false;
     }
 
-    auto ShaderProgram::loadFragmentShader(Uuid fragment_shader) -> void {
+    auto ShaderProgram::loadFragmentShader(const Uuid& fragment_shader) -> void {
         m_fragment_shader_id = fragment_shader;
         m_fragment_shader    = &ResourceManager::getInstance().getAsset<Shader>(fragment_shader);
         m_compiled           = false;

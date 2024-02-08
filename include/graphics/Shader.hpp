@@ -99,7 +99,7 @@ void main()
          * \param pack Mountpoint of the asset pack
          * \param type ShaderType defaulting to VertexShader
          */
-        explicit Shader(const std::string& name, Uuid uuid, const std::string& pack, ShaderType type = VertexShader);
+        explicit Shader(const std::string& name, const Uuid& uuid, const std::string& pack, ShaderType type = VertexShader);
 
         /**
          * \brief Get the ShaderType of the asset

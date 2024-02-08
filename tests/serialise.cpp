@@ -172,7 +172,7 @@ auto check_sprite(const YAML::Node& component) -> void {
     REQUIRE(colour_value == rosa::Colour(0.46F, 1.F, 1.F, 1.F));
 }
 
-auto check_sound(const YAML::Node& component, rosa::Uuid source) -> void {
+auto check_sound(const YAML::Node& component, const rosa::Uuid& source) -> void {
     const auto& source_uuid = component["source"];
     REQUIRE(source_uuid.Type() == YAML::NodeType::Scalar);
     auto source_uuid_value = source_uuid.as<rosa::Uuid>();

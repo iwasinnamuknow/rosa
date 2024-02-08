@@ -35,7 +35,7 @@
 #endif
 
 namespace rosa {
-    Texture::Texture(const std::string& name, Uuid uuid, const std::string& pack, TextureFilterParams filter_params)
+    Texture::Texture(const std::string& name, const Uuid& uuid, const std::string& pack, TextureFilterParams filter_params)
         : rosa::Resource(name, uuid, pack), m_filter_params(filter_params) {
 
         if (PHYSFS_exists(name.c_str()) == 0) {

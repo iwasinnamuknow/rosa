@@ -42,7 +42,7 @@ namespace rosa {
             auto getSize() -> glm::vec2;
 
             auto getTexture() const -> Texture&;
-            auto setTexture(Uuid uuid) -> void;
+            auto setTexture(const Uuid& uuid) -> void;
 
             auto setScreenSpace(bool screen_space) -> void;
             auto getScreenSpace() -> bool;

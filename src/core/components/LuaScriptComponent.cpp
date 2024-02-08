@@ -336,7 +336,7 @@ namespace rosa {
 
         state.new_usertype<rosa::SoundPlayerComponent>(
                 "SoundPlayer",
-                "getAudio", &rosa::SoundPlayerComponent::getAudio,
+                "getAudioUuid", &rosa::SoundPlayerComponent::getAudioUuid,
                 "setAudio", &rosa::SoundPlayerComponent::setAudio,
                 "play", &rosa::SoundPlayerComponent::play,
                 "stop", &rosa::SoundPlayerComponent::stop,
@@ -352,7 +352,7 @@ namespace rosa {
 
         state.new_usertype<rosa::MusicPlayerComponent>(
                 "MusicPlayer",
-                "getAudio", &rosa::MusicPlayerComponent::getAudio,
+                "getAudioUuid", &rosa::MusicPlayerComponent::getAudioUuid,
                 "setAudio", &rosa::MusicPlayerComponent::setAudio,
                 "play", &rosa::MusicPlayerComponent::play,
                 "stop", &rosa::MusicPlayerComponent::stop,
@@ -395,7 +395,7 @@ namespace rosa {
         ZoneScopedN("LuaScriptComponent:Initialise");
     }
 
-    auto LuaScriptComponent::setScript(Uuid entity_id, Scene* scene, Uuid script_id, bool deserialised) -> bool {
+    auto LuaScriptComponent::setScript(const Uuid& entity_uuid, Scene* scene, const Uuid& script_uuid, bool deserialised) -> bool {
         ZoneScopedN("LuaScriptComponent:setScript");
 
         assert(scene != nullptr);
@@ -403,14 +403,14 @@ namespace rosa {
         tracy::LuaRegister(m_state);
 
         m_scene  = scene;
-        m_entity = entity_id;
+        m_entity = entity_uuid;
 
         try {
             m_state.open_libraries(sol::lib::base, sol::lib::string);
 
-            const auto& script = ResourceManager::getInstance().getAsset<LuaScript>(script_id);
+            const auto& script = ResourceManager::getInstance().getAsset<LuaScript>(script_uuid);
 
-            auto& entity = m_scene->getEntity(m_entity);
+            auto& entity = m_scene->getRegistry().getEntity(entity_uuid);
 
             init_events(m_state);
             init_types(m_state);
@@ -424,7 +424,7 @@ namespace rosa {
                 m_on_input_function = m_state["onInput"];
                 m_on_load_function  = m_state["onLoad"];
 
-                m_uuid = script_id;
+                m_uuid = script_uuid;
 
                 m_state["scene"] = m_scene;
 
@@ -493,7 +493,7 @@ namespace rosa {
         m_state.set(key, value);
     }
 
-    auto LuaScriptComponent::getScript() const -> Uuid {
+    auto LuaScriptComponent::getScriptUuid() const -> const Uuid& {
         return m_uuid;
     }
 

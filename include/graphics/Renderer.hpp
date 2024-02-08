@@ -108,7 +108,7 @@ namespace rosa {
          * shader already exists, it will be returned - otherwise it will be constructed
          * and cached.
          */
-        auto makeShaderProgram(Uuid vertex_shader = {}, Uuid fragment_shader = {}) -> ShaderProgram*;
+        auto makeShaderProgram(const Uuid& vertex_shader = {}, const Uuid& fragment_shader = {}) -> ShaderProgram*;
 
         Renderer();
         ~Renderer();

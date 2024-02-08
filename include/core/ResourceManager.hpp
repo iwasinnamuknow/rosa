@@ -123,7 +123,7 @@ namespace rosa {
          * \return A reference to the resource object
          */
         template<typename T>
-        auto getAsset(Uuid uuid) const -> T& {
+        auto getAsset(const Uuid& uuid) const -> T& {
             ZoneScopedN("Assets:GetAsset");
             if (!m_resources.contains(uuid)) {
                 throw ResourceNotFoundException(fmt::format("Couldn't locate a resource {}", uuid.toString()));

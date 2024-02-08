@@ -28,7 +28,7 @@ namespace rosa::ecs {
     class Entity {
     public:
         Entity();
-        explicit Entity(rosa::Uuid uuid);
+        explicit Entity(const rosa::Uuid& uuid);
 
         // copy assignment
         auto operator=(const Entity& other) -> Entity& = default;
@@ -42,7 +42,7 @@ namespace rosa::ecs {
 
         virtual ~Entity();
 
-        [[nodiscard]] auto getUuid() const -> rosa::Uuid;
+        [[nodiscard]] auto getUuid() const -> const rosa::Uuid&;
 
         [[nodiscard]] auto getComponentSignature() -> ec_sig&;
 

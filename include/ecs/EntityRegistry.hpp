@@ -42,25 +42,25 @@ namespace rosa::ecs {
             ZoneScopedNC("Registry:Setup", profiler::detail::tracy_colour_registry);
         }
 
-        auto createEntity(rosa::Uuid uuid = rosa::Uuid::generate()) -> C& {
+        auto createEntity(const rosa::Uuid& uuid = rosa::Uuid::generate()) -> C& {
             ZoneScopedNC("Registry:CreateEntity", profiler::detail::tracy_colour_registry);
             C& entity = m_entities->createEntity(uuid);
             entity.setActive(true);
             return entity;
         }
 
-        auto removeEntity(rosa::Uuid uuid) -> void {
+        auto removeEntity(const rosa::Uuid& uuid) -> void {
             ZoneScopedNC("Registry:RemoveEntity", profiler::detail::tracy_colour_registry);
             m_entities->removeEntity(uuid);
         }
 
-        auto getEntity(rosa::Uuid uuid) -> C& {
+        auto getEntity(const rosa::Uuid& uuid) -> C& {
             ZoneScopedNC("Registry:GetEntity", profiler::detail::tracy_colour_registry);
             return m_entities->getEntity(uuid);
         }
 
         template<typename T>
-        auto addComponent(rosa::Uuid uuid) -> T& {
+        auto addComponent(const rosa::Uuid& uuid) -> T& {
             ZoneScopedNC("Registry:AddComponent", profiler::detail::tracy_colour_registry);
             auto& entity    = m_entities->getEntity(uuid);
             T&    component = m_component_registry.addComponent<T>(uuid);
@@ -70,7 +70,7 @@ namespace rosa::ecs {
         }
 
         template<typename T>
-        auto addComponent(rosa::Uuid uuid, T& data) -> T& {
+        auto addComponent(const rosa::Uuid& uuid, T& data) -> T& {
             ZoneScopedNC("Registry:AddComponentExisting", profiler::detail::tracy_colour_registry);
             auto& entity    = m_entities->getEntity(uuid);
             T&    component = m_component_registry.addComponent<T>(uuid, data);
@@ -80,7 +80,7 @@ namespace rosa::ecs {
         }
 
         template<typename T>
-        auto removeComponent(rosa::Uuid uuid) -> void {
+        auto removeComponent(const rosa::Uuid& uuid) -> void {
             ZoneScopedNC("Registry:RemoveComponent", profiler::detail::tracy_colour_registry);
             auto& entity = m_entities->getEntity(uuid);
             m_component_registry.removeComponent<T>(uuid);
@@ -88,13 +88,13 @@ namespace rosa::ecs {
         }
 
         template<typename T>
-        auto getComponent(rosa::Uuid uuid) -> T& {
+        auto getComponent(const rosa::Uuid& uuid) -> T& {
             ZoneScopedNC("Registry:GetComponent", profiler::detail::tracy_colour_registry);
             return m_component_registry.getComponent<T>(uuid);
         }
 
         template<typename T>
-        auto hasComponent(rosa::Uuid uuid) -> bool {
+        auto hasComponent(const rosa::Uuid& uuid) -> bool {
             ZoneScopedNC("Registry:HasComponent", profiler::detail::tracy_colour_registry);
             return m_entities->getEntity(uuid).getComponentSignature().test(static_cast<size_t>(m_component_registry.getComponentType<T>()));
         }
