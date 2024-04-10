@@ -23,7 +23,6 @@
 
 #include <graphics/gl.hpp>
 #include <GLFW/glfw3.h>
-#include <entt/fwd.hpp>
 #include <fmt/format.h>
 #include <glm/glm.hpp>
 #include <imgui.h>

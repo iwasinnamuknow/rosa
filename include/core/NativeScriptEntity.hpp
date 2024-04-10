@@ -18,7 +18,6 @@
 //#include <core/Scene.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <core/components/TransformComponent.hpp>
-#include <entt/entt.hpp>
 #include <functional>
 #include <spdlog/spdlog.h>
 #include <core/Entity.hpp>
