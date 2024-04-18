@@ -42,7 +42,8 @@ namespace rosa {
         Renderable renderable{
                 m_quad,
                 transform,
-                m_shader_program};
+                m_shader_program,
+                m_screen_space};
 
         Renderer::getInstance().submit(renderable);
     }
