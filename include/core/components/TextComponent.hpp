@@ -81,11 +81,19 @@ namespace rosa {
             for (const auto& quad: m_quad_cache) {
                 Renderable renderable{
                         quad,
-                        glm::translate(transform, glm::vec3(quad.pos.x, quad.pos.y, 0.F)),
+                        glm::translate(transform, glm::vec3(quad.pos.x + m_offset.x, quad.pos.y + m_offset.y, 0.F)),
                         m_shader_program,
                         m_screen_space};
                 Renderer::getInstance().submit(renderable);
             }
+        }
+
+        auto setOffset(glm::vec2 offset) -> void {
+            m_offset = offset;
+        }
+
+        auto getOffset() -> glm::vec2 {
+            return m_offset;
         }
 
     private:
@@ -95,6 +103,7 @@ namespace rosa {
         bool m_screen_space{true};
         std::string m_text;
         Colour m_colour{1.F, 1.F, 1.F};
+        glm::vec2         m_offset{0.F, 0.F};
 
         ShaderProgram* m_shader_program{nullptr};
 
