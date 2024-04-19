@@ -30,3 +30,12 @@ assets:
     - type: 3
       path: font.bff
       uuid: 286d945e-7fd9-4444-a95e-3faa3e541536
+    - type: 0
+      path: rosa.dds
+      uuid: 88ce43f7-3ccd-4d0a-867f-13f359a0c658
+      filtering:
+        minify: 0x2600
+        magnify: 0x2600
+    - type: 0
+      path: light.dds
+      uuid: 14b87e5e-8a05-4c8f-b850-39ea5b40caf8

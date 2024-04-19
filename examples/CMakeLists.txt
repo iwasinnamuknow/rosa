@@ -64,6 +64,15 @@ target_compile_features(text_rendering PRIVATE cxx_std_20)
 target_include_directories(text_rendering PRIVATE ../include/)
 target_link_libraries(text_rendering PRIVATE rosa)
 
+if (_WIN32)
+    add_executable(reaction_tester WIN32 reaction_tester/reaction_tester.cpp reaction_tester/RosaTalker.cpp)
+else (_WIN32)
+    add_executable(reaction_tester reaction_tester/reaction_tester.cpp reaction_tester/RosaTalker.cpp)
+endif (_WIN32)
+target_compile_features(reaction_tester PRIVATE cxx_std_20)
+target_include_directories(reaction_tester PRIVATE ../include/)
+target_link_libraries(reaction_tester PRIVATE rosa)
+
 # Asset packaging
 file(GLOB_RECURSE ASSETS "assets/*")
 
