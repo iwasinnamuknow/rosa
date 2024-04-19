@@ -76,6 +76,10 @@ namespace rosa {
         return entity;
     }
 
+    auto Scene::deferCall(std::function<void()> fn) -> void {
+        m_deferred.emplace_back(fn);
+    }
+
     auto Scene::removeEntity(const Uuid& uuid) -> bool {
 
         ZoneScopedN("Scene:Entity:Remove");
@@ -145,11 +149,19 @@ namespace rosa {
         ZoneScopedNC("Updates", profiler::detail::tracy_colour_updates);
 
         {
-            ZoneScopedNC("Updates:LuaScript", profiler::detail::tracy_colour_updates);
+            ZoneScopedNC("Updates:DeferredCalls", profiler::detail::tracy_colour_updates);
+
+            for (auto& deferred: m_deferred) {
+                deferred();
+            }
+            m_deferred.clear();
+        }
+
+        {
+            ZoneScopedNC("Updates:NativeScript", profiler::detail::tracy_colour_updates);
 
             // Run updates for native script components, instantiating where needed
             for (auto& entity: ecs::RegistryView<Entity, NativeScriptComponent>(m_registry)) {
-
                 auto& nsc = m_registry.getComponent<NativeScriptComponent>(entity.getUuid());
 
                 if (!nsc.instance) {
