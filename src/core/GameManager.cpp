@@ -96,6 +96,17 @@ namespace rosa {
             assert(m_current_scene); // Ensure scene pointer is valid - this needs to be managed internally.
 
             {
+                ZoneScopedNC("ImGui::NewFrame", profiler::detail::tracy_colour_imgui);
+                ImGui_ImplOpenGL3_NewFrame();
+                ImGui_ImplGlfw_NewFrame();
+                ImGui::NewFrame();
+            }
+
+            {
+                m_current_scene->update(delta_time);
+            }
+
+            {
                 ZoneScopedNC("Events", profiler::detail::tracy_colour_events);
                 EventManager::getInstance().pollEvents(*m_render_window);
 
@@ -108,17 +119,6 @@ namespace rosa {
                         m_current_scene->input(event);
                     }
                 }
-            }
-
-            {
-                ZoneScopedNC("ImGui::NewFrame", profiler::detail::tracy_colour_imgui);
-                ImGui_ImplOpenGL3_NewFrame();
-                ImGui_ImplGlfw_NewFrame();
-                ImGui::NewFrame();
-            }
-
-            {
-                m_current_scene->update(delta_time);
             }
 
             {
