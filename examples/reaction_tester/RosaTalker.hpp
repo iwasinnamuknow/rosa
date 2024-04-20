@@ -62,7 +62,7 @@ protected:
 
     std::unordered_map<int, std::string> m_strings{
             {State::Welcome, "Hello, my name is Rosa. Would you like to play a game?"},
-            {State::Instructions, "Press any key when the light turns on."},
+            {State::Instructions, "Press any key when the green light turns on."},
     };
 
     std::unique_ptr<std::mt19937_64>      m_generator{nullptr};
