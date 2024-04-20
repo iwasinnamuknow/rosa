@@ -39,7 +39,7 @@
 auto get_exe_dir() -> std::string {
 #if defined(_WIN32)
     char* exe_path;
-    if (_get_pgmptr(&exePath) != 0) {
+    if (_get_pgmptr(&exe_path) != 0) {
         return {};
     }
 
