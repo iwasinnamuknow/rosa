@@ -19,6 +19,7 @@
 #include <core/Entity.hpp>
 #include <core/GameManager.hpp>
 #include <core/components/NativeScriptComponent.hpp>
+#include "rosa_logo.h"
 
 // Create a class to represent our scene
 class GameScene : public rosa::Scene {
@@ -40,9 +41,15 @@ public:
 auto main() -> int {
 
     // Grab the GameManager
-    auto game_mgr = rosa::GameManager(800, 600, "Reaction Test", 8);
+    auto game_mgr = rosa::GameManager(1280, 720, "Reaction Test", 8);
 
     rosa::ResourceManager::getInstance().registerAssetPack("base.pak", "");
+
+    GLFWimage icon;
+    icon.width = 16;
+    icon.height = 16;
+    icon.pixels = const_cast<unsigned char*>(rosa_logo.pixel_data);
+    game_mgr.getRenderWindow()->setWindowIcon(&icon);
 
     // Instantiate our scene from the class above and register it
     game_mgr.addScene("game_scene", std::make_unique<GameScene>(game_mgr.getRenderWindow()));
