@@ -78,7 +78,7 @@ namespace rosa {
          *
          * Compare colour channels with a small epsilon
          */
-        constexpr auto operator==(const Colour& other) const -> bool {
+        auto operator==(const Colour& other) const -> bool {
 
             const float relative_difference_factor = 0.0001f;// 0.01%
 
@@ -98,7 +98,7 @@ namespace rosa {
         /**
          * \brief Check if a colour has zeros for all channels
          */
-        constexpr auto isZero() const noexcept -> bool {
+        auto isZero() const noexcept -> bool {
             return (
                     (r == g) && (r == b) && (r == a) && (a == 0.F));
         }

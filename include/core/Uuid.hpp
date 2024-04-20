@@ -144,7 +144,7 @@ namespace rosa {
         }
 
         // std::string operator
-        constexpr explicit operator std::string() const {
+        explicit operator std::string() const {
             // Formats to "0065e7d7-418c-4da4-b4d6-b54b6cf7466a"
             char buffer[256] = {0};
             auto chars_written = std::snprintf(buffer, 255,
@@ -174,7 +174,7 @@ namespace rosa {
          * \brief Convert UUID to a string
          * \return std::string representation
          */
-        constexpr auto toString() const -> std::string {
+        auto toString() const -> std::string {
             return static_cast<std::string>(*this);
         }
 
