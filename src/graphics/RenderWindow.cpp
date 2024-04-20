@@ -149,6 +149,10 @@ namespace rosa {
         }
     }
 
+    auto RenderWindow::setWindowIcon(const GLFWimage* icon) -> void {
+        glfwSetWindowIcon(m_wnd, 1, icon);
+    }
+
     void RenderWindow::resize(int change_x, int change_y) {
         spdlog::debug("RenderWindow: Window resized. New size is {},{}", change_x, change_y);
         m_wnd_size[0] = change_x;

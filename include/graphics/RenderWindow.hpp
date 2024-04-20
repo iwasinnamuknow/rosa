@@ -98,6 +98,8 @@ namespace rosa {
             return {m_wnd_size[0], m_wnd_size[1]};
         }
 
+        auto setWindowIcon(const GLFWimage* icon) -> void;
+
         /**
          * \brief Discover if a key is being pressed
          */
