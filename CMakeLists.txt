@@ -18,14 +18,7 @@ find_package(sol2 CONFIG REQUIRED)
 find_package(Lua REQUIRED)
 find_package(lodepng CONFIG REQUIRED)
 
-if (_WIN32)
-  add_library(rosa WIN32 ${SOURCES})
-#set(vcpkg_INCLUDE_DIR ${_VCPKG_INSTALLED_DIR}/x64-linux/include)
-else (_WIN32)
-add_library(
-        rosa ${SOURCES}
-)
-endif (_WIN32)
+add_library(rosa ${SOURCES})
 
 find_package(imgui CONFIG REQUIRED)
 find_package(Tracy CONFIG REQUIRED)
@@ -75,7 +68,7 @@ set (GENERAL_LIBS
   yaml-cpp
   lua
   sol2
-        ${OPENGL_STUFF}
+  ${OPENGL_STUFF}
   imgui::imgui
   soloud
   lodepng
