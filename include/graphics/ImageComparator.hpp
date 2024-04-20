@@ -18,6 +18,7 @@
 #include <core/Exception.hpp>
 #include <lodepng.h>
 #include <vector>
+#include <span>
 
 namespace rosa {
 
