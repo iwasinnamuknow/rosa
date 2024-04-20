@@ -18,14 +18,14 @@ find_package(sol2 CONFIG REQUIRED)
 find_package(Lua REQUIRED)
 find_package(lodepng CONFIG REQUIRED)
 
-#if (_WIN32)
-#  add_executable(rosa_exe WIN32 ${SOURCES})
+if (_WIN32)
+  add_library(rosa WIN32 ${SOURCES})
 #set(vcpkg_INCLUDE_DIR ${_VCPKG_INSTALLED_DIR}/x64-linux/include)
-#else (_WIN32)
+else (_WIN32)
 add_library(
-        rosa SHARED ${SOURCES}
+        rosa ${SOURCES}
 )
-#endif (_WIN32)
+endif (_WIN32)
 
 find_package(imgui CONFIG REQUIRED)
 find_package(Tracy CONFIG REQUIRED)
@@ -81,7 +81,7 @@ set (GENERAL_LIBS
   lodepng
 )
 
-# set (WINDOWS_LIBS)
+#set (WINDOWS_LIBS)
 
 set (LINUX_LIBS
         ${LINUX_LIBS}
