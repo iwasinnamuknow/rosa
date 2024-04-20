@@ -80,7 +80,7 @@ namespace rosa {
          */
         constexpr auto operator==(const Colour& other) const -> bool {
 
-            const float relative_difference_factor = 0.0001;// 0.01%
+            const float relative_difference_factor = 0.0001f;// 0.01%
 
             const auto mag_r   = std::max(std::abs(r), std::abs(other.r));
             auto       r_match = std::abs(r - other.r) <= relative_difference_factor * mag_r;

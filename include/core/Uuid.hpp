@@ -118,8 +118,8 @@ namespace rosa {
             std::memcpy(bytes.data() + (sizeof(std::uint8_t) * 8), &bottom, sizeof(bottom));
 
             // Set version and variant
-            bytes[6] = ((bytes[6] & 0x0f) | 0x40); // Version 4
-            bytes[8] = ((bytes[8] & 0x3f) | 0x80); // Variant is 10
+            bytes[6] = ((bytes[6] & 0x0fu) | 0x40u); // Version 4
+            bytes[8] = ((bytes[8] & 0x3fu) | 0x80u); // Variant is 10
 
             return {bytes};
         }
