@@ -113,8 +113,9 @@ auto RosaTalker::onInput(const rosa::Event& event) -> void {
                         std::uniform_real_distribution<float> dist{std::uniform_real_distribution(2.F, 5.F)};
                         m_light_timer = dist(*m_generator);
                         m_text_comp->setText("");
-                        getScene().deferCall([this]() -> void {
-                            m_light_entity     = &getScene().createEntity();
+
+                        //                        getScene().deferCall([this]() -> void {
+                        m_light_entity     = &getScene().createEntity();
                             auto& light_sprite = m_light_entity->addComponent<rosa::SpriteComponent>();
                             light_sprite.setTexture(light_uuid);
                             light_sprite.setTextureRect(rosa::Rect(glm::vec2(0, 0), glm::vec2(128, 128)));
@@ -123,7 +124,7 @@ auto RosaTalker::onInput(const rosa::Event& event) -> void {
                                     (static_cast<float>(window_size.x / 2)),
                                     (static_cast<float>(window_size.y / 2)));
                             m_light_entity->getComponent<rosa::TransformComponent>().setPosition(position);
-                        });
+                            //                        });
                     }
                     break;
                 case Play:

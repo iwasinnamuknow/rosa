@@ -76,10 +76,6 @@ namespace rosa {
         return entity;
     }
 
-    auto Scene::deferCall(std::function<void()> fn) -> void {
-        m_deferred.emplace_back(fn);
-    }
-
     auto Scene::removeEntity(const Uuid& uuid) -> bool {
 
         ZoneScopedN("Scene:Entity:Remove");
@@ -111,9 +107,33 @@ namespace rosa {
         {
             ZoneScopedNC("Events:NativeScript", profiler::detail::tracy_colour_events);
 
-            // Run updates for native script components, instantiating where needed
-            for (auto& entity: ecs::RegistryView<Entity, NativeScriptComponent>(m_registry)) {
-                auto& nsc = m_registry.getComponent<NativeScriptComponent>(entity.getUuid());
+            // Run updates for native script components, instantiating where needed.
+            //
+            // Removed the fancy RegistryView in favour of a simple indexed loop. This handles
+            // cases where a new entity is created, which would have invalidated the iterators.
+            //
+            // If a new entity is added in this loop, it will be placed at the end of the entity
+            // block and the new size will be accounted for on the next iteration.
+            //
+            // If an entity is deleted in this loop, nothing will be affected as the entity won't
+            // be removed until the next frame.
+            for (std::size_t i{0}; i < m_registry.count(); i++) {
+                auto& ecs_entity = m_registry.getAtIndex(i);
+                auto& entity     = m_registry.getEntity(ecs_entity.getUuid());
+
+                if (!entity.isActive()) {
+                    continue;
+                }
+
+                if (entity.forDeletion()) {
+                    continue;
+                }
+
+                if (!entity.hasComponent<NativeScriptComponent>()) {
+                    continue;
+                }
+
+                auto& nsc = entity.getComponent<NativeScriptComponent>();
 
                 if (!nsc.instance) {
                     nsc.instantiate_function(this, &entity);
@@ -149,20 +169,26 @@ namespace rosa {
         ZoneScopedNC("Updates", profiler::detail::tracy_colour_updates);
 
         {
-            ZoneScopedNC("Updates:DeferredCalls", profiler::detail::tracy_colour_updates);
-
-            for (auto& deferred: m_deferred) {
-                deferred();
-            }
-            m_deferred.clear();
-        }
-
-        {
             ZoneScopedNC("Updates:NativeScript", profiler::detail::tracy_colour_updates);
 
-            // Run updates for native script components, instantiating where needed
-            for (auto& entity: ecs::RegistryView<Entity, NativeScriptComponent>(m_registry)) {
-                auto& nsc = m_registry.getComponent<NativeScriptComponent>(entity.getUuid());
+            // See comment above regarding index-based loop
+            for (std::size_t i{0}; i < m_registry.count(); i++) {
+                auto& ecs_entity = m_registry.getAtIndex(i);
+                auto& entity     = m_registry.getEntity(ecs_entity.getUuid());
+
+                if (!entity.isActive()) {
+                    continue;
+                }
+
+                if (entity.forDeletion()) {
+                    continue;
+                }
+
+                if (!entity.hasComponent<NativeScriptComponent>()) {
+                    continue;
+                }
+
+                auto& nsc = entity.getComponent<NativeScriptComponent>();
 
                 if (!nsc.instance) {
                     nsc.instantiate_function(this, &entity);

@@ -112,20 +112,6 @@ namespace rosa {
             auto createEntity(const Uuid& uuid) -> Entity&;
 
             /**
-             * @brief Defer a function call until the next frame
-             * \param fn A lambda object
-             *
-             * Example:
-             *
-             * deferCall([this]() -> void {
-             *     auto& entity = this->getScene().createEntity();
-             *     entity.setActive(false);
-             *     ...
-             * }
-             */
-            auto deferCall(std::function<void()> fn) -> void;
-
-            /**
              * @brief Remove an entity from the scene
              * 
              * @param entity reference to the entity to remove
@@ -154,8 +140,6 @@ namespace rosa {
 
             double m_last_frame_time{};
             glm::vec4 m_active_camera_pos{0};
-
-            std::vector<std::function<void()>> m_deferred{};
     };
 
 } // namespace rosa
