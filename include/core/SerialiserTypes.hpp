@@ -143,6 +143,12 @@ namespace YAML {
             rhs = node.as<std::string>();
             return true;
         }
+
+        static auto encode(const rosa::Uuid& rhs) -> Node {
+            Node node;
+            node = rhs.toString();
+            return node;
+        }
     };
 
     template<>
@@ -157,6 +163,15 @@ namespace YAML {
             rhs.b = node[2].as<float>();
             rhs.a = node[3].as<float>();
             return true;
+        }
+
+        static auto encode(const rosa::Colour& rhs) -> Node {
+            Node node;
+            node.push_back(rhs.r);
+            node.push_back(rhs.g);
+            node.push_back(rhs.b);
+            node.push_back(rhs.a);
+            return node;
         }
     };
 

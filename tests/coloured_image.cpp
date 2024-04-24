@@ -19,20 +19,23 @@
 
 // Rosa objects we'll need
 #include <core/GameManager.hpp>
+#include <core/SerialiserTypes.hpp>
+#include <core/components/NativeScriptComponent.hpp>
 #include <core/components/SpriteComponent.hpp>
-#include <core/components/LuaScriptComponent.hpp>
 #include <graphics/ImageComparator.hpp>
+
+#include "NSCColour.hpp"
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
 static constexpr auto dds_uuid = rosa::Uuid("f7055f22-6bfa-1a3b-4dbd-b366dd18866d");
-static constexpr auto script_uuid = rosa::Uuid("9046e8fe-cb01-7adf-1029-c79e71961173");
 
 // Create a class to represent our scene
-class LuaRotatingImage : public rosa::Scene {
+class ColouredImage : public rosa::Scene {
 public:
 
     // Pass default params to the base class constructor
-    explicit LuaRotatingImage(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {}
+    explicit ColouredImage(rosa::RenderWindow* render_window)
+        : rosa::Scene(render_window) {}
 
     // Override the onLoad function so we can set up our scene. This will be called
     // any time the GameManager activates the scene.
@@ -61,42 +64,60 @@ public:
         entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
 
         // Creat the lua script component and load our script
-        auto& script_comp = entity.addComponent<rosa::LuaScriptComponent>();
-        script_comp.setScript(entity.getUuid(), this, script_uuid);
+        entity.addComponent<rosa::NativeScriptComponent>().bind<NSCColour>();
     }
 };
 
-TEST_CASE("Rotate an image via lua script", "[lua]") {
+TEST_CASE("Colour an image via lua script", "[lua]") {
 
     // Grab the GameManager
-    auto game_mgr = rosa::GameManager(800, 600, "Lua Rotate Image", 0, true);
+    auto game_mgr = rosa::GameManager(800, 600, "Coloured Image", 0, true);
 
     rosa::ResourceManager::getInstance().registerAssetPack("references/base.pak", "");
 
     // Instantiate our scene from the class above and register it
-    game_mgr.addScene("simple_image", std::make_unique<LuaRotatingImage>(game_mgr.getRenderWindow()));
+    game_mgr.addScene("coloured_image", std::make_unique<ColouredImage>(game_mgr.getRenderWindow()));
 
     // Set the scene as active
-    game_mgr.changeScene("simple_image");
+    game_mgr.changeScene("coloured_image");
 
     // Advance some frames
-    game_mgr.run(3);
-
-    auto wnd_size = game_mgr.getRenderWindow()->getWindowSize();
+    game_mgr.run(2);
 
     // Read current framebuffer and compare to the reference image
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
     auto pixels = game_mgr.getRenderWindow()->readFrame();
-    std::vector<unsigned char> ref3_pixels = rosa::ImageComparator::readPNG("references/lua_rotating_image-3.png");
-    rosa::ImageComparator::writePNGDifferential("lua_rotating_image-3.png", pixels, ref3_pixels, wnd_size.x, wnd_size.y);
-    REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref3_pixels) == true);
+    std::vector<unsigned char> ref2_pixels = rosa::ImageComparator::readPNG("references/lua_coloured_image-2.png");
+    REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref2_pixels) == true);
 
     // Advance some more frames
-    game_mgr.run(3);
+    game_mgr.run(5);
 
     // Read current framebuffer and compare to the reference image
     game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
     pixels = game_mgr.getRenderWindow()->readFrame();
-    std::vector<unsigned char> ref6_pixels = rosa::ImageComparator::readPNG("references/lua_rotating_image-6.png");
-    REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref6_pixels) == true);
+    std::vector<unsigned char> ref7_pixels = rosa::ImageComparator::readPNG("references/lua_coloured_image-7.png");
+    const auto                 window_size = game_mgr.getRenderWindow()->getWindowSize();
+    rosa::ImageComparator::writePNG("ci_ref7.png", pixels, window_size.x, window_size.y);
+    rosa::ImageComparator::writePNGDifferential("ci_ref7_diff.png", pixels, ref7_pixels, window_size.x, window_size.y);
+    REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref7_pixels) == true);
+
+    // Advance some more frames
+    game_mgr.run(5);
+
+    // Read current framebuffer and compare to the reference image
+    game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
+    pixels = game_mgr.getRenderWindow()->readFrame();
+    std::vector<unsigned char> ref12_pixels = rosa::ImageComparator::readPNG("references/lua_coloured_image-12.png");
+    REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref12_pixels) == true);
+
+    // Advance some more frames
+    game_mgr.run(5);
+
+    // Read current framebuffer and compare to the reference image
+    game_mgr.getRenderWindow()->getFrameBuffer().copyColorBuffer();
+    pixels = game_mgr.getRenderWindow()->readFrame();
+    std::vector<unsigned char> ref17_pixels = rosa::ImageComparator::readPNG("references/lua_coloured_image-17.png");
+    REQUIRE(rosa::ImageComparator::compareEqualityBasic(pixels, ref17_pixels) == true);
+
 }

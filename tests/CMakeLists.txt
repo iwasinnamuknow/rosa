@@ -18,8 +18,8 @@ set(TESTS
   resource-manager.cpp
   scene.cpp
   display_image.cpp
-  lua_rotating_image.cpp
-  lua_coloured_image.cpp
+        rotating_image.cpp
+        coloured_image.cpp
   msaa.cpp
   texture_filtering.cpp
         serialise.cpp
