@@ -23,79 +23,78 @@
 #include <core/components/SpriteComponent.hpp>
 #include <core/components/SoundPlayerComponent.hpp>
 #include <core/components/MusicPlayerComponent.hpp>
-#include <core/components/LuaScriptComponent.hpp>
 #include <core/components/NativeScriptComponent.hpp>
 #include <core/components/CameraComponent.hpp>
 
-static auto lua_node_from_yaml(const YAML::Node& node) -> sol::table;
+//static auto lua_node_from_yaml(const YAML::Node& node) -> sol::table;
+//
+//static auto deserialise_map(const YAML::Node& node) -> sol::table {
+//    sol::table table{};
+//
+//    for (YAML::const_iterator it = node.begin(); it != node.end(); ++it) {
+//        if (it->second.Type() == YAML::NodeType::Scalar) {
+//            const auto& tag = it->second.Tag();
+//
+//            if (tag == "int") {
+//                table[it->first.as<std::string>()] = it->second.as<int>();
+//            } else if (tag == "float") {
+//                table[it->first.as<std::string>()] = it->second.as<float>();
+//
+//            } else if (tag == "bool") {
+//                table[it->first.as<std::string>()] = it->second.as<bool>();
+//
+//            } else if (tag == "str") {
+//                table[it->first.as<std::string>()] = it->second.as<std::string>();
+//            }
+//        } else {
+//            table[it->first.as<std::string>()] = lua_node_from_yaml(it->second);
+//        }
+//    }
+//
+//    return table;
+//}
 
-static auto deserialise_map(const YAML::Node& node) -> sol::table {
-    sol::table table{};
-
-    for (YAML::const_iterator it = node.begin(); it != node.end(); ++it) {
-        if (it->second.Type() == YAML::NodeType::Scalar) {
-            const auto& tag = it->second.Tag();
-
-            if (tag == "int") {
-                table[it->first.as<std::string>()] = it->second.as<int>();
-            } else if (tag == "float") {
-                table[it->first.as<std::string>()] = it->second.as<float>();
-
-            } else if (tag == "bool") {
-                table[it->first.as<std::string>()] = it->second.as<bool>();
-
-            } else if (tag == "str") {
-                table[it->first.as<std::string>()] = it->second.as<std::string>();
-            }
-        } else {
-            table[it->first.as<std::string>()] = lua_node_from_yaml(it->second);
-        }
-    }
-
-    return table;
-}
-
-static auto deserialise_sequence(const YAML::Node& node) -> sol::table {
-    sol::table table{};
-    int index{1};
-
-    for (YAML::const_iterator seq_it = node.begin(); seq_it != node.end(); ++seq_it) {
-        if (seq_it->Type() == YAML::NodeType::Scalar) {
-            const auto& tag = seq_it->Tag();
-
-            if (tag == "int") {
-                table[index++] = seq_it->as<int>();
-            } else if (tag == "float") {
-                table[index++] = seq_it->as<float>();
-
-            } else if (tag == "bool") {
-                table[index++] = seq_it->as<bool>();
-
-            } else if (tag == "str") {
-                table[index++] = seq_it->as<std::string>();
-            }
-        } else {
-            table[index++] = lua_node_from_yaml(*seq_it);
-        }
-
-    }
-
-    return table;
-}
-
-static auto lua_node_from_yaml(const YAML::Node& node) -> sol::table {
-    sol::table table{};
-
-    const auto node_type = node.Type();
-
-    if (node_type == YAML::NodeType::Map) {
-        table = deserialise_map(node);
-    } else if (node_type == YAML::NodeType::Sequence) {
-        table = deserialise_sequence(node);
-    }
-
-    return table;
-}
+//static auto deserialise_sequence(const YAML::Node& node) -> sol::table {
+//    sol::table table{};
+//    int index{1};
+//
+//    for (YAML::const_iterator seq_it = node.begin(); seq_it != node.end(); ++seq_it) {
+//        if (seq_it->Type() == YAML::NodeType::Scalar) {
+//            const auto& tag = seq_it->Tag();
+//
+//            if (tag == "int") {
+//                table[index++] = seq_it->as<int>();
+//            } else if (tag == "float") {
+//                table[index++] = seq_it->as<float>();
+//
+//            } else if (tag == "bool") {
+//                table[index++] = seq_it->as<bool>();
+//
+//            } else if (tag == "str") {
+//                table[index++] = seq_it->as<std::string>();
+//            }
+//        } else {
+//            table[index++] = lua_node_from_yaml(*seq_it);
+//        }
+//
+//    }
+//
+//    return table;
+//}
+//
+//static auto lua_node_from_yaml(const YAML::Node& node) -> sol::table {
+//    sol::table table{};
+//
+//    const auto node_type = node.Type();
+//
+//    if (node_type == YAML::NodeType::Map) {
+//        table = deserialise_map(node);
+//    } else if (node_type == YAML::NodeType::Sequence) {
+//        table = deserialise_sequence(node);
+//    }
+//
+//    return table;
+//}
 
 
 namespace rosa {
@@ -106,7 +105,6 @@ namespace rosa {
     auto operator<<(YAML::Emitter &out, const SpriteComponent &component) -> YAML::Emitter&;
     auto operator<<(YAML::Emitter &out, const SoundPlayerComponent &component) -> YAML::Emitter&;
     auto operator<<(YAML::Emitter &out, const MusicPlayerComponent &component) -> YAML::Emitter&;
-    auto operator<<(YAML::Emitter &out, const LuaScriptComponent &component) -> YAML::Emitter&;
     auto operator<<(YAML::Emitter &out, const NativeScriptEntity &component) -> YAML::Emitter&;
     auto operator<<(YAML::Emitter &out, const CameraComponent &component) -> YAML::Emitter&;
 } // namespace rosa
@@ -233,24 +231,6 @@ namespace YAML {
             rhs.setPosition(node["position"].as<double>());
             rhs.setVolume(node["volume"].as<float>());
             rhs.setPause(node["paused"].as<bool>());
-            return true;
-        }
-    };
-
-    template<>
-    struct convert<rosa::LuaScriptComponent> {
-        static auto decode(const Node& node, rosa::LuaScriptComponent& rhs, rosa::Scene* scene, rosa::Uuid entity) -> bool {
-            if (!node.IsMap()) {
-                return false;
-            }
-
-            rhs.setScript(entity, scene, node["script"].as<rosa::Uuid>(), true);
-
-            if (node["data"]) {
-                auto script_data = node["data"];
-                auto table_data = lua_node_from_yaml(script_data);
-                rhs.setData("", table_data);
-            }
             return true;
         }
     };

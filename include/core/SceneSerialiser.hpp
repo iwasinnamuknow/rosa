@@ -17,7 +17,6 @@
 
 #include <core/Scene.hpp>
 #include <yaml-cpp/yaml.h>
-#include <sol/sol.hpp>
 #include <unordered_map>
 #include <core/NativeScriptEntity.hpp>
 

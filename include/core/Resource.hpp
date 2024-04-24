@@ -34,7 +34,6 @@ namespace rosa {
         ResourceSound          = 1,
         ResourceMusic          = 2,
         ResourceFont           = 3,
-        ResourceScript         = 4,
         ResourceVertexShader   = 5,
         ResourceFragmentShader = 6
     };

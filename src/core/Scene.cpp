@@ -24,7 +24,6 @@
 #include <core/ResourceManager.hpp>
 #include <core/Scene.hpp>
 #include <core/components/CameraComponent.hpp>
-#include <core/components/LuaScriptComponent.hpp>
 #include <core/components/MusicPlayerComponent.hpp>
 #include <core/components/NativeScriptComponent.hpp>
 #include <core/components/SoundPlayerComponent.hpp>
@@ -47,7 +46,6 @@ namespace rosa {
         m_registry.registerComponent<TransformComponent>();
         m_registry.registerComponent<SpriteComponent>();
         m_registry.registerComponent<NativeScriptComponent>();
-        m_registry.registerComponent<LuaScriptComponent>();
         m_registry.registerComponent<CameraComponent>();
         m_registry.registerComponent<TextComponent>();
         m_registry.registerComponent<SoundPlayerComponent>();
@@ -144,23 +142,23 @@ namespace rosa {
             }
         }
 
-        {
-            ZoneScopedNC("Events:LuaScript", profiler::detail::tracy_colour_events);
-
-            // Run updates for native script components, instantiating where needed
-            for (auto& entity: ecs::RegistryView<Entity, LuaScriptComponent>(m_registry)) {
-
-                auto& lsc = m_registry.getComponent<LuaScriptComponent>(entity.getUuid());
-
-                //Entity* actual = &m_entities.at(entity);
-
-                auto result = lsc.m_on_input_function(Event(event));
-                if (!result.valid()) {
-                    sol::error err = result;
-                    spdlog::error("Failed to call onInput for lua script: {}", err.what());
-                }
-            }
-        }
+        //        {
+        //            ZoneScopedNC("Events:LuaScript", profiler::detail::tracy_colour_events);
+        //
+        //            // Run updates for native script components, instantiating where needed
+        //            for (auto& entity: ecs::RegistryView<Entity, LuaScriptComponent>(m_registry)) {
+        //
+        //                auto& lsc = m_registry.getComponent<LuaScriptComponent>(entity.getUuid());
+        //
+        //                //Entity* actual = &m_entities.at(entity);
+        //
+        //                auto result = lsc.m_on_input_function(Event(event));
+        //                if (!result.valid()) {
+        //                    sol::error err = result;
+        //                    spdlog::error("Failed to call onInput for lua script: {}", err.what());
+        //                }
+        //            }
+        //        }
     }
 
     auto Scene::update(float delta_time) -> void {
@@ -199,20 +197,20 @@ namespace rosa {
             }
         }
 
-        {
-            ZoneScopedNC("Updates:LuaScript", profiler::detail::tracy_colour_updates);
-
-            // Run updates for lua script components
-            for (auto& entity: ecs::RegistryView<Entity, LuaScriptComponent>(m_registry)) {
-
-                auto& lsc    = m_registry.getComponent<LuaScriptComponent>(entity.getUuid());
-                auto result = lsc.m_on_update_function(delta_time);
-                if (!result.valid()) {
-                    sol::error err = result;
-                    spdlog::error("Failed to call onUpdate for lua script: {}", err.what());
-                }
-            }
-        }
+        //        {
+        //            ZoneScopedNC("Updates:LuaScript", profiler::detail::tracy_colour_updates);
+        //
+        //            // Run updates for lua script components
+        //            for (auto& entity: ecs::RegistryView<Entity, LuaScriptComponent>(m_registry)) {
+        //
+        //                auto& lsc    = m_registry.getComponent<LuaScriptComponent>(entity.getUuid());
+        //                auto result = lsc.m_on_update_function(delta_time);
+        //                if (!result.valid()) {
+        //                    sol::error err = result;
+        //                    spdlog::error("Failed to call onUpdate for lua script: {}", err.what());
+        //                }
+        //            }
+        //        }
 
         {
             ZoneScopedNC("Updates:TransformUpdate", profiler::detail::tracy_colour_updates);
@@ -256,9 +254,6 @@ namespace rosa {
                         auto& nsc = m_registry.getComponent<NativeScriptComponent>(entity.getUuid());
                         nsc.on_destroy_function(nsc.instance);
                         nsc.destroy_instance_function();
-                    } else if (m_registry.hasComponent<LuaScriptComponent>(entity.getUuid())) {
-                        auto& lsc = m_registry.getComponent<LuaScriptComponent>(entity.getUuid());
-                        lsc.m_on_delete_function();
                     }
                     m_registry.removeEntity(entity.getUuid());
                 }

@@ -27,7 +27,6 @@
 namespace rosa {
 
     class NativeScriptEntity;
-    struct LuaScriptComponent;
     class SceneSerialiser;
 
     /**
@@ -135,7 +134,6 @@ namespace rosa {
             friend class NativeScriptEntity;
             friend class Entity;
             friend class SceneSerialiser;
-            friend struct LuaScriptComponent;
             friend class GameManager;
 
             double m_last_frame_time{};

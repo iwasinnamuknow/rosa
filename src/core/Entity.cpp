@@ -17,7 +17,6 @@
 #include <core/GameManager.hpp>
 #include <core/Scene.hpp>
 #include <core/components/CameraComponent.hpp>
-#include <core/components/LuaScriptComponent.hpp>
 #include <core/components/MusicPlayerComponent.hpp>
 #include <core/components/NativeScriptComponent.hpp>
 #include <core/components/SoundPlayerComponent.hpp>
@@ -85,7 +84,6 @@ namespace rosa {
 
     template auto Entity::getComponent<TransformComponent>() -> TransformComponent&;
     template auto Entity::getComponent<CameraComponent>() -> CameraComponent&;
-    template auto Entity::getComponent<LuaScriptComponent>() -> LuaScriptComponent&;
     template auto Entity::getComponent<NativeScriptComponent>() -> NativeScriptComponent&;
     template auto Entity::getComponent<TextComponent>() -> TextComponent&;
     template auto Entity::getComponent<MusicPlayerComponent>() -> MusicPlayerComponent&;
@@ -100,7 +98,6 @@ namespace rosa {
 
     template auto Entity::hasComponent<TransformComponent>() -> bool;
     template auto Entity::hasComponent<CameraComponent>() -> bool;
-    template auto Entity::hasComponent<LuaScriptComponent>() -> bool;
     template auto Entity::hasComponent<NativeScriptComponent>() -> bool;
     template auto Entity::hasComponent<TextComponent>() -> bool;
     template auto Entity::hasComponent<MusicPlayerComponent>() -> bool;
@@ -115,7 +112,6 @@ namespace rosa {
 
     template auto Entity::addComponent<TransformComponent>() -> TransformComponent&;
     template auto Entity::addComponent<CameraComponent>() -> CameraComponent&;
-    template auto Entity::addComponent<LuaScriptComponent>() -> LuaScriptComponent&;
     template auto Entity::addComponent<NativeScriptComponent>() -> NativeScriptComponent&;
     template auto Entity::addComponent<TextComponent>() -> TextComponent&;
     template auto Entity::addComponent<MusicPlayerComponent>() -> MusicPlayerComponent&;
@@ -130,7 +126,6 @@ namespace rosa {
 
     template auto Entity::addComponent<TransformComponent>(TransformComponent& data) -> TransformComponent&;
     template auto Entity::addComponent<CameraComponent>(CameraComponent& data) -> CameraComponent&;
-    template auto Entity::addComponent<LuaScriptComponent>(LuaScriptComponent& data) -> LuaScriptComponent&;
     template auto Entity::addComponent<NativeScriptComponent>(NativeScriptComponent& data) -> NativeScriptComponent&;
     template auto Entity::addComponent<TextComponent>(TextComponent& data) -> TextComponent&;
     template auto Entity::addComponent<MusicPlayerComponent>(MusicPlayerComponent& data) -> MusicPlayerComponent&;
@@ -149,7 +144,6 @@ namespace rosa {
 
     template auto Entity::removeComponent<TransformComponent>() -> bool;
     template auto Entity::removeComponent<CameraComponent>() -> bool;
-    template auto Entity::removeComponent<LuaScriptComponent>() -> bool;
     template auto Entity::removeComponent<NativeScriptComponent>() -> bool;
     template auto Entity::removeComponent<TextComponent>() -> bool;
     template auto Entity::removeComponent<MusicPlayerComponent>() -> bool;

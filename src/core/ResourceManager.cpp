@@ -16,7 +16,6 @@
 
 #include <audio/AudioFile.hpp>
 #include <cassert>
-#include <core/LuaScript.hpp>
 #include <core/Resource.hpp>
 #include <core/ResourceManager.hpp>
 #include <core/SerialiserTypes.hpp>
@@ -179,10 +178,10 @@ namespace rosa {
                 spdlog::debug("ResourceManager: Loading fragment shader {} from /{}", uuid.toString(), filename);
                 m_resources[uuid] = std::make_unique<Shader>(filename, uuid, path, ShaderType::FragmentShader);
                 break;
-            case ResourceType::ResourceScript:
-                spdlog::debug("ResourceManager: Loading lua script {} from /{}", uuid.toString(), filename);
-                m_resources[uuid] = std::make_unique<LuaScript>(filename, uuid, path);
-                break;
+                //            case ResourceType::ResourceScript:
+                //                spdlog::debug("ResourceManager: Loading lua script {} from /{}", uuid.toString(), filename);
+                //                m_resources[uuid] = std::make_unique<LuaScript>(filename, uuid, path);
+                //                break;
             case ResourceType::ResourceSound:
             case ResourceType::ResourceMusic:
                 spdlog::debug("ResourceManager: Loading audio track {} from /{}", uuid.toString(), filename);

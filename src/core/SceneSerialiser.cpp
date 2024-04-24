@@ -19,7 +19,6 @@
 #include <core/SerialiserTypes.hpp>
 #include <core/Uuid.hpp>
 #include <core/components/CameraComponent.hpp>
-#include <core/components/LuaScriptComponent.hpp>
 #include <core/components/MusicPlayerComponent.hpp>
 #include <core/components/NativeScriptComponent.hpp>
 #include <core/components/SoundPlayerComponent.hpp>
@@ -80,11 +79,6 @@ namespace rosa {
                 if (entity.hasComponent<MusicPlayerComponent>()) {
                     auto& player = entity.getComponent<MusicPlayerComponent>();
                     out << player;
-                }
-
-                if (entity.hasComponent<LuaScriptComponent>()) {
-                    auto& lsc = entity.getComponent<LuaScriptComponent>();
-                    out << lsc;
                 }
 
                 if (entity.hasComponent<NativeScriptComponent>()) {
@@ -153,9 +147,6 @@ namespace rosa {
                 } else if (type == "sprite") {
                     auto& sprite = new_entity.addComponent<SpriteComponent>();
                     sprite = comp.as<SpriteComponent>();
-                } else if (type == "lua_script") {
-                    auto& lsc = new_entity.addComponent<LuaScriptComponent>();
-                    YAML::convert<LuaScriptComponent>::decode(comp, lsc, &m_scene, new_entity.getUuid());
                 } else if (type == "sound") {
                     auto& player = new_entity.addComponent<SoundPlayerComponent>();
                     YAML::convert<SoundPlayerComponent>::decode(comp, player);

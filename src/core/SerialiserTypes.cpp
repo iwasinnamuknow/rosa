@@ -15,36 +15,6 @@
 
 #include <core/SerialiserTypes.hpp>
 
-static auto lua_t_to_yaml(YAML::Emitter& out, sol::table& table) -> void {
-    for (auto it = table.begin(); it != table.end(); ++it) {
-        auto [key, val] = *it;
-
-        out << YAML::Key << key.as<std::string>();
-        out << YAML::Value;
-
-        sol::type type = val.get_type();
-
-        if (type == sol::type::number) {
-            const double number = val.as<double>();
-            auto floored = std::floor(number);
-            if (floored < number) {
-                out << YAML::LocalTag("float") << number;
-            } else {
-                out << YAML::LocalTag("int") << number;
-            }
-        } else if (type == sol::type::boolean) {
-            const bool boolean = val.as<bool>();
-            out << YAML::LocalTag("bool") << boolean;
-        } else if (type == sol::type::string) {
-            const std::string str = val.as<std::string>();
-            out << YAML::LocalTag("str") << str;
-        } else if (type == sol::type::table) {
-            sol::table subt = val;
-            lua_t_to_yaml(out, subt);
-        }
-    }
-}
-
 namespace rosa {
 
     auto operator<<(YAML::Emitter& out, const glm::vec2& vec) -> YAML::Emitter& {
@@ -107,24 +77,6 @@ namespace rosa {
         out << YAML::Key << "paused" << YAML::Value << component.getPause();
         out << YAML::Key << "playing" << YAML::Value << component.isPlaying();
         out << YAML::EndMap;
-        return out;
-    }
-
-    auto operator<<(YAML::Emitter &out, const LuaScriptComponent &component) -> YAML::Emitter & {
-        out << YAML::BeginMap;
-        out << YAML::Key << "type" << YAML::Value << "lua_script";
-        out << YAML::Key << "script" << YAML::Value << static_cast<std::string>(component.getScriptUuid());
-
-        // TODO There has to be a neater way of capturing data that doesn't require all data to
-        //      be kept inside a single lua table
-        auto table = component.getTable("persist");
-        if (table.valid()) {
-            out << YAML::Key << "data" << YAML::Value << YAML::BeginMap; // script data
-            lua_t_to_yaml(out, table);
-            out << YAML::EndMap; // script data
-        }
-
-        out << YAML::EndMap; // lua script
         return out;
     }
 

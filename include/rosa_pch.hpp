@@ -29,7 +29,6 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <physfs.h>
-#include <sol/sol.hpp>
 #include <spdlog/spdlog.h>
 #include <tracy/Tracy.hpp>
 #include <yaml-cpp/yaml.h>
