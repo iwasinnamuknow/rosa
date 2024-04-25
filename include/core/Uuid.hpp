@@ -17,12 +17,12 @@
 
 #include <core/Exception.hpp>
 
-#include <string>
-#include <ostream>
-#include <cstdint>
-#include <random>
 #include <algorithm>
+#include <cstdint>
 #include <cstring>
+#include <ostream>
+#include <random>
+#include <string>
 
 // Forward declare UUID for hash
 namespace rosa {
@@ -52,7 +52,7 @@ namespace rosa {
          * \brief Create a UUID object from a string of characters
          * \param str_uuid string representation
          */
-        constexpr Uuid(const std::string &str_uuid) {
+        constexpr Uuid(const std::string& str_uuid) {
 
             std::string tmpstr = str_uuid;
 
@@ -62,16 +62,14 @@ namespace rosa {
                         std::remove_if(
                                 tmpstr.begin(),
                                 tmpstr.end(),
-                                [] (char i) {
+                                [](char i) {
                                     if (i == '-') {
                                         return true;
                                     }
 
                                     return false;
-                                }
-                        ),
-                        tmpstr.end()
-                );
+                                }),
+                        tmpstr.end());
             }
 
             if (tmpstr.length() != 32) {
@@ -80,8 +78,8 @@ namespace rosa {
 
             // Copy each byte into the array
             for (std::uint64_t index{0}; index < 16; index++) {
-                auto substr = tmpstr.substr(index * 2, 2);
-                m_data.at(index) = hexByteToInt(substr); // can't constexpr stoi so had to reimplement
+                auto substr      = tmpstr.substr(index * 2, 2);
+                m_data.at(index) = hexByteToInt(substr);// can't constexpr stoi so had to reimplement
             }
         }
 
@@ -89,10 +87,11 @@ namespace rosa {
          * \brief Create a UUID object from an array of bytes
          * \param bytes An array of 16 raw byte values
          */
-        constexpr Uuid(const std::array<std::uint8_t, 16> bytes) : m_data(bytes) {}
+        constexpr Uuid(const std::array<std::uint8_t, 16> bytes)
+            : m_data(bytes) {}
 
         // Copy operators
-        constexpr Uuid(const Uuid& other) = default;
+        constexpr Uuid(const Uuid& other)                    = default;
         constexpr auto operator=(const Uuid& other) -> Uuid& = default;
 
         // Destructor
@@ -118,19 +117,19 @@ namespace rosa {
             std::memcpy(bytes.data() + (sizeof(std::uint8_t) * 8), &bottom, sizeof(bottom));
 
             // Set version and variant
-            bytes[6] = ((bytes[6] & 0x0fu) | 0x40u); // Version 4
-            bytes[8] = ((bytes[8] & 0x3fu) | 0x80u); // Variant is 10
+            bytes[6] = ((bytes[6] & 0x0fu) | 0x40u);// Version 4
+            bytes[8] = ((bytes[8] & 0x3fu) | 0x80u);// Variant is 10
 
             return {bytes};
         }
 
         // Stream output operator
-        friend auto operator<<(std::ostream &out, const rosa::Uuid &other) -> std::ostream & {
+        friend auto operator<<(std::ostream& out, const rosa::Uuid& other) -> std::ostream& {
             return out << static_cast<std::string>(other);
         }
 
         // Equality operator
-        constexpr auto operator==(const Uuid &other) const noexcept -> bool {
+        constexpr auto operator==(const Uuid& other) const noexcept -> bool {
             const auto& o_data = other.getData();
 
             // Compare byte-for-byte
@@ -144,29 +143,29 @@ namespace rosa {
         }
 
         // std::string operator
-        explicit operator std::string() const {
+        operator std::string() const {
             // Formats to "0065e7d7-418c-4da4-b4d6-b54b6cf7466a"
-            char buffer[256] = {0};
-            auto chars_written = std::snprintf(buffer, 255,
-                          "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-                          m_data[0], m_data[1], m_data[2], m_data[3],
-                          m_data[4], m_data[5],
-                          m_data[6], m_data[7],
-                          m_data[8], m_data[9],
-                          m_data[10], m_data[11], m_data[12], m_data[13], m_data[14], m_data[15]);
+            std::array<char, 256> buffer        = {0};
+            auto                  chars_written = std::snprintf(buffer.data(), 255,
+                                                                "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+                                                                m_data[0], m_data[1], m_data[2], m_data[3],
+                                                                m_data[4], m_data[5],
+                                                                m_data[6], m_data[7],
+                                                                m_data[8], m_data[9],
+                                                                m_data[10], m_data[11], m_data[12], m_data[13], m_data[14], m_data[15]);
 
             if (chars_written < 0 || chars_written == 256) {
                 throw Exception("Failed to stringify UUID");
             }
 
-            return {buffer};
+            return {buffer.data()};
         }
 
         /**
          * \brief Get as raw bytes
          * \return A 16-byte array
          */
-        constexpr auto getData() const noexcept -> const std::array<std::uint8_t, 16> & {
+        constexpr auto getData() const noexcept -> const std::array<std::uint8_t, 16>& {
             return m_data;
         }
 
@@ -199,16 +198,16 @@ namespace rosa {
         constexpr auto hexByteToInt(const std::string_view view) -> std::uint8_t {
 
             std::uint8_t result{0};
-            int shift{4};
+            int          shift{4};
 
-            for (const auto character : view) {
-                if (character >= 48 && character <= 57) { // regular digit
+            for (const auto character: view) {
+                if (character >= 48 && character <= 57) {// regular digit
                     result |= ((character - 48) << shift);
 
-                } else if (character >= 65 && character <= 70) { // uppercase A-F
+                } else if (character >= 65 && character <= 70) {// uppercase A-F
                     result |= ((character - 65 + 10) << shift);
 
-                } else if (character >= 97 && character <= 102) { // lowercase a-f
+                } else if (character >= 97 && character <= 102) {// lowercase a-f
                     result |= ((character - 97 + 10) << shift);
                 }
 
@@ -219,21 +218,21 @@ namespace rosa {
         }
     };
 
-} // namespace rosa
+}// namespace rosa
 
 /**
  * \brief Hashing function for UUIDs
  */
 template<>
 struct std::hash<rosa::Uuid> {
-    std::size_t operator()(const rosa::Uuid &k) const {
-        using std::size_t;
+    std::size_t operator()(const rosa::Uuid& k) const {
         using std::hash;
+        using std::size_t;
         using std::string;
 
         std::size_t res{0};
 
-        for (const auto &element: k.getData()) {
+        for (const auto& element: k.getData()) {
             res = res * 31 + hash<std::uint8_t>()(element);
         }
 
@@ -241,6 +240,9 @@ struct std::hash<rosa::Uuid> {
     }
 };
 
+/**
+ * \brief Serialisation functions
+ */
 namespace YAML {
     template<>
     struct convert<rosa::Uuid> {

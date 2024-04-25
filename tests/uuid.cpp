@@ -21,22 +21,30 @@ TEST_CASE("Empty Uuid is all zeros", "[uuid]") {
 
     rosa::Uuid empty_uuid{};
 
-    for (const auto& element: empty_uuid.getData()) {
-        REQUIRE(element == 0x0);
-    }
+    REQUIRE(empty_uuid.empty());
 }
 
 TEST_CASE("Generate Uuid", "[uuid]") {
 
     rosa::Uuid random_uuid = rosa::Uuid::generate();
 
-    REQUIRE(random_uuid != rosa::Uuid());
+    REQUIRE(!random_uuid.empty());
 }
 
 TEST_CASE("Parse Uuid from string", "[uuid]") {
 
-    rosa::Uuid uuid_string("ab80206e-d173-4beb-5fc0-639fc9c08526");
+    rosa::Uuid uuid_string("ab80206e-d173-4beb-5FC0-639fc9c08526");
     REQUIRE(uuid_string.toString() == "ab80206e-d173-4beb-5fc0-639fc9c08526");
+}
+
+TEST_CASE("Throw when failing to parse a Uuid from a short string", "[uuid]") {
+
+    REQUIRE_THROWS_AS(rosa::Uuid("1234"), rosa::Exception);
+}
+
+TEST_CASE("Throw when failing to parse a Uuid from a long string", "[uuid]") {
+
+    REQUIRE_THROWS_AS(rosa::Uuid("123499999999999999999999999999999999999999"), rosa::Exception);
 }
 
 TEST_CASE("Parse Uuid from string without dashes", "[uuid]") {
@@ -67,6 +75,14 @@ TEST_CASE("Explicit cast Uuid to std::string", "[uuid]") {
     std::string str = static_cast<std::string>(uuid);
 
     REQUIRE(str == "ab80206e-d173-4beb-5fc0-639fc9c08526");
+}
+
+TEST_CASE("Implicit cast Uuid to std::string", "[uuid]") {
+
+    rosa::Uuid  uuid("ab80206e-d173-4beb-5fc0-639fc9c08526");
+    std::string str = uuid;
+
+    REQUIRE(str == rosa::Uuid("ab80206e-d173-4beb-5fc0-639fc9c08526"));
 }
 
 TEST_CASE("Uuid as hash key", "[uuid]") {
