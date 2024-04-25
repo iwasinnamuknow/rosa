@@ -35,4 +35,28 @@ namespace rosa {
             friend class SceneSerialiser;
     };
 
+    auto operator<<(YAML::Emitter& out, const SpriteComponent& component) -> YAML::Emitter&;
+
 } // namespace rosa
+
+namespace YAML {
+    template<>
+    struct convert<rosa::SpriteComponent> {
+        static auto decode(const Node& node, rosa::SpriteComponent& rhs) -> bool {
+            if (!node.IsMap()) {
+                return false;
+            }
+
+            rhs.setTexture(node["texture"].as<rosa::Uuid>());
+            rhs.setColour(node["colour"].as<rosa::Colour>());
+            return true;
+        }
+
+        static auto encode(const rosa::SpriteComponent& rhs) -> Node {
+            Node node;
+            node["texture"] = rhs.getTextureUuid().toString();
+            node["colour"]  = rhs.getColour();
+            return node;
+        }
+    };
+}// namespace YAML

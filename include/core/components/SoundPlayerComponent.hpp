@@ -18,7 +18,6 @@
 #include <core/Uuid.hpp>
 #include <core/ResourceManager.hpp>
 #include <audio/AudioManager.hpp>
-
 #include <spdlog/spdlog.h>
 #include <soloud/include/soloud_wav.h>
 
@@ -120,4 +119,39 @@ namespace rosa {
             friend class SceneSerialiser;
     };
 
+    auto operator<<(YAML::Emitter& out, const SoundPlayerComponent& component) -> YAML::Emitter&;
+
 } // namespace rosa
+
+namespace YAML {
+    template<>
+    struct convert<rosa::SoundPlayerComponent> {
+        static auto decode(const Node& node, rosa::SoundPlayerComponent& rhs) -> bool {
+            if (!node.IsMap()) {
+                return false;
+            }
+
+            rhs.setAudio(node["source"].as<rosa::Uuid>());
+            rhs.setDefaultVolume(node["default_volume"].as<float>());
+            rhs.setPause(true);
+            if (node["playing"].as<bool>()) {
+                rhs.play();
+            }
+            rhs.setPosition(node["position"].as<double>());
+            rhs.setVolume(node["volume"].as<float>());
+            rhs.setPause(node["paused"].as<bool>());
+            return true;
+        }
+
+        static auto encode(const rosa::SoundPlayerComponent& rhs) -> Node {
+            Node node;
+            node["source"]         = rhs.getAudioUuid().toString();
+            node["default_volume"] = rhs.getDefaultVolume();
+            node["playing"]        = rhs.isPlaying();
+            node["position"]       = rhs.getPosition();
+            node["volume"]         = rhs.getVolume();
+            node["paused"]         = rhs.getPause();
+            return node;
+        }
+    };
+}// namespace YAML

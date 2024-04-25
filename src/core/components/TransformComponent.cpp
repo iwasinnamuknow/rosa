@@ -30,4 +30,14 @@ namespace rosa {
         return temp;
     }
 
+    auto operator<<(YAML::Emitter& out, const TransformComponent& component) -> YAML::Emitter& {
+        out << YAML::BeginMap;
+        out << YAML::Key << "type" << YAML::Value << "transform";
+        out << YAML::Key << "position" << YAML::Value << component.position;
+        out << YAML::Key << "scale" << YAML::Value << component.scale;
+        out << YAML::Key << "rotation" << YAML::Value << component.rotation;
+        out << YAML::EndMap;
+        return out;
+    }
+
 } // namespace rosa

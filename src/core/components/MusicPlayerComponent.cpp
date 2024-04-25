@@ -82,4 +82,17 @@ namespace rosa {
         return m_volume;
     }
 
+    auto operator<<(YAML::Emitter& out, const MusicPlayerComponent& component) -> YAML::Emitter& {
+        out << YAML::BeginMap;
+        out << YAML::Key << "type" << YAML::Value << "music";
+        out << YAML::Key << "source" << YAML::Value << static_cast<std::string>(component.getAudioUuid());
+        out << YAML::Key << "position" << YAML::Value << component.getPosition();
+        out << YAML::Key << "volume" << YAML::Value << component.getVolume();
+        out << YAML::Key << "default_volume" << YAML::Value << component.getDefaultVolume();
+        out << YAML::Key << "paused" << YAML::Value << component.getPause();
+        out << YAML::Key << "playing" << YAML::Value << component.isPlaying();
+        out << YAML::EndMap;
+        return out;
+    }
+
 } // namespace rosa

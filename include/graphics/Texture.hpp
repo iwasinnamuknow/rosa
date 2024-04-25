@@ -94,3 +94,19 @@ namespace rosa {
     };
 
 }// namespace rosa
+
+namespace YAML {
+    template<>
+    struct convert<rosa::TextureFilterMode> {
+        static auto decode(const Node& node, rosa::TextureFilterMode& rhs) -> bool {
+            rhs = static_cast<rosa::TextureFilterMode>(node.as<int>());
+            return true;
+        }
+
+        static auto encode(const rosa::TextureFilterMode& rhs) -> Node {
+            Node node;
+            node = static_cast<int>(rhs);
+            return node;
+        }
+    };
+}// namespace YAML

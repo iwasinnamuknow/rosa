@@ -17,22 +17,10 @@
 
 #include <yaml-cpp/yaml.h>
 #include <glm/glm.hpp>
-#include <core/components/TransformComponent.hpp>
-#include <core/components/SpriteComponent.hpp>
-#include <core/components/SoundPlayerComponent.hpp>
-#include <core/components/MusicPlayerComponent.hpp>
-#include <core/components/NativeScriptComponent.hpp>
-#include <core/components/CameraComponent.hpp>
 
 namespace rosa {
     auto operator<<(YAML::Emitter& out, const glm::vec2& vec) -> YAML::Emitter&;
     auto operator<<(YAML::Emitter& out, const glm::vec3& vec) -> YAML::Emitter&;
-    auto operator<<(YAML::Emitter &out, const TransformComponent &component) -> YAML::Emitter&;
-    auto operator<<(YAML::Emitter &out, const SpriteComponent &component) -> YAML::Emitter&;
-    auto operator<<(YAML::Emitter &out, const SoundPlayerComponent &component) -> YAML::Emitter&;
-    auto operator<<(YAML::Emitter &out, const MusicPlayerComponent &component) -> YAML::Emitter&;
-    auto operator<<(YAML::Emitter &out, const NativeScriptEntity &component) -> YAML::Emitter&;
-    auto operator<<(YAML::Emitter &out, const CameraComponent &component) -> YAML::Emitter&;
 } // namespace rosa
 
 namespace YAML {
@@ -46,6 +34,13 @@ namespace YAML {
             rhs.x = node[0].as<float>();
             rhs.y = node[1].as<float>();
             return true;
+        }
+
+        static auto encode(const glm::vec2& rhs) -> Node {
+            Node node;
+            node.push_back(rhs.x);
+            node.push_back(rhs.y);
+            return node;
         }
     };
 
@@ -61,92 +56,13 @@ namespace YAML {
             rhs.z = node[2].as<float>();
             return true;
         }
-    };
 
-    template<>
-    struct convert<rosa::TextureFilterMode> {
-        static auto decode(const Node& node, rosa::TextureFilterMode& rhs) -> bool {
-            rhs = static_cast<rosa::TextureFilterMode>(node.as<int>());
-            return true;
-        }
-    };
-
-    template<>
-    struct convert<rosa::TransformComponent> {
-        static auto decode(const Node& node, rosa::TransformComponent& rhs) -> bool {
-            if (!node.IsMap()) {
-                return false;
-            }
-
-            rhs.position = node["position"].as<glm::vec3>();
-            rhs.scale = node["scale"].as<glm::vec3>();
-            rhs.rotation = node["rotation"].as<float>();
-            return true;
-        }
-    };
-
-    template<>
-    struct convert<rosa::SpriteComponent> {
-        static auto decode(const Node& node, rosa::SpriteComponent& rhs) -> bool {
-            if (!node.IsMap()) {
-                return false;
-            }
-
-            rhs.setTexture(node["texture"].as<rosa::Uuid>());
-            rhs.setColour(node["colour"].as<rosa::Colour>());
-            return true;
-        }
-    };
-
-    template<>
-    struct convert<rosa::SoundPlayerComponent> {
-        static auto decode(const Node& node, rosa::SoundPlayerComponent& rhs) -> bool {
-            if (!node.IsMap()) {
-                return false;
-            }
-
-            rhs.setAudio(node["source"].as<rosa::Uuid>());
-            rhs.setDefaultVolume(node["default_volume"].as<float>());
-            rhs.setPause(true);
-            if (node["playing"].as<bool>()) {
-                rhs.play();
-            }
-            rhs.setPosition(node["position"].as<double>());
-            rhs.setVolume(node["volume"].as<float>());
-            rhs.setPause(node["paused"].as<bool>());
-            return true;
-        }
-    };
-
-    template<>
-    struct convert<rosa::MusicPlayerComponent> {
-        static auto decode(const Node& node, rosa::MusicPlayerComponent& rhs) -> bool {
-            if (!node.IsMap()) {
-                return false;
-            }
-
-            rhs.setAudio(node["source"].as<rosa::Uuid>());
-            rhs.setDefaultVolume(node["default_volume"].as<float>());
-            rhs.setPause(true);
-            if (node["playing"].as<bool>()) {
-                rhs.play();
-            }
-            rhs.setPosition(node["position"].as<double>());
-            rhs.setVolume(node["volume"].as<float>());
-            rhs.setPause(node["paused"].as<bool>());
-            return true;
-        }
-    };
-
-    template<>
-    struct convert<rosa::CameraComponent> {
-        static auto decode(const Node& node, rosa::CameraComponent& rhs) -> bool {
-            if (!node.IsMap()) {
-                return false;
-            }
-
-            rhs.setEnabled(node["enabled"].as<bool>());
-            return true;
+        static auto encode(const glm::vec3& rhs) -> Node {
+            Node node;
+            node.push_back(rhs.x);
+            node.push_back(rhs.y);
+            node.push_back(rhs.z);
+            return node;
         }
     };
 } // namespace YAML

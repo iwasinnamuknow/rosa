@@ -16,6 +16,7 @@
 #pragma once
 
 #include <cmath>
+#include <core/SerialiserTypes.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -65,4 +66,30 @@ namespace rosa {
         }
     };
 
+    auto operator<<(YAML::Emitter& out, const TransformComponent& component) -> YAML::Emitter&;
+
 }// namespace rosa
+
+namespace YAML {
+    template<>
+    struct convert<rosa::TransformComponent> {
+        static auto decode(const Node& node, rosa::TransformComponent& rhs) -> bool {
+            if (!node.IsMap()) {
+                return false;
+            }
+
+            rhs.position = node["position"].as<glm::vec3>();
+            rhs.scale    = node["scale"].as<glm::vec3>();
+            rhs.rotation = node["rotation"].as<float>();
+            return true;
+        }
+
+        static auto encode(const rosa::TransformComponent& rhs) -> Node {
+            Node node;
+            node["position"] = rhs.position;
+            node["scale"]    = rhs.scale;
+            node["rotation"] = rhs.rotation;
+            return node;
+        }
+    };
+}// namespace YAML

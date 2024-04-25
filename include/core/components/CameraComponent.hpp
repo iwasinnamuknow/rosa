@@ -50,4 +50,26 @@ namespace rosa {
         bool m_enabled{false};
     };
 
+    auto operator<<(YAML::Emitter& out, const CameraComponent& component) -> YAML::Emitter&;
+
 }// namespace rosa
+
+namespace YAML {
+    template<>
+    struct convert<rosa::CameraComponent> {
+        static auto decode(const Node& node, rosa::CameraComponent& rhs) -> bool {
+            if (!node.IsMap()) {
+                return false;
+            }
+
+            rhs.setEnabled(node["enabled"].as<bool>());
+            return true;
+        }
+
+        static auto encode(const rosa::CameraComponent& rhs) -> Node {
+            Node node;
+            node["enabled"] = rhs.getEnabled();
+            return node;
+        }
+    };
+}// namespace YAML

@@ -13,20 +13,18 @@
  *  see <https://www.gnu.org/licenses/>.
  */
 
-#include <core/SerialiserTypes.hpp>
+#include <core/components/SpriteComponent.hpp>
+#include <yaml-cpp/yaml.h>
 
 namespace rosa {
 
-    auto operator<<(YAML::Emitter& out, const glm::vec2& vec) -> YAML::Emitter& {
-        out << YAML::Flow;
-        out << YAML::BeginSeq << vec.x << vec.y << YAML::EndSeq;
+    auto operator<<(YAML::Emitter& out, const SpriteComponent& component) -> YAML::Emitter& {
+        out << YAML::BeginMap;
+        out << YAML::Key << "type" << YAML::Value << "sprite";
+        out << YAML::Key << "texture" << YAML::Value << static_cast<std::string>(component.getTextureUuid());
+        out << YAML::Key << "colour" << YAML::Value << component.getColour();
+        out << YAML::EndMap;
         return out;
     }
 
-    auto operator<<(YAML::Emitter& out, const glm::vec3& vec) -> YAML::Emitter& {
-        out << YAML::Flow;
-        out << YAML::BeginSeq << vec.x << vec.y << vec.z << YAML::EndSeq;
-        return out;
-    }
-
-} // namespace rosa
+}// namespace rosa

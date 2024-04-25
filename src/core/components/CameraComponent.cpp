@@ -25,4 +25,12 @@ namespace rosa {
         return m_enabled;
     }
 
+    auto operator<<(YAML::Emitter& out, const CameraComponent& component) -> YAML::Emitter& {
+        out << YAML::BeginMap;
+        out << YAML::Key << "type" << YAML::Value << "camera";
+        out << YAML::Key << "enabled" << YAML::Value << component.getEnabled();
+        out << YAML::EndMap;
+        return out;
+    }
+
 } // namespace rosa
