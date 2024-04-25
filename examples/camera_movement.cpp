@@ -15,14 +15,13 @@
 
 
 // Rosa objects we'll need
+#include "NSCCameraMovement.hpp"
 #include <core/GameManager.hpp>
-#include <core/components/SpriteComponent.hpp>
 #include <core/components/CameraComponent.hpp>
-#include <core/components/LuaScriptComponent.hpp>
+#include <core/components/SpriteComponent.hpp>
 
 // Define the uuid for the image asset we'll use. See assets/manifest.yaml
 static constexpr auto dds_uuid = rosa::Uuid("f7055f22-6bfa-1a3b-4dbd-b366dd18866d");
-static constexpr auto cam_script_uuid = rosa::Uuid("739c0f32-872e-e264-7fa9-57ebaa40c420");
 
 // Create a class to represent our scene
 class MyScene : public rosa::Scene {
@@ -60,8 +59,7 @@ public:
         cam_comp.setEnabled(/*enable=*/true);
 
         // Add movement script to camera entity
-        auto& cam_script_comp = cam_entity.addComponent<rosa::LuaScriptComponent>();
-        cam_script_comp.setScript(cam_entity.getUuid(), this, cam_script_uuid);
+        cam_entity.addComponent<rosa::NativeScriptComponent>().bind<NSCCameraMovement>();
     }
 };
 
