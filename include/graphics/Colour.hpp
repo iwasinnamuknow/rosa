@@ -78,22 +78,7 @@ namespace rosa {
          *
          * Compare colour channels with a small epsilon
          */
-        auto operator==(const Colour& other) const -> bool {
-
-            const float relative_difference_factor = 0.0001f;// 0.01%
-
-            const auto mag_r   = std::max(std::abs(r), std::abs(other.r));
-            auto       r_match = std::abs(r - other.r) <= relative_difference_factor * mag_r;
-            const auto mag_g   = std::max(std::abs(g), std::abs(other.g));
-            auto       g_match = std::abs(g - other.g) <= relative_difference_factor * mag_g;
-            const auto mag_b   = std::max(std::abs(b), std::abs(other.b));
-            auto       b_match = std::abs(b - other.b) <= relative_difference_factor * mag_b;
-            const auto mag_a   = std::max(std::abs(a), std::abs(other.a));
-            auto       a_match = std::abs(a - other.a) <= relative_difference_factor * mag_a;
-
-            return (
-                    r_match && g_match && b_match && a_match);
-        }
+        auto operator==(const Colour& other) const -> bool;
 
         /**
          * \brief Check if a colour has zeros for all channels
@@ -109,4 +94,32 @@ namespace rosa {
         float a{1}; /**< alpha value */
     };
 
+    auto operator<<(YAML::Emitter& out, const rosa::Colour& colour) -> YAML::Emitter&;
+
 }// namespace rosa
+
+namespace YAML {
+    template<>
+    struct convert<rosa::Colour> {
+        static auto decode(const Node& node, rosa::Colour& rhs) -> bool {
+            if (!node.IsSequence() || node.size() != 4) {
+                return false;
+            }
+
+            rhs.r = node[0].as<float>();
+            rhs.g = node[1].as<float>();
+            rhs.b = node[2].as<float>();
+            rhs.a = node[3].as<float>();
+            return true;
+        }
+
+        static auto encode(const rosa::Colour& rhs) -> Node {
+            Node node;
+            node.push_back(rhs.r);
+            node.push_back(rhs.g);
+            node.push_back(rhs.b);
+            node.push_back(rhs.a);
+            return node;
+        }
+    };
+}// namespace YAML

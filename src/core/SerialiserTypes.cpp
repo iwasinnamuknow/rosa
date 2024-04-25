@@ -14,6 +14,7 @@
  */
 
 #include <core/SerialiserTypes.hpp>
+#include <graphics/Colour.hpp>
 
 namespace rosa {
 
@@ -26,12 +27,6 @@ namespace rosa {
     auto operator<<(YAML::Emitter& out, const glm::vec3& vec) -> YAML::Emitter& {
         out << YAML::Flow;
         out << YAML::BeginSeq << vec.x << vec.y << vec.z << YAML::EndSeq;
-        return out;
-    }
-
-    auto operator<<(YAML::Emitter& out, const rosa::Colour& colour) -> YAML::Emitter& {
-        out << YAML::Flow;
-        out << YAML::BeginSeq << colour.r << colour.g << colour.b << colour.a << YAML::EndSeq;
         return out;
     }
 

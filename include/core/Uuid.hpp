@@ -240,3 +240,19 @@ struct std::hash<rosa::Uuid> {
         return res;
     }
 };
+
+namespace YAML {
+    template<>
+    struct convert<rosa::Uuid> {
+        static auto decode(const Node& node, rosa::Uuid& rhs) -> bool {
+            rhs = node.as<std::string>();
+            return true;
+        }
+
+        static auto encode(const rosa::Uuid& rhs) -> Node {
+            Node node;
+            node = rhs.toString();
+            return node;
+        }
+    };
+}// namespace YAML

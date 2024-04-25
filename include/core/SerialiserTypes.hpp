@@ -17,8 +17,6 @@
 
 #include <yaml-cpp/yaml.h>
 #include <glm/glm.hpp>
-#include <core/Uuid.hpp>
-#include <graphics/Colour.hpp>
 #include <core/components/TransformComponent.hpp>
 #include <core/components/SpriteComponent.hpp>
 #include <core/components/SoundPlayerComponent.hpp>
@@ -26,81 +24,9 @@
 #include <core/components/NativeScriptComponent.hpp>
 #include <core/components/CameraComponent.hpp>
 
-//static auto lua_node_from_yaml(const YAML::Node& node) -> sol::table;
-//
-//static auto deserialise_map(const YAML::Node& node) -> sol::table {
-//    sol::table table{};
-//
-//    for (YAML::const_iterator it = node.begin(); it != node.end(); ++it) {
-//        if (it->second.Type() == YAML::NodeType::Scalar) {
-//            const auto& tag = it->second.Tag();
-//
-//            if (tag == "int") {
-//                table[it->first.as<std::string>()] = it->second.as<int>();
-//            } else if (tag == "float") {
-//                table[it->first.as<std::string>()] = it->second.as<float>();
-//
-//            } else if (tag == "bool") {
-//                table[it->first.as<std::string>()] = it->second.as<bool>();
-//
-//            } else if (tag == "str") {
-//                table[it->first.as<std::string>()] = it->second.as<std::string>();
-//            }
-//        } else {
-//            table[it->first.as<std::string>()] = lua_node_from_yaml(it->second);
-//        }
-//    }
-//
-//    return table;
-//}
-
-//static auto deserialise_sequence(const YAML::Node& node) -> sol::table {
-//    sol::table table{};
-//    int index{1};
-//
-//    for (YAML::const_iterator seq_it = node.begin(); seq_it != node.end(); ++seq_it) {
-//        if (seq_it->Type() == YAML::NodeType::Scalar) {
-//            const auto& tag = seq_it->Tag();
-//
-//            if (tag == "int") {
-//                table[index++] = seq_it->as<int>();
-//            } else if (tag == "float") {
-//                table[index++] = seq_it->as<float>();
-//
-//            } else if (tag == "bool") {
-//                table[index++] = seq_it->as<bool>();
-//
-//            } else if (tag == "str") {
-//                table[index++] = seq_it->as<std::string>();
-//            }
-//        } else {
-//            table[index++] = lua_node_from_yaml(*seq_it);
-//        }
-//
-//    }
-//
-//    return table;
-//}
-//
-//static auto lua_node_from_yaml(const YAML::Node& node) -> sol::table {
-//    sol::table table{};
-//
-//    const auto node_type = node.Type();
-//
-//    if (node_type == YAML::NodeType::Map) {
-//        table = deserialise_map(node);
-//    } else if (node_type == YAML::NodeType::Sequence) {
-//        table = deserialise_sequence(node);
-//    }
-//
-//    return table;
-//}
-
-
 namespace rosa {
     auto operator<<(YAML::Emitter& out, const glm::vec2& vec) -> YAML::Emitter&;
     auto operator<<(YAML::Emitter& out, const glm::vec3& vec) -> YAML::Emitter&;
-    auto operator<<(YAML::Emitter& out, const rosa::Colour& colour) -> YAML::Emitter&;
     auto operator<<(YAML::Emitter &out, const TransformComponent &component) -> YAML::Emitter&;
     auto operator<<(YAML::Emitter &out, const SpriteComponent &component) -> YAML::Emitter&;
     auto operator<<(YAML::Emitter &out, const SoundPlayerComponent &component) -> YAML::Emitter&;
@@ -134,44 +60,6 @@ namespace YAML {
             rhs.y = node[1].as<float>();
             rhs.z = node[2].as<float>();
             return true;
-        }
-    };
-
-    template<>
-    struct convert<rosa::Uuid> {
-        static auto decode(const Node& node, rosa::Uuid& rhs) -> bool {
-            rhs = node.as<std::string>();
-            return true;
-        }
-
-        static auto encode(const rosa::Uuid& rhs) -> Node {
-            Node node;
-            node = rhs.toString();
-            return node;
-        }
-    };
-
-    template<>
-    struct convert<rosa::Colour> {
-        static auto decode(const Node& node, rosa::Colour& rhs) -> bool {
-            if (!node.IsSequence() || node.size() != 4) {
-                return false;
-            }
-
-            rhs.r = node[0].as<float>();
-            rhs.g = node[1].as<float>();
-            rhs.b = node[2].as<float>();
-            rhs.a = node[3].as<float>();
-            return true;
-        }
-
-        static auto encode(const rosa::Colour& rhs) -> Node {
-            Node node;
-            node.push_back(rhs.r);
-            node.push_back(rhs.g);
-            node.push_back(rhs.b);
-            node.push_back(rhs.a);
-            return node;
         }
     };
 
