@@ -15,16 +15,15 @@
 
 
 // Bring in everything
-#include <core/GameManager.hpp>
-#include <core/components/TextComponent.hpp>
-#include <core/components/CameraComponent.hpp>
-#include <core/components/LuaScriptComponent.hpp>
+#include "NSCCameraMovement.hpp"
 #include <core/Entity.hpp>
+#include <core/GameManager.hpp>
 #include <core/Uuid.hpp>
+#include <core/components/CameraComponent.hpp>
+#include <core/components/TextComponent.hpp>
 
 // Define the uuid for the image asset we'll use. See assets/assets.lst
 static constexpr auto font_uuid =       rosa::Uuid("286d945e-7fd9-4444-a95e-3faa3e541536");
-static constexpr auto cam_script_uuid = rosa::Uuid("739c0f32-872e-e264-7fa9-57ebaa40c420");
 static constexpr auto dds_uuid =        rosa::Uuid("f7055f22-6bfa-1a3b-4dbd-b366dd18866d");
 
 // Create a class to represent our scene
@@ -73,8 +72,7 @@ class MyScene : public rosa::Scene {
             cam_comp.setEnabled(true);
 
             // Add a simple camera movement script
-            auto& cam_script_comp = cam_entity.addComponent<rosa::LuaScriptComponent>();
-            cam_script_comp.setScript(cam_entity.getUuid(), this, cam_script_uuid);
+            cam_entity.addComponent<rosa::NativeScriptComponent>().bind<NSCCameraMovement>();
         }
 };
 
@@ -86,10 +84,10 @@ auto main() -> int {
     rosa::ResourceManager::getInstance().registerAssetPack("base.pak", "");
 
     // Instantiate our scene from the class above and register it
-    game_mgr.addScene("simple_image", std::make_unique<MyScene>(game_mgr.getRenderWindow()));
+    game_mgr.addScene("text_rendering", std::make_unique<MyScene>(game_mgr.getRenderWindow()));
 
     // Set the scene as active
-    game_mgr.changeScene("simple_image");
+    game_mgr.changeScene("text_rendering");
 
     // Away we go with our desired window size
     game_mgr.run();
