@@ -152,10 +152,10 @@ namespace rosa {
                     sprite = comp.as<SpriteComponent>();
                 } else if (type == "sound") {
                     auto& player = new_entity.addComponent<SoundPlayerComponent>();
-                    player       = comp.as<SoundPlayerComponent>();
+                    YAML::convert<SoundPlayerComponent>::decode(comp, player);
                 } else if (type == "music") {
                     auto& player = new_entity.addComponent<MusicPlayerComponent>();
-                    player       = comp.as<MusicPlayerComponent>();
+                    YAML::convert<MusicPlayerComponent>::decode(comp, player);
                 } else if (type == "native_script") {
                     auto classname = comp["script"].as<std::string>();
                     auto factory_func = m_nsc_map.at(classname);
