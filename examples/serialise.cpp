@@ -16,17 +16,16 @@
 
 // Rosa objects we'll need
 #include <core/GameManager.hpp>
+#include <core/SceneSerialiser.hpp>
 #include <core/components/MusicPlayerComponent.hpp>
+#include <core/components/NativeScriptComponent.hpp>
 #include <core/components/SoundPlayerComponent.hpp>
 #include <core/components/SpriteComponent.hpp>
-#include <core/components/LuaScriptComponent.hpp>
-#include <core/SceneSerialiser.hpp>
 
 // Define the uuid for the assets we'll use. See assets/manifest.yaml
 static constexpr auto dds_uuid = rosa::Uuid("f7055f22-6bfa-1a3b-4dbd-b366dd18866d");
 static constexpr auto bell_uuid = rosa::Uuid("60f20064-0c13-2e94-35cd-404c011c00a2");
 static constexpr auto music_uuid = rosa::Uuid("a3c890ea-0f97-d3ed-32de-55ba88c8dc63");
-static constexpr auto script_uuid = rosa::Uuid("9046e8fe-cb01-7adf-1029-c79e71961173");
 
 // NativeScript test class
 #include "NSCTest.hpp"
@@ -36,11 +35,8 @@ class SerialiseScene : public rosa::Scene {
 public:
 
     // Pass default params to the base class constructor
-    explicit SerialiseScene(rosa::RenderWindow* render_window) : rosa::Scene(render_window) {}
-
-    // Override the onLoad function so we can set up our scene. This will be called
-    // any time the GameManager activates the scene.
-    auto onLoad() -> void override {
+    explicit SerialiseScene(rosa::RenderWindow* render_window)
+        : rosa::Scene(render_window) {
 
         // Grab the window size
         auto window_size = getRenderWindow().getWindowSize();
@@ -64,9 +60,6 @@ public:
         // Set the position to screen-center
         entity.getComponent<rosa::TransformComponent>().setPosition(position.x, position.y);
 
-        // Create lua script
-        auto& script_comp = entity.addComponent<rosa::LuaScriptComponent>();
-
         // Create sound player
         auto& splayer = entity.addComponent<rosa::SoundPlayerComponent>();
         splayer.setAudio(bell_uuid);
@@ -74,8 +67,6 @@ public:
         // Create music player
         auto& mplayer = entity.addComponent<rosa::MusicPlayerComponent>();
         mplayer.setAudio(music_uuid);
-
-        script_comp.setScript(entity.getUuid(), this, script_uuid);
 
         // Create a NativeScriptComponent to test serialisation of that too
         entity.addComponent<rosa::NativeScriptComponent>().bind<NSCTest>();

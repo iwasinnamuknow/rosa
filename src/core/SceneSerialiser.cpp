@@ -131,7 +131,9 @@ namespace rosa {
                 abort();
             }
 
-            Entity new_entity = m_scene.createEntity(Uuid(entity["uuid"].as<std::string>()));
+            auto uuid = Uuid(entity["uuid"].as<rosa::Uuid>());
+            spdlog::debug("Deserialising entity as {}", uuid.toString());
+            auto& new_entity = m_scene.createEntity(uuid);
 
             for (auto comp : entity["components"]) {
                 if (!comp["type"]) {
@@ -140,28 +142,33 @@ namespace rosa {
                 }
 
                 auto type = comp["type"].as<std::string>();
+                spdlog::debug("Deserialising {} component to entity {}", type, uuid.toString());
 
                 if (type == "transform") {
                     auto& transform = new_entity.getComponent<TransformComponent>();
-                    YAML::convert<TransformComponent>::decode(comp, transform);
+                    transform       = comp.as<TransformComponent>();
                 } else if (type == "sprite") {
                     auto& sprite = new_entity.addComponent<SpriteComponent>();
                     sprite = comp.as<SpriteComponent>();
                 } else if (type == "sound") {
                     auto& player = new_entity.addComponent<SoundPlayerComponent>();
-                    YAML::convert<SoundPlayerComponent>::decode(comp, player);
+                    player       = comp.as<SoundPlayerComponent>();
                 } else if (type == "music") {
                     auto& player = new_entity.addComponent<MusicPlayerComponent>();
-                    YAML::convert<MusicPlayerComponent>::decode(comp, player);
+                    player       = comp.as<MusicPlayerComponent>();
                 } else if (type == "native_script") {
                     auto classname = comp["script"].as<std::string>();
                     auto factory_func = m_nsc_map.at(classname);
-                    auto nsc = factory_func(&m_scene, &new_entity);
-                    nsc->deserialise(comp["data"]);
-                    new_entity.addComponent<NativeScriptComponent>().bind(nsc);
+                    auto* nse          = factory_func(&m_scene, &new_entity);
+                    nse->deserialise(comp["data"]);
+                    auto& nsc = new_entity.addComponent<NativeScriptComponent>();
+                    nsc.bind(nse);
+                    nsc.instantiate_function(&m_scene, &new_entity);
+                    nsc.on_load_function(nsc.instance);
+
                 } else if (type == "camera") {
                     auto& camera = new_entity.addComponent<CameraComponent>();
-                    YAML::convert<CameraComponent>::decode(comp, camera);
+                    camera       = comp.as<CameraComponent>();
                 }
             }
         }

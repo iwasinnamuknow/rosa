@@ -35,8 +35,8 @@ namespace rosa {
         public:
         explicit NativeScriptEntity(Scene* scene, Entity* entity)
             : m_entity(entity), m_scene(scene) {}
-        NativeScriptEntity(NativeScriptEntity const &) = delete;
-            auto operator=(NativeScriptEntity const &) -> NativeScriptEntity & = delete;
+        NativeScriptEntity(NativeScriptEntity const&)                     = delete;
+        auto operator=(NativeScriptEntity const &) -> NativeScriptEntity & = delete;
             NativeScriptEntity(NativeScriptEntity const &&) = delete;
             auto operator=(NativeScriptEntity const &&) -> NativeScriptEntity & = delete;
             virtual ~NativeScriptEntity() = default;

@@ -1,42 +1,43 @@
 /*
- * This file is part of rosa.
- *
- *  rosa is free software: you can redistribute it and/or modify it under the terms of the
- *  GNU General Public License as published by the Free Software Foundation, either version
- *  3 of the License, or (at your option) any later version.
- *
- *  rosa is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- *  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along with rosa. If not,
- *  see <https://www.gnu.org/licenses/>.
- */
+* This file is part of rosa.
+*
+*  rosa is free software: you can redistribute it and/or modify it under the terms of the
+*  GNU General Public License as published by the Free Software Foundation, either version
+*  3 of the License, or (at your option) any later version.
+*
+*  rosa is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+*  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License along with rosa. If not,
+*  see <https://www.gnu.org/licenses/>.
+*/
 
-#include <core/components/NativeScriptComponent.hpp>
 #include <core/NativeScriptEntity.hpp>
+#include <core/components/MusicPlayerComponent.hpp>
+#include <core/components/SoundPlayerComponent.hpp>
 
-// This is our NativeScript test class
+#pragma once
+
 class NSCTest : public rosa::NativeScriptEntity {
 public:
     ROSA_CONSTRUCTOR(NSCTest)
     ~NSCTest() override = default;
 
     void onCreate() override {
-        spdlog::info("NativeScript Test script initialised");
-    }
-
-    void onLoad() override {
-        spdlog::info("NativeScript Test script loaded");
+        getEntity().getComponent<rosa::SoundPlayerComponent>().play();
+        getEntity().getComponent<rosa::MusicPlayerComponent>().play();
     }
 
     void onUpdate(float /*delta_time*/) override {
-        m_test_int++;
-        m_test_string = "test_string" + std::to_string(m_test_int);
-    }
-
-    void onDestroy() override {
-        spdlog::info("NativeScript Dieing!");
+        m_rotation += 0.1F;
+        if (m_rotation >= 360.0F) {
+            m_rotation = 0.F;
+        }
+        auto& transform = getEntity().getComponent<rosa::TransformComponent>();
+        transform.setRotation(m_rotation);
+        //        persist["rotation"] = (persist["rotation"] + 0.1) % 360
+        //                              entity:getTransform():setRotation(persist["rotation"])
     }
 
     // We need this for deserialisation so we can re-create the class
@@ -49,32 +50,22 @@ protected:
     auto serialise() const -> YAML::Node override {
 
         YAML::Node res;
-
-        res["test_int"] = m_test_int;
-        res["test_string"] = m_test_string;
-
+        res["rotation"] = m_rotation;
         return res;
     }
 
     // Deserialisation, you also have to deal with yaml here
     auto deserialise(YAML::Node node) -> void override {
         if (node.Type() == YAML::NodeType::Map) {
-            if (node["test_int"]) {
-                m_test_int = node["test_int"].as<int>();
-            }
-
-            if (node["test_string"]) {
-                m_test_string = node["test_string"].as<std::string>();
+            if (node["rotation"]) {
+                m_rotation = node["rotation"].as<float>();
             }
         }
-
-        onLoad();
     }
 
     auto getName() const -> std::string override {
         return {"NSCTest"};
     }
 
-    int m_test_int{1234};
-    std::string m_test_string{"testing1234"};
+    float m_rotation{0.F};
 };
