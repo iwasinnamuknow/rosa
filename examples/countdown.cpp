@@ -15,15 +15,13 @@
 
 
 // Rosa objects we'll need
+#include "NSCCountdown.hpp"
 #include <core/GameManager.hpp>
-#include <core/components/LuaScriptComponent.hpp>
 #include <core/components/SoundPlayerComponent.hpp>
+#include <iostream>
 
-// Script asset
-constexpr auto script_uuid = rosa::Uuid("f611c6e3-6836-0333-978c-cfadd31a5bfa");
 // Default countdown duration
 static int countdown_start{1200};
-
 
 // Create a class to represent our scene
 class CountdownScene : public rosa::Scene {
@@ -40,9 +38,12 @@ public:
         }
 
         parent.addComponent<rosa::SoundPlayerComponent>();
-        auto& script_comp = parent.addComponent<rosa::LuaScriptComponent>();
-        script_comp.setValue("start_time", countdown_start);
-        script_comp.setScript(parent.getUuid(), this, script_uuid);
+        auto& nsc = parent.addComponent<rosa::NativeScriptComponent>();
+        nsc.bind<NSCCountdown>();
+        nsc.instantiate_function(this, &parent);
+        nsc.on_create_function(nsc.instance);
+        dynamic_cast<NSCCountdown*>(nsc.instance)->countdown_time = countdown_start;
+        dynamic_cast<NSCCountdown*>(nsc.instance)->start();
     }
 };
 

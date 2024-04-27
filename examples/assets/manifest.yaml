@@ -1,8 +1,5 @@
 ---
 assets: 
-    - type: 4
-      path: test.lua
-      uuid: 9046e8fe-cb01-7adf-1029-c79e71961173
     - type: 0
       path: test.dds
       uuid: f7055f22-6bfa-1a3b-4dbd-b366dd18866d
