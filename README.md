@@ -16,8 +16,6 @@ Rosa is my attempt to write a fairly simple, code-only 2d game engine. It is bui
     * SFX/music player
 * NativeScript - Write component scripts in C++
     * Access to the entire language and engine
-* LuaScript - Write component scripts in Lua
-    * Easy access to components
 * Packaged asset format using PhysFS - assets are packaged in archives including:
     * ZIP
     * 7z
@@ -36,6 +34,7 @@ Rosa is my attempt to write a fairly simple, code-only 2d game engine. It is bui
 * **Experimental!** Scene serialisation/deserialisation
     * Using UUIDs for all indices for portability
     * All components currently supported in Lua and NativeScript (NS is ugly)
+  * Text rendering
 
 I hope to keep extending Rosa, particularly LuaScript support and general code quality/architecture. Additional platforms will also be added hopefully, starting with Windows.
 
