@@ -19,7 +19,6 @@
 #include <core/GameManager.hpp>
 #include <core/Scene.hpp>
 #include <core/SceneSerialiser.hpp>
-#include <graphics/Renderer.hpp>
 #include <memory>
 #include <spdlog/spdlog.h>
 #include <tracy/Tracy.hpp>
@@ -101,7 +100,7 @@ namespace rosa {
                 ImGui_ImplGlfw_NewFrame();
                 ImGui::NewFrame();
 
-                drawRenderStats();
+                drawRenderStats(delta_time);
 
                 //ImGui::ShowDemoWindow(nullptr);
             }
@@ -188,46 +187,72 @@ namespace rosa {
         return addScene(key, std::move(scene));
     }
 
-    void GameManager::drawRenderStats() {
+    void GameManager::drawRenderStats(float delta_time) {
+
+        if (m_renderer_stats.size() >= 120) {
+            m_renderer_stats.pop_back();
+        }
+
+        if (m_frame_times.size() >= 120) {
+            m_frame_times.pop_back();
+        }
+
+        RendererStats stats = Renderer::getInstance().getStats();
+        m_renderer_stats.push_front(stats);
+        m_frame_times.push_front(delta_time);
+
         if (m_show_renderer_stats) {
             ImGui::SetNextWindowPos(ImVec2(0, 0));
-            ImGui::SetNextWindowSize(ImVec2(180, 120));
+            ImGui::SetNextWindowSize(ImVec2(302, 500));
             ImGui::Begin("Renderer Stats", nullptr,
-                         ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoFocusOnAppearing);
+                         ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBackground);
 
-            if (ImGui::BeginTable("stats", 2)) {
-                RendererStats                    stats  = Renderer::getInstance().getStats();
-                const std::array<const char*, 4> titles = {
-                        "Draws",
-                        "Vertices",
-                        "Textures",
-                        "Shaders"};
-                for (std::size_t row = 0; row < 4; row++) {
-                    ImGui::TableNextRow();
-                    for (int column = 0; column < 2; column++) {
-                        ImGui::TableSetColumnIndex(column);
-                        if (column == 0) {
-                            ImGui::TextUnformatted(titles[row]);
-                        } else {
-                            switch (row) {
-                                case 0:
-                                    ImGui::Text("%d", stats.draws);
-                                    break;
-                                case 1:
-                                    ImGui::Text("%d", stats.vertices);
-                                    break;
-                                case 2:
-                                    ImGui::Text("%d", stats.textures);
-                                    break;
-                                case 3:
-                                    ImGui::Text("%d", stats.shaders);
-                                    break;
-                            }
-                        }
-                    }
+            std::array<float, 120> draw_calls{0};
+            std::array<float, 120> vertices{0};
+            std::array<float, 120> textures{0};
+            std::array<float, 120> shaders{0};
+            std::array<float, 120> frame_times{0};
+
+            {
+                std::size_t index{0};
+                for (const auto& time: m_frame_times) {
+                    auto fps           = 1.F / time;
+                    frame_times[index] = fps;
+                    index++;
                 }
-                ImGui::EndTable();
             }
+
+            {
+                std::size_t index{0};
+                for (const auto& entry: m_renderer_stats) {
+
+                    draw_calls[index] = static_cast<float>(entry.draws);
+                    vertices[index]   = static_cast<float>(entry.vertices);
+                    textures[index]   = static_cast<float>(entry.textures);
+                    shaders[index]    = static_cast<float>(entry.shaders);
+
+                    index++;
+                }
+            }
+
+            ImGui::Text("Framerate %.1f", 1.F / delta_time);
+            ImGui::PlotLines("", frame_times.data(), 120, 0, nullptr, 0.F, 1.F, ImVec2(300.F, 50.F));
+            ImGui::NewLine();
+
+            ImGui::Text("Draw Calls %d", stats.draws);
+            ImGui::PlotLines("", draw_calls.data(), 120, 0, nullptr, 0.F, 1.F, ImVec2(300.F, 50.F));
+            ImGui::NewLine();
+
+            ImGui::Text("Vertices %d", stats.vertices);
+            ImGui::PlotLines("", vertices.data(), 120, 0, nullptr, 0.F, 1.F, ImVec2(300.F, 50.F));
+            ImGui::NewLine();
+
+            ImGui::Text("Texture Binds %d", stats.textures);
+            ImGui::PlotLines("", textures.data(), 120, 0, nullptr, 0.F, 1.F, ImVec2(300.F, 50.F));
+            ImGui::NewLine();
+
+            ImGui::Text("Shader Binds %d", stats.shaders);
+            ImGui::PlotLines("", shaders.data(), 120, 0, nullptr, 0.F, 1.F, ImVec2(300.F, 50.F));
 
             ImGui::End();
         }
