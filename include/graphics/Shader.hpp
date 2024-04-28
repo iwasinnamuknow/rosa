@@ -38,54 +38,7 @@ namespace rosa {
     };
 
     /**
-     * \brief The default vertex shader used if no other shader is provided
-     */
-    constexpr auto default_vertex_shader = std::string_view(R"(
-#version 420 core
-
-layout (location = 0) in vec2 inPosition;
-layout (location = 1) in vec2 inUV;
-layout (location = 2) in vec4 inColor;
-layout (location = 3) in float inTexture;
-
-uniform mat4 mvp;
-
-out vec4 passColor;
-out vec2 UV;
-out float texture;
-
-void main()
-{
-    gl_Position = mvp * vec4(inPosition, 0.0, 1.0);
-    passColor = inColor;
-    UV = inUV;
-    texture = inTexture;
-}
-)");
-
-    /**
-     * \brief The default fragment shader if no other shader is provided
-     */
-    constexpr auto default_fragment_shader = std::string_view(R"(
-#version 420 core
-
-in vec4 passColor;
-in vec2 UV;
-in float texture;
-
-out vec4 color;
-
-layout(binding=0) uniform sampler2D textureSamplers[32];
-
-void main()
-{
-    int index = int(texture);
-    color = texture2D(textureSamplers[index], UV).rgba * passColor;
-}
-)");
-
-    /**
-     * \brief Used to handle OpenGL shader compilation and storage
+     * \brief Handles OpenGL shader compilation and storage
      *
      * When constructed the shader will be retrieved from disk and stored in a string.
      * This string can be provided to the Renderer and compiled/uploaded to the GPU
@@ -96,7 +49,7 @@ void main()
          * \brief Construct a shader object
          * \param name Filename relative to it's asset pack
          * \param uuid Uuid to associate with the shader
-         * \param pack Mountpoint of the asset pack
+         * \param pack Mount point of the asset pack
          * \param type ShaderType defaulting to VertexShader
          */
         explicit Shader(const std::string& name, const Uuid& uuid, const std::string& pack, ShaderType type = VertexShader);

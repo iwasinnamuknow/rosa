@@ -21,24 +21,25 @@ namespace rosa {
     Shader::Shader(const std::string& name, const Uuid& uuid, const std::string& pack, ShaderType type)
         : Resource(name, uuid, pack), m_type(type) {
 
-        if (m_type == VertexShader) {
-            m_content = default_vertex_shader;
-        } else if (m_type == FragmentShader) {
-            m_content = default_fragment_shader;
-        }
-
-        if (name == "default") {
-            return;
-        }
-
         if (PHYSFS_exists(name.c_str()) == 0) {
             throw ResourceNotFoundException(fmt::format("Couldn't find shader {}", name));
         }
 
         PHYSFS_file* file = PHYSFS_openRead(name.c_str());
+        if (file == nullptr) {
+            throw Exception(fmt::format("Failed to open file for reading {}", name));
+        }
 
-        std::int64_t length_read = PHYSFS_readBytes(file, m_content.data(), static_cast<std::uint64_t>(PHYSFS_fileLength(file)));
-        assert(length_read == PHYSFS_fileLength(file));
+        PHYSFS_sint64 file_length = PHYSFS_fileLength(file);
+        m_content.resize(file_length);
+
+        auto          unsigned_length = static_cast<std::uint64_t>(file_length);
+        PHYSFS_sint64 length_read     = PHYSFS_readBytes(file, m_content.data(), unsigned_length);
+        if (length_read != file_length) {
+            throw Exception(fmt::format("Error reading file {}", name));
+        }
+
+        assert(length_read == file_length);
     }
 
 }// namespace rosa

@@ -1,5 +1,11 @@
 ---
 assets:
+  - type: 5
+    path: default_vertex.shader
+    uuid: 00000000-0000-0000-0000-000000000001
+  - type: 6
+    path: default_fragment.shader
+    uuid: 00000000-0000-0000-0000-000000000002
   - type: 0
     path: test.dds
     uuid: f7055f22-6bfa-1a3b-4dbd-b366dd18866d

@@ -47,6 +47,10 @@ namespace rosa {
             auto setScreenSpace(bool screen_space) -> void;
             auto getScreenSpace() -> bool;
 
+            auto setShaders(const Uuid& vertex, const Uuid& fragment) -> void;
+            auto getVertexShader() -> const Uuid&;
+            auto getFragmentShader() -> const Uuid&;
+
         protected:
             auto draw(glm::mat4 transform) -> void override;
             Texture* m_texture{nullptr};
@@ -59,6 +63,8 @@ namespace rosa {
             Quad m_quad;
             bool m_screen_space{false};
 
+            rosa::Uuid     m_vertex_shader{"00000000-0000-0000-0000-000000000001"};
+            rosa::Uuid     m_fragment_shader{"00000000-0000-0000-0000-000000000002"};
             ShaderProgram* m_shader_program{nullptr};
     };
 

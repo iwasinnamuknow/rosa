@@ -26,7 +26,6 @@
 
 #include <string_view>
 #include <vector>
-#include <glm/ext/matrix_clip_space.hpp>
 
 namespace rosa {
 
@@ -35,66 +34,76 @@ namespace rosa {
     struct TextComponent {
 
         TextComponent()
-            : m_shader_program(Renderer::getInstance().makeShaderProgram()) {
-        }
+            : m_shader_program(Renderer::getInstance().makeShaderProgram(m_vertex_shader, m_fragment_shader)) {}
 
-        auto setText(const std::string& text) -> void {
-            m_quad_cache.clear();
-            m_text = text;
-        }
+        /**
+         * \brief Set the text to be displayed
+         */
+        auto setText(const std::string& text) -> void;
 
-        auto getText() const -> const std::string& {
-            return m_text;
-        }
+        /**
+         * \brief Retrieve a previously set string
+         */
+        auto getText() const -> const std::string&;
 
-        auto setScreenSpace(bool state) -> void {
-            m_screen_space = state;
-        }
+        /**
+         * \brief Enable or disable screen-space rendering
+         */
+        auto setScreenSpace(bool state) -> void;
 
-        auto getScreenSpace() const -> bool {
-            return m_screen_space;
-        }
+        /**
+         * \brief Retrieve screen-space rendering setting
+         */
+        auto getScreenSpace() const -> bool;
 
-        auto getFontUuid() const -> const Uuid& {
-            return m_font_uuid;
-        }
+        /**
+         * \brief Retrieve the asset Uuid of the font
+         */
+        auto getFont() const -> const Uuid&;
 
-        auto setFont(const Uuid& uuid) -> void {
-            m_font = &ResourceManager::getInstance().getAsset<BitmapFont>(uuid);
-            m_font_uuid = uuid;
-        }
+        /**
+         * \brief Set the font resource
+         */
+        auto setFont(const Uuid& uuid) -> void;
 
-        auto setColour(Colour colour) {
-            m_colour = colour;
-        }
+        /**
+         * \brief Set the colour of the text
+         */
+        auto setColour(Colour colour) -> void;
 
-        auto getColour() -> Colour {
-            return m_colour;
-        }
+        /**
+         * \brief Get the previously set text colour
+         */
+        auto getColour() -> Colour;
 
-        auto render(glm::mat4 transform) -> void {
+        /**
+         * \brief Use an offset from the parent entity
+         * \param offset
+         */
+        auto setOffset(glm::vec2 offset) -> void;
 
-            if (m_quad_cache.empty()) {
-                m_quad_cache = m_font->print(m_text, 0, 0, m_colour);
-            }
+        /**
+         * \brief Retrieve a previously set offset
+         */
+        auto getOffset() -> glm::vec2;
 
-            for (const auto& quad: m_quad_cache) {
-                Renderable renderable{
-                        quad,
-                        glm::translate(transform, glm::vec3(quad.pos.x + m_offset.x, quad.pos.y + m_offset.y, 0.F)),
-                        m_shader_program,
-                        m_screen_space};
-                Renderer::getInstance().submit(renderable);
-            }
-        }
+        /**
+         * \brief Provide a pair of shaders to override the defaults
+         */
+        auto setShaders(const Uuid& vertex, const Uuid& fragment) -> void;
 
-        auto setOffset(glm::vec2 offset) -> void {
-            m_offset = offset;
-        }
+        /**
+         * \brief Retrieve a previously set vertex shader
+         */
+        auto getVertexShader() -> const Uuid&;
 
-        auto getOffset() -> glm::vec2 {
-            return m_offset;
-        }
+        /**
+         * \brief Retrieve a previously set fragment shader
+         */
+        auto getFragmentShader() -> const Uuid&;
+
+    protected:
+        auto draw(glm::mat4 transform) -> void;
 
     private:
         BitmapFont* m_font{nullptr};
@@ -105,9 +114,12 @@ namespace rosa {
         Colour m_colour{1.F, 1.F, 1.F};
         glm::vec2         m_offset{0.F, 0.F};
 
+        rosa::Uuid     m_vertex_shader{"00000000-0000-0000-0000-000000000001"};
+        rosa::Uuid     m_fragment_shader{"00000000-0000-0000-0000-000000000002"};
         ShaderProgram* m_shader_program{nullptr};
 
         friend class SceneSerialiser;
+        friend class Scene;
     };
 
 } // namespace rosa

@@ -25,13 +25,13 @@
 
 namespace rosa {
 
-    Sprite::Sprite() {
-    }
+    Sprite::Sprite()
+        : m_shader_program(Renderer::getInstance().makeShaderProgram(m_vertex_shader, m_fragment_shader)) {}
 
     auto Sprite::draw(glm::mat4 transform) -> void {
 
         if (m_shader_program == nullptr) {
-            m_shader_program = Renderer::getInstance().makeShaderProgram();
+            return;
         }
 
         //auto temppos = glm::vec4(m_quad.pos, 0, 0);
@@ -94,5 +94,18 @@ namespace rosa {
         return {m_quad.texture_rect_pos, m_quad.texture_rect_size};
     }
 
+    auto Sprite::setShaders(const Uuid& vertex, const Uuid& fragment) -> void {
+        m_vertex_shader   = vertex;
+        m_fragment_shader = fragment;
+
+        m_shader_program = Renderer::getInstance().makeShaderProgram(m_vertex_shader, m_fragment_shader);
+    }
+
+    auto Sprite::getVertexShader() -> const Uuid& {
+        return m_vertex_shader;
+    }
+    auto Sprite::getFragmentShader() -> const Uuid& {
+        return m_fragment_shader;
+    }
 
 } // namespace rosa
