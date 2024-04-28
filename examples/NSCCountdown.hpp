@@ -17,6 +17,7 @@
 #include <core/GameManager.hpp>
 #include <core/NativeScriptEntity.hpp>
 #include <core/components/NativeScriptComponent.hpp>
+#include <core/components/SoundPlayerComponent.hpp>
 #include <core/input/Keyboard.hpp>
 #include <format>
 

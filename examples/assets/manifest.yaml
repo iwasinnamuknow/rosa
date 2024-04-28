@@ -1,35 +1,41 @@
 ---
-assets: 
-    - type: 0
-      path: test.dds
-      uuid: f7055f22-6bfa-1a3b-4dbd-b366dd18866d
-      filtering:
-        minify: 0x2601
-        magnify: 0x2601
-    - type: 0
-      path: digits.dds
-      uuid: 409b5f84-4060-0a2e-9227-04056ac17ffb
-    - type: 1
-      path: alarm.ogg
-      uuid: 47185140-8a1b-9d46-3606-402ed23bcf83
-    - type: 1
-      path: music.ogg
-      uuid: a3c890ea-0f97-d3ed-32de-55ba88c8dc63
-    - type: 1
-      path: bell.ogg
-      uuid: 60f20064-0c13-2e94-35cd-404c011c00a2
-    - type: 4
-      path: countdown.lua
-      uuid: f611c6e3-6836-0333-978c-cfadd31a5bfa
-    - type: 3
-      path: font.bff
-      uuid: 286d945e-7fd9-4444-a95e-3faa3e541536
-    - type: 0
-      path: rosa.dds
-      uuid: 88ce43f7-3ccd-4d0a-867f-13f359a0c658
-      filtering:
-        minify: 0x2600
-        magnify: 0x2600
-    - type: 0
-      path: light.dds
-      uuid: 14b87e5e-8a05-4c8f-b850-39ea5b40caf8
+assets:
+  - type: 5
+    path: default_vertex.shader
+    uuid: 00000000-0000-0000-0000-000000000001
+  - type: 6
+    path: default_fragment.shader
+    uuid: 00000000-0000-0000-0000-000000000002
+  - type: 0
+    path: test.dds
+    uuid: f7055f22-6bfa-1a3b-4dbd-b366dd18866d
+    filtering:
+      minify: 0x2601
+      magnify: 0x2601
+  - type: 0
+    path: digits.dds
+    uuid: 409b5f84-4060-0a2e-9227-04056ac17ffb
+  - type: 1
+    path: alarm.ogg
+    uuid: 47185140-8a1b-9d46-3606-402ed23bcf83
+  - type: 1
+    path: music.ogg
+    uuid: a3c890ea-0f97-d3ed-32de-55ba88c8dc63
+  - type: 1
+    path: bell.ogg
+    uuid: 60f20064-0c13-2e94-35cd-404c011c00a2
+  - type: 4
+    path: countdown.lua
+    uuid: f611c6e3-6836-0333-978c-cfadd31a5bfa
+  - type: 3
+    path: font.bff
+    uuid: 286d945e-7fd9-4444-a95e-3faa3e541536
+  - type: 0
+    path: rosa.dds
+    uuid: 88ce43f7-3ccd-4d0a-867f-13f359a0c658
+    filtering:
+      minify: 0x2600
+      magnify: 0x2600
+  - type: 0
+    path: light.dds
+    uuid: 14b87e5e-8a05-4c8f-b850-39ea5b40caf8
