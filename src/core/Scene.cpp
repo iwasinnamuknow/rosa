@@ -313,7 +313,7 @@ namespace rosa {
             for (const auto& entity: ecs::RegistryView<Entity, TextComponent>(m_registry)) {
                 auto& text_comp = m_registry.getComponent<TextComponent>(entity.getUuid());
                 auto& transform = m_registry.getComponent<TransformComponent>(entity.getUuid());
-                text_comp.render(transform.getGlobalTransform());
+                text_comp.draw(transform.getGlobalTransform());
             };
         }
 
