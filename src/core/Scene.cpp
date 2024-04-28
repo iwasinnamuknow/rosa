@@ -141,24 +141,6 @@ namespace rosa {
                 nsc.on_input_function(nsc.instance, event);
             }
         }
-
-        //        {
-        //            ZoneScopedNC("Events:LuaScript", profiler::detail::tracy_colour_events);
-        //
-        //            // Run updates for native script components, instantiating where needed
-        //            for (auto& entity: ecs::RegistryView<Entity, LuaScriptComponent>(m_registry)) {
-        //
-        //                auto& lsc = m_registry.getComponent<LuaScriptComponent>(entity.getUuid());
-        //
-        //                //Entity* actual = &m_entities.at(entity);
-        //
-        //                auto result = lsc.m_on_input_function(Event(event));
-        //                if (!result.valid()) {
-        //                    sol::error err = result;
-        //                    spdlog::error("Failed to call onInput for lua script: {}", err.what());
-        //                }
-        //            }
-        //        }
     }
 
     auto Scene::update(float delta_time) -> void {
@@ -196,21 +178,6 @@ namespace rosa {
                 nsc.on_update_function(nsc.instance, delta_time);
             }
         }
-
-        //        {
-        //            ZoneScopedNC("Updates:LuaScript", profiler::detail::tracy_colour_updates);
-        //
-        //            // Run updates for lua script components
-        //            for (auto& entity: ecs::RegistryView<Entity, LuaScriptComponent>(m_registry)) {
-        //
-        //                auto& lsc    = m_registry.getComponent<LuaScriptComponent>(entity.getUuid());
-        //                auto result = lsc.m_on_update_function(delta_time);
-        //                if (!result.valid()) {
-        //                    sol::error err = result;
-        //                    spdlog::error("Failed to call onUpdate for lua script: {}", err.what());
-        //                }
-        //            }
-        //        }
 
         {
             ZoneScopedNC("Updates:TransformUpdate", profiler::detail::tracy_colour_updates);
