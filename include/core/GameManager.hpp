@@ -143,6 +143,10 @@ namespace rosa {
         Colour m_clear_colour{0, 0, 0, 1};
 
         std::uint64_t m_frame_count{0};
+
+        bool m_show_renderer_stats{false};
+
+        void drawRenderStats();
     };
 
 } // namespace rosa

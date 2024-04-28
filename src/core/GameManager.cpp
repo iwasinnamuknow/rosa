@@ -100,6 +100,10 @@ namespace rosa {
                 ImGui_ImplOpenGL3_NewFrame();
                 ImGui_ImplGlfw_NewFrame();
                 ImGui::NewFrame();
+
+                drawRenderStats();
+
+                //ImGui::ShowDemoWindow(nullptr);
             }
 
             {
@@ -116,6 +120,11 @@ namespace rosa {
                     if (event.type == EventType::EventClose) {
                         m_render_window->close();
                     } else {
+                        if (event.type == EventType::EventKeyboard) {
+                            if (event.keyboard.key == Key::KeyF10 && event.keyboard.type == KeyboardEventType::KeyReleased) {
+                                m_show_renderer_stats = !m_show_renderer_stats;
+                            }
+                        }
                         m_current_scene->input(event);
                     }
                 }
@@ -177,6 +186,51 @@ namespace rosa {
         auto serialiser = SceneSerialiser(*scene.get());
         serialiser.deserialiseFromYaml(path);
         return addScene(key, std::move(scene));
+    }
+
+    void GameManager::drawRenderStats() {
+        if (m_show_renderer_stats) {
+            ImGui::SetNextWindowPos(ImVec2(0, 0));
+            ImGui::SetNextWindowSize(ImVec2(180, 120));
+            ImGui::Begin("Renderer Stats", nullptr,
+                         ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoFocusOnAppearing);
+
+            if (ImGui::BeginTable("stats", 2)) {
+                RendererStats                    stats  = Renderer::getInstance().getStats();
+                const std::array<const char*, 4> titles = {
+                        "Draws",
+                        "Vertices",
+                        "Textures",
+                        "Shaders"};
+                for (std::size_t row = 0; row < 4; row++) {
+                    ImGui::TableNextRow();
+                    for (int column = 0; column < 2; column++) {
+                        ImGui::TableSetColumnIndex(column);
+                        if (column == 0) {
+                            ImGui::TextUnformatted(titles[row]);
+                        } else {
+                            switch (row) {
+                                case 0:
+                                    ImGui::Text("%d", stats.draws);
+                                    break;
+                                case 1:
+                                    ImGui::Text("%d", stats.vertices);
+                                    break;
+                                case 2:
+                                    ImGui::Text("%d", stats.textures);
+                                    break;
+                                case 3:
+                                    ImGui::Text("%d", stats.shaders);
+                                    break;
+                            }
+                        }
+                    }
+                }
+                ImGui::EndTable();
+            }
+
+            ImGui::End();
+        }
     }
 
 } // namespace rosa
