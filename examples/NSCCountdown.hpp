@@ -121,12 +121,13 @@ public:
     }
 
     std::string getTimeFormatted() {
-        std::chrono::time_point<std::chrono::steady_clock> time_now     = std::chrono::steady_clock::now();
-        auto                                               target_time  = m_start_time + std::chrono::seconds(countdown_time);
-        auto                                               duration     = target_time - time_now;
-        auto                                               formatted    = std::chrono::hh_mm_ss(duration);
-        auto                                               full_seconds = std::chrono::floor<std::chrono::seconds>(duration);
-        auto                                               millis       = std::chrono::duration_cast<std::chrono::milliseconds>(duration - full_seconds);
+        auto time_now     = std::chrono::steady_clock::now();
+        auto target_time  = m_start_time + std::chrono::seconds(countdown_time);
+        auto duration     = target_time - time_now;
+        auto formatted    = std::chrono::hh_mm_ss(duration);
+        auto full_seconds = std::chrono::floor<std::chrono::seconds>(duration);
+        auto millis       = std::chrono::duration_cast<std::chrono::milliseconds>(duration - full_seconds);
+
         return std::format("{:%H}:{:%M}:{:%S}.{}", duration, duration, duration, millis.count()).substr(0, 12);
     }
 
