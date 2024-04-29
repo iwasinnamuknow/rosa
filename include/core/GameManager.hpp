@@ -24,8 +24,8 @@
 
 #include <core/ResourceManager.hpp>
 #include <core/Scene.hpp>
+#include <graphics/RenderOverlay.hpp>
 #include <graphics/RenderWindow.hpp>
-#include <graphics/Renderer.hpp>
 #include <memory>
 #include <spdlog/spdlog.h>
 #include <unordered_map>
@@ -145,12 +145,7 @@ namespace rosa {
 
         std::uint64_t m_frame_count{0};
 
-        bool m_show_renderer_stats{false};
-
-        std::list<RendererStats> m_renderer_stats;
-        std::list<float>         m_frame_times;
-
-        void drawRenderStats(float delta_time);
+        RenderOverlay m_render_overlay;
     };
 
 } // namespace rosa
